@@ -1,0 +1,51 @@
+{% extends 'sumApp/base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}Logout Successful - DocuSum{% endblock %}
+
+{% block extra_head %}
+    <style>
+        .logout-container {
+            padding: 40px;
+            border-radius: 15px;
+            background: #ffffff; /* White background for the card */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, .1); /* Subtle shadow for depth */
+            margin-top: 100px; /* Add some top margin for spacing */
+            border: 1px solid #e3e6f0; /* Slight border for definition */
+        }
+
+        .btn-custom {
+            border-radius: 15px; /* Rounded corners for buttons */
+            padding: 12px 35px;
+            margin: 15px;
+            font-size: 18px;
+            color: #ffffff; /* White text */
+            border: 2px solid transparent; /* Transparent border */
+            background-color: #3763f4; /* Primary blue background */
+            transition: background-color 0.2s, border-color 0.2s; /* Smooth transition for hover effect */
+        }
+
+        .btn-custom:hover, .btn-custom:focus {
+            background-color: #1955f5; /* Darker blue on hover */
+            border-color: #ffffff; /* Even darker blue for border on hover */
+        }
+
+        .logout-message {
+            font-size: 20px;
+            color: #495057; /* Dark gray color for text */
+            margin-bottom: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container d-flex align-items-center justify-content-center">
+        <div class="logout-container text-center">
+            <h1 class="logout-message">You've been logged out</h1>
+            <div class="mt-5">
+                <a href="{% url 'index' %}" class="btn btn-custom btn-lg">Return to Homepage</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
