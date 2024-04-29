@@ -18,3 +18,4 @@ requests==2.31.0
 requests-oauthlib==1.4.0
 sqlparse==0.4.4
 urllib3==2.2.1
+uuid==1.30
