@@ -1,0 +1,97 @@
+{% extends "Authorized/Employer/base.html" %}
+{% load static%}
+{% load socialaccount %}
+{% block title %}Candidate List {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="margin-top: 20px;width: 663px;">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Candidate List</h4>
+                        <h6 class="text-muted card-subtitle mb-2">Software Engineering Intern @ Apple</h6>
+                        <h6 class="text-muted card-subtitle mb-2">Job ID: 12345</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height: 655px;margin-left: -12px;">
+            <div class="col-md-6" style="height: inherit;">
+                <div style="height: inherit;overflow: hidden;width: 641px;margin: auto;border-width: 1px;border-radius: 6px;margin-top: 5px;">
+                    <div class="card shadow-sm" style="height: 655px;margin: auto;overflow: scroll;width: 645px;">
+                        <div class="card-group justify-content-center align-items-center m-auto" style="overflow: scroll;display: block;width: 628px;height: inherit;">
+                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
+                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
+                                    <div style="margin-top: 5px;">
+                                        <h4 style="margin-top: 5px;">Emily Nguyen</h4>
+                                        <hr style="width: inherit;margin-top: 5px;">
+                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">emilynguyen@email.com</p>
+                                    </div><button class="btn btn-primary" type="button" style="margin-top: 5px;">Resume</button><button class="btn btn-primary" type="button" style="margin-left: 10px;margin-top: 5px;">Contact</button>
+                                </div>
+                            </div>
+                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
+                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
+                                    <div style="margin-top: 5px;">
+                                        <h4 style="margin-top: 5px;">Not Emily Nguyen</h4>
+                                        <hr style="width: inherit;margin-top: 5px;">
+                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">emilynguyen@email.com</p>
+                                    </div><button class="btn btn-primary" type="button" style="margin-top: 5px;">Resume</button><button class="btn btn-primary" type="button" style="margin-left: 10px;margin-top: 5px;">Contact</button>
+                                </div>
+                            </div>
+                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
+                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
+                                    <div style="margin-top: 5px;">
+                                        <h4 style="margin-top: 5px;">Not Emily Nguyen</h4>
+                                        <hr style="width: inherit;margin-top: 5px;">
+                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">emilynguyen@email.com</p>
+                                    </div><button class="btn btn-primary" type="button" style="margin-top: 5px;">Resume</button><button class="btn btn-primary" type="button" style="margin-left: 10px;margin-top: 5px;">Contact</button>
+                                </div>
+                            </div>
+                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
+                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
+                                    <div style="margin-top: 5px;">
+                                        <h4 style="margin-top: 5px;">Not Emily Nguyen</h4>
+                                        <hr style="width: inherit;margin-top: 5px;">
+                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">emilynguyen@email.com</p>
+                                    </div><button class="btn btn-primary" type="button" style="margin-top: 5px;">Resume</button><button class="btn btn-primary" type="button" style="margin-left: 10px;margin-top: 5px;">Contact</button>
+                                </div>
+                            </div>
+                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
+                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
+                                    <div style="margin-top: 5px;">
+                                        <h4 style="margin-top: 5px;">Emily Nguyen</h4>
+                                        <hr style="width: inherit;margin-top: 5px;">
+                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">emilynguyen@email.com</p>
+                                    </div><button class="btn btn-primary" type="button" style="margin-top: 5px;">Resume</button><button class="btn btn-primary" type="button" style="margin-left: 10px;margin-top: 5px;">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xxl-6" style="margin-top: -118px;">
+                <div style="height: inherit;overflow: hidden;width: 641px;margin: auto;border-width: 1px;border-radius: 6px;margin-top: 0px;">
+                    <div class="card shadow-sm" style="height: 780px;margin: auto;overflow: scroll;">
+                        <div style="margin-top: 10px;margin-bottom: 10px;padding-left: 20px;padding-top: 10px;position: sticky;">
+                            <h1>Emily Nguyen</h1>
+                            <div class="btn-group" role="group"><button class="btn btn-primary" type="button" style="border-radius: 6px;">View Resume</button><button class="btn btn-primary" type="button" style="margin-left: 17px;border-radius: 6px;">Contact Info</button></div>
+                        </div>
+                        <hr>
+                        <div>
+                            <h2 style="padding-left: 20px;">Resume</h2>
+                            <h4 style="padding-left: 20px;">Education</h4>
+                            <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;height: inherit;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar</span></p>
+                        </div>
+                        <h4 style="padding-left: 20px;">Experience</h4>
+                        <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;height: inherit;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar</span></p>
+                        <h4 style="padding-left: 20px;">Relevant Skills</h4>
+                        <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;height: inherit;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar</span></p>
+                        <h4 style="padding-left: 20px;">Projects</h4>
+                        <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;height: inherit;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

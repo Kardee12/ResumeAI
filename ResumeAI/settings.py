@@ -23,6 +23,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR,'employer_static')
 )
 
 STATICFILES_FINDERS = (
@@ -107,7 +108,7 @@ DATABASES = {
         'USER': 'core',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': 5432
+        'PORT': 5433
     }
 }
 
@@ -159,8 +160,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': config('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
-            'secret': config('SOCIAL_AUTH_GOOGLE_SECRET'),
+            # 'client_id': config('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
+            'client_id' : '785778521263-erpmce5nvn3ihgre3hm6l7mitgv69a91.apps.googleusercontent.com',
+            'secret': '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',
             'key': ''
         },
         'SCOPE': [
