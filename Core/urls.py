@@ -8,5 +8,6 @@ urlpatterns = [
     #dont forget to add job id
     path("employer/job_posting",EmployerViews.jobPostingPage, name="job_posting_page"),
     #add job id -- maybe use jinja? 
-    path("employer/job_posting/candidatelist", EmployerViews.candidatePage ,name="candidate_list")
+    path("employer/job_posting/candidatelist", EmployerViews.candidatePage ,name="candidate_list"),
+    path("employer/profile", EmployerViews.profile, name="employer_profile")
 ] 

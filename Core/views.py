@@ -13,11 +13,4 @@ def home(request):
 def dashboard(request):
     return render(request, "Authorized/Core/dashboard.html")
 
-@login_required()
-def jobPostingPage(request):
-    return render(request, "Authorized/Employer/JobPostings_Employer.html")
-
-@login_required
-def candidatePage(request):
-    return render(request, "Authorized/Employer/CandidateList.html")
     

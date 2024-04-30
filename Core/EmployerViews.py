@@ -9,3 +9,7 @@ def jobPostingPage(request):
 @login_required
 def candidatePage(request):
     return render(request, "Authorized/Employer/CandidateList.html")
+
+@login_required
+def profile(request):
+    return render(request,"Authorized/Employer/Profile_Employer.html")
