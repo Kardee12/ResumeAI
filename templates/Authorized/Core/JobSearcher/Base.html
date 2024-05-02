@@ -5,14 +5,26 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ResumeAI{% endblock %}</title>
     <link rel="stylesheet" href="{% static "assets/bootstrap/css/bootstrap.min.css" %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css">
     <link rel="stylesheet" href="{% static "assets/css/styles.min.css" %}">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
     <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            color: #525f7f;
+        }
+        .content-container {
+            font-family: 'Roboto', BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
         .hover-highlight:hover {
             background-color: rgba(0, 0, 0, 0.1);
             border-radius: 0.25rem;
@@ -20,15 +32,16 @@
         .dropdown-menu {
             border-radius: 0.5rem;
         }
+        
     </style>
     {% block extra_head %}
     {% endblock %}
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md fixed-top navbar-shrink py-3 navbar-light">
+    <nav class="navbar navbar-expand-md fixed-top navbar-shrink py-3 navbar-light" id="mainNav">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/static">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'jobsearcher_dashboard' %}">
                 <span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-cloud-search">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -44,13 +57,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link hover-highlight" href="#">Chat</a></li>
+                    <li class="nav-item"><a class="nav-link hover-highlight" href="{% url 'jobsearcher_chat' %}">Chat</a></li>
                     <li class="nav-item"><a class="nav-link hover-highlight" href="#">Search</a></li>
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {% with user.socialaccount_set.all.0 as socialaccount %}
                             {% if socialaccount %}
                                 <img src="{{ socialaccount.get_avatar_url }}" alt="{{ user.username }}" class="rounded-circle" style="width: 32px; height: 32px;">
@@ -58,10 +71,11 @@
                                 <i class="fas fa-user-circle fa-lg"></i>
                             {% endif %}
                             {% endwith %}
-                            {{ user.username | title }}
+                            {{ user.first_name|title}}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="{% url 'jobsearcher_profile'%}"> Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
                             <li><a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a></li>
                         </ul>
                     </li>
@@ -78,12 +92,13 @@
         </div>
     </nav>
 
-    <section class="py-5 my-5">
+<section class="py-sm-5 my-sm-5">
+    <div class="content-container">
         {% block content %}
-        <!-- Main content goes here. This block will be overridden by child templates. -->
         {% endblock content %}
-    </section>
-
+    </div>
+</section>
+    
     <footer>
         <div class="container py-4 py-lg-5">
             <div class="text-muted d-flex justify-content-between align-items-center pt-3">
@@ -99,5 +114,4 @@
     <script src="{% static "assets/js/script.min.js" %}"></script>
     {% block extra_scripts %}{% endblock %}
 </body>
-
 </html>

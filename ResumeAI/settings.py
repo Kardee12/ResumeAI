@@ -174,6 +174,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 }
 
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
