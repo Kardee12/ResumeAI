@@ -1,5 +1,4 @@
 import os
-
 from django.contrib.auth import logout
 from django.db import transaction
 from django.shortcuts import render, redirect
@@ -9,6 +8,8 @@ from ResumeAI.Generic.generic_decoraters import job_searcher_required
 from django.contrib.auth.decorators import login_required
 from ResumeAI import settings
 from .forms import UserProfileForm
+from .functions.JobSearcherDBUtility import update_user_skills
+from .functions.ParsingUtility import ResumeParsing, ParsingFunctions
 
 
 @login_required
@@ -38,6 +39,8 @@ def jobsearcher_profile(request):
 
 @login_required
 def js_setup_profile(request):
+    rparser = ResumeParsing(request)
+    aiParser = ParsingFunctions()
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -51,6 +54,23 @@ def js_setup_profile(request):
                         user=request.user,
                         resume=request.FILES['resume'],
                     )
+                user_resume = UserResume.objects.get(user=request.user)
+                extracted_text = None
+                skills = None
+                if user_resume and user_resume.resume:
+                    if user_resume.resume.name.endswith('.pdf'):
+                        extracted_text = rparser.extract_text_from_pdf()
+                    elif user_resume.resume.name.endswith('.docx'):
+                        extracted_text = rparser.extract_text_from_docx()
+                    elif user_resume.resume.name.endswith('.doc'):
+                        extracted_text = rparser.extract_text_from_doc()
+                if extracted_text:
+                    output = aiParser.gen_query(extracted_text)
+                    skills = aiParser.post_processing(output)
+                    if skills:
+                        update_user_skills(request.user, skills)
+                else:
+                    print("ERROR: Unable to parse the resume or no skills extracted.")
                 profile.resume = resume
                 profile.save()
                 print(str(profile))
@@ -86,16 +106,13 @@ def edit_profile(request):
                     if old_resume.resume and os.path.isfile(old_resume.resume.path):
                         os.remove(old_resume.resume.path)
                     old_resume.delete()
-
                 new_resume = UserResume(
                     user=request.user,
                     resume=resume_file
                 )
                 new_resume.save()
                 profile.resume = new_resume
-
             profile.save()
-
         return redirect('jobsearcher_profile')
 
     context = {
@@ -103,7 +120,3 @@ def edit_profile(request):
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
     }
     return render(request, 'Authorized/Core/JobSearcher/edit-profile.html', context)
-
-# @login_required
-# def edit_profile(request):
-#     return render(request, 'Authorized/Core/JobSearcher/edit-profile.html', {'google_maps_api_key':settings.GOOGLE_MAPS_API_KEY})

@@ -41,10 +41,17 @@ Create Profile - ResumeAI
     textarea.form-control {
         border-radius: 12px; /* Rounded textarea */
     }
+    #resumeUpload:invalid {
+    border-color: red;
+    }
+
+    #resumeUpload:valid {
+        border-color: green;
+    }
 </style>
-    <script 
-    src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete" 
-    async defer>    
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete"
+    async defer>
     </script>
 {% endblock %}
 
@@ -66,7 +73,7 @@ Create Profile - ResumeAI
                     </div>
                     <div class="mb-3">
                         <label for="resumeUpload" class="form-label">Upload Resume</label>
-                        <input type="file" class="form-control" id="resumeUpload" name="resume">
+                        <input type="file" class="form-control" id="resumeUpload" name="resume" accept=".pdf,.doc,.docx">
                         <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
                     </div>
                     <div class="text-center">
@@ -87,12 +94,27 @@ Create Profile - ResumeAI
             componentRestrictions: {country: 'us'}  // Optional: restrict search to a specific country
         };
         var autocomplete = new google.maps.places.Autocomplete(locationInput, options);
-    
+
         // Optional: Add listener to handle when the user selects an address
         autocomplete.addListener('place_changed', function() {
             var place = autocomplete.getPlace();
             console.log(place);  // You can do something with the selected place details here
         });
+    }
+    
+    const fileInput = document.getElementById('resumeUpload');
+    fileInput.addEventListener('change', validateFile);
+    
+    function validateFile() {
+        const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
+        const selectedFile = this.files[0];
+        if (!allowedExtensions.exec(selectedFile.name)) {
+            alert('Please select a PDF, DOC, or DOCX file.');
+            fileInput.value = ''; // Clear the selected file
+            return false;
+        }
+    
+        return true;
     }
     </script>
 {% endblock %}
