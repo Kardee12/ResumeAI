@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from allauth.socialaccount.models import SocialAccount
 
-class Skill(models.Model):
+class UserSkill(models.Model):
     name = models.CharField(max_length=255, unique=True)
     def __str__(self):
         return self.name
@@ -14,7 +14,8 @@ class UserProfile(models.Model):
     location = models.CharField(max_length=255, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     resume = models.ForeignKey('UserResume', on_delete=models.SET_NULL, null=True, blank=True, related_name='profile')
-    skills = models.ManyToManyField(Skill, blank=True)
+    skills = models.ManyToManyField(UserSkill, blank=True)
+    goal = models.TextField(blank=True, null=True)
     def __str__(self):
         return f"{self.user.username}'s Profile"
 

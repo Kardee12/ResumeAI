@@ -60,7 +60,7 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="locationInput" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="locationInput" name="location" placeholder={{ profile.location }}>
+                        <input type="text" class="form-control" id="locationInput" name="location" placeholder="Enter your location">
                     </div>
                     <div class="mb-3">
                         <label for="summaryInput" class="form-label">Professional Bio</label>
@@ -98,5 +98,14 @@ function initAutocomplete() {
         }
     });
 }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        var locationInput = document.getElementById('locationInput');
+        var locationValue = "{{ profile.location}}";
+        var formattedLocation = locationValue.replace(/\w\S*/g, function(txt){
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+        locationInput.placeholder = formattedLocation;
+    });
 </script>
 {% endblock %}

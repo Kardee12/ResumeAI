@@ -8,7 +8,7 @@ from ResumeAI.Generic.generic_decoraters import job_searcher_required
 from django.contrib.auth.decorators import login_required
 from ResumeAI import settings
 from .forms import UserProfileForm
-from .functions.JobSearcherDBUtility import update_user_skills
+from .functions.JobSearcherDBUtility import create_user_skills, update_user_skills
 from .functions.ParsingUtility import ResumeParsing, ParsingFunctions
 
 
@@ -29,18 +29,21 @@ def jobsearcher_chat(request):
 def jobsearcher_profile(request):
     user = request.user
     profile = UserProfile.objects.get(user=user)
-    skills = ["Java", "Javascript", "AI","Python","Django"]
     return render(request, "Authorized/Core/JobSearcher/profile.html", context={
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
-        'profile': profile,
-        'skills' : skills,
+        'profile': profile
     })
 
 
+from django.contrib import messages
+
+
 @login_required
+@job_searcher_required
 def js_setup_profile(request):
     rparser = ResumeParsing(request)
     aiParser = ParsingFunctions()
+    initial_skills = []
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -50,13 +53,10 @@ def js_setup_profile(request):
                 profile.bio = form.cleaned_data['bio']
                 profile.profile_completed = True
                 if 'resume' in request.FILES:
-                    resume = UserResume.objects.create(
-                        user=request.user,
-                        resume=request.FILES['resume'],
-                    )
+                    resume = UserResume.objects.create(user=request.user, resume=request.FILES['resume'])
+                    profile.resume = resume
                 user_resume = UserResume.objects.get(user=request.user)
                 extracted_text = None
-                skills = None
                 if user_resume and user_resume.resume:
                     if user_resume.resume.name.endswith('.pdf'):
                         extracted_text = rparser.extract_text_from_pdf()
@@ -66,28 +66,29 @@ def js_setup_profile(request):
                         extracted_text = rparser.extract_text_from_doc()
                 if extracted_text:
                     output = aiParser.gen_query(extracted_text)
-                    skills = aiParser.post_processing(output)
-                    if skills:
-                        update_user_skills(request.user, skills)
-                else:
-                    print("ERROR: Unable to parse the resume or no skills extracted.")
-                profile.resume = resume
+                    top_skills = aiParser.post_processing(output)
+                    if top_skills:
+                        create_user_skills(request.user, top_skills)
                 profile.save()
-                print(str(profile))
             return redirect('home')
     else:
         form = UserProfileForm()
-    return render(request, 'Authorized/Core/JobSearcher/create-profile.html',
-                  {'form': form,
-                   'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY})
 
+    return render(request, 'Authorized/Core/JobSearcher/create-profile.html', {
+        'form': form,
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
+    })
 
 @login_required
+@job_searcher_required
 def edit_profile(request):
+    rparser = ResumeParsing(request)
+    aiParser = ParsingFunctions()
     try:
         profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
         profile = None
+
     if request.method == 'POST':
         location = request.POST.get('location')
         bio = request.POST.get('summary')
@@ -112,6 +113,20 @@ def edit_profile(request):
                 )
                 new_resume.save()
                 profile.resume = new_resume
+                extracted_text = None
+                if new_resume.resume.name.endswith('.pdf'):
+                    extracted_text = rparser.extract_text_from_pdf()
+                elif new_resume.resume.name.endswith('.docx'):
+                    extracted_text = rparser.extract_text_from_docx()
+                elif new_resume.resume.name.endswith('.doc'):
+                    extracted_text = rparser.extract_text_from_doc()
+
+                if extracted_text:
+                    output = aiParser.gen_query(extracted_text)
+                    skills = aiParser.post_processing(output)
+                    if skills:
+                        update_user_skills(request.user, skills)
+
             profile.save()
         return redirect('jobsearcher_profile')
 

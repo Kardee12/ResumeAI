@@ -47,6 +47,7 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         padding: 20px;
         text-align: left;
+        position: relative;
     }
     .card-title {
         font-size: 20px;
@@ -109,11 +110,15 @@
                 <div class="col-md-6">
                     <div class="profile-section card">
                         <div class="card-body">
-                            <h3 class="card-title">Skills</h3>
+                            <h3 class="card-title">Skills <a href="" class="btn btn-edit">Edit</a></h3>
                             <ul>
-                                {% for skill in skills %}
-                                <li>{{ skill }}</li>
-                                {% endfor %}
+                            {% for skill in profile.skills.all %}
+                                {% if forloop.counter <= 5 %}
+                                    <li>{{ skill.name |title }}</li>
+                                {% endif %}
+                            {% empty %}
+                                <li>No skills listed</li>
+                            {% endfor %}
                             </ul>
                         </div>
                     </div>

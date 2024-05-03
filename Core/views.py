@@ -18,7 +18,7 @@ def home(request):
     try:
         profile = UserProfile.objects.get(user=user)
     except UserProfile.DoesNotExist:
-        return redirect('js_setup_profile')
+        return redirect('js_setup_profile1')
     if request.user.role == 'job_searcher':
             return redirect('jobsearcher_dashboard')
     else:
