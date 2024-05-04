@@ -42,7 +42,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 SITE_ID=1
-LOGIN_REDIRECT_URL = '/dashboard'
+LOGIN_REDIRECT_URL = '/home'
 LOGOUT_URL = '/'
 SOCIALACCOUNT_LOGIN_ON_GET=True
 
@@ -175,6 +175,9 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 
 }
+
+GOOGLE_MAPS_API_KEY = 'AIzaSyAX69RmxQGMa_PnFo0NrvklcC9W41bHQHc'
+HF_TOKEN = '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'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

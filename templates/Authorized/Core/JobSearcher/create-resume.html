@@ -1,0 +1,185 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}
+Create Resume - ResumeAI
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+<style>
+   body {
+       font-family: 'Roboto', sans-serif;
+       background-color: #f8f9fa;
+   }
+
+   .container {
+       max-width: 800px;
+   }
+
+   .resume-form {
+       background-color: #fff;
+       padding: 30px;
+       border-radius: 10px;
+       box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+   }
+
+   .form-group label {
+       font-weight: 500;
+   }
+
+   .form-control {
+       border-radius: 5px;
+   }
+
+   .btn-primary {
+       background-color: #007bff;
+       border-color: #007bff;
+   }
+
+   .btn-primary:hover {
+       background-color: #0069d9;
+       border-color: #0062cc;
+   }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+   <div class="resume-form">
+       <h2 class="text-center mb-4">Create Your Resume</h2>
+       <form>
+           <div class="form-group mb-3">
+               <label for="name">Name</label>
+               <input type="text" class="form-control" id="name" placeholder="Enter your full name">
+           </div>
+           <div class="form-group mb-3">
+               <label for="email">Email</label>
+               <input type="email" class="form-control" id="email" placeholder="Enter your email address">
+           </div>
+           <div class="form-group mb-3">
+               <label for="phone">Phone Number</label>
+               <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number">
+           </div>
+           <div class="form-group mb-3">
+               <label for="address">Address</label>
+               <textarea class="form-control" id="address" rows="3" placeholder="Enter your address"></textarea>
+           </div>
+           <div class="form-group mb-3">
+               <label for="summary">Professional Summary</label>
+               <textarea class="form-control" id="summary" rows="4" placeholder="Write a brief professional summary"></textarea>
+           </div>
+           <div class="form-group mb-3">
+               <label>Work Experience</label>
+               <div class="work-experience-fields">
+                   <div class="work-experience-field mb-3">
+                       <input type="text" class="form-control mb-2" placeholder="Job Title">
+                       <input type="text" class="form-control mb-2" placeholder="Company Name">
+                       <div class="row">
+                           <div class="col">
+                               <input type="date" class="form-control mb-2" placeholder="Start Date">
+                           </div>
+                           <div class="col">
+                               <input type="date" class="form-control mb-2" placeholder="End Date">
+                           </div>
+                       </div>
+                       <textarea class="form-control" rows="3" placeholder="Job Description"></textarea>
+                   </div>
+               </div>
+               <button type="button" class="btn btn-primary btn-sm mb-3" onclick="addWorkExperienceField()">Add Work Experience</button>
+           </div>
+           <div class="form-group mb-3">
+               <label>Education</label>
+               <div class="education-fields">
+                   <div class="education-field mb-3">
+                       <input type="text" class="form-control mb-2" placeholder="Degree/Certification">
+                       <input type="text" class="form-control mb-2" placeholder="Institution Name">
+                       <div class="row">
+                           <div class="col">
+                               <input type="date" class="form-control mb-2" placeholder="Start Date">
+                           </div>
+                           <div class="col">
+                               <input type="date" class="form-control mb-2" placeholder="End Date">
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <button type="button" class="btn btn-primary btn-sm mb-3" onclick="addEducationField()">Add Education</button>
+           </div>
+           <div class="form-group mb-3">
+               <label for="skills">Skills</label>
+               <div class="skills-fields">
+                   <div class="skill-field mb-2">
+                       <input type="text" class="form-control" placeholder="Enter a skill">
+                   </div>
+               </div>
+               <button type="button" class="btn btn-primary btn-sm mb-3" onclick="addSkillField()">Add Skill</button>
+           </div>
+           <div class="text-center">
+               <button type="submit" class="btn btn-primary">Create Resume</button>
+           </div>
+       </form>
+   </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+   function addWorkExperienceField() {
+       const workExperienceFields = document.querySelector('.work-experience-fields');
+       const newField = document.createElement('div');
+       newField.classList.add('work-experience-field', 'mb-3');
+       newField.innerHTML = `
+           <input type="text" class="form-control mb-2" placeholder="Job Title">
+           <input type="text" class="form-control mb-2" placeholder="Company Name">
+           <div class="row">
+               <div class="col">
+                   <input type="date" class="form-control mb-2" placeholder="Start Date">
+               </div>
+               <div class="col">
+                   <input type="date" class="form-control mb-2" placeholder="End Date">
+               </div>
+           </div>
+           <textarea class="form-control" rows="3" placeholder="Job Description"></textarea>
+       `;
+       workExperienceFields.appendChild(newField);
+   }
+
+   function addEducationField() {
+       const educationFields = document.querySelector('.education-fields');
+       const newField = document.createElement('div');
+       newField.classList.add('education-field', 'mb-3');
+       newField.innerHTML = `
+           <input type="text" class="form-control mb-2" placeholder="Degree/Certification">
+           <input type="text" class="form-control mb-2" placeholder="Institution Name">
+           <div class="row">
+               <div class="col">
+                   <input type="date" class="form-control mb-2" placeholder="Start Date">
+               </div>
+               <div class="col">
+                   <input type="date" class="form-control mb-2" placeholder="End Date">
+               </div>
+           </div>
+       `;
+       educationFields.appendChild(newField);
+   }
+
+   function addSkillField() {
+       const skillsFields = document.querySelector('.skills-fields');
+       const skillFields = skillsFields.querySelectorAll('.skill-field');
+
+       if (skillFields.length < 10) {
+           const newField = document.createElement('div');
+           newField.classList.add('skill-field', 'mb-2');
+           newField.innerHTML = `
+               <input type="text" class="form-control" placeholder="Enter a skill">
+           `;
+           skillsFields.appendChild(newField);
+       } else {
+           alert('You can add up to 10 skills only.');
+       }
+   }
+</script>
+{% endblock %}
