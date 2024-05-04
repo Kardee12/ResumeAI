@@ -35,10 +35,29 @@ def jobsearcher_chat(request):
 def jobsearcher_profile(request):
     user = request.user
     profile = UserProfile.objects.get(user=user)
+    skills = profile.skills.all()[:6]
+    print(skills)
     return render(request, "Authorized/Core/JobSearcher/profile.html", context={
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
-        'profile': profile
+        'profile': profile,
+        'skills': skills
     })
+
+
+@login_required
+def update_skills(request):
+    if request.method == 'POST':
+        user = request.user
+        profile = UserProfile.objects.get(user=user)
+        skills_names = request.POST.getlist('skills')
+        profile.skills.clear()
+        for name in skills_names:
+            skill, created = UserSkill.objects.get_or_create(name=name)
+            profile.skills.add(skill)
+        profile.save()
+
+        return redirect('jobsearcher_profile')
+    return redirect('jobsearcher_dashboard')
 
 @login_required
 @job_searcher_required

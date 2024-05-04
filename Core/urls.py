@@ -12,5 +12,6 @@ urlpatterns = [
     path('js-setup/', JobSearcher.js_setup_profile,name='js_setup_profile'),
     path('download-resume/', gen_views.download_resume, name='download-resume'),
     path('edit-jsprofile/', JobSearcher.edit_profile,name='edit-profile'),
-    path('create-resume/', JobSearcher.create_resume, name='create-resume')
+    path('create-resume/', JobSearcher.create_resume, name='create-resume'),
+    path('jsprofile/update-skills/', JobSearcher.update_skills, name='update_skills'),
 ]
