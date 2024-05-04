@@ -1,14 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from Core.forms import EmployerProfileForm
-from Core.models import EmployerProfile, Job
+from Core.EmployerForm import EmployerProfileForm
+from Core.EmployerModel import EmployerProfile, Job
 from django.db import transaction
 
 
 
 @login_required()
 def jobPostingPage(request):
-    job  = get_object_or_404(Job, job_uuid)
+    job  = get_object_or_404(Job, Job.job_uuid)
     return render(request, "Authorized/Employer/JobPostings_Employer.html")
 
 @login_required
