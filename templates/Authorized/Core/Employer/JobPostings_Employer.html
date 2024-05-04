@@ -21,36 +21,16 @@
                 <div style="height: inherit;overflow: hidden;width: 641px;margin: auto;border-width: 1px;border-radius: 6px;margin-top: 5px;">
                     <div class="card shadow-sm" style="height: 652px;margin: auto;overflow: scroll;">
                         <div class="card-group" style="overflow: scroll;display: block;width: 628px;margin: auto;margin-top: 5px;margin-bottom: 5px;margin-left: 5px;margin-right: 5px;height: inherit;">
+                            <!-- this should have a for loop for all the jobs posted by the employer -->
+                            {% for job in jobs %}
                             <div class="card" style="margin: auto;width: 626px;">
                                 <div class="card-body">
-                                    <h4 class="card-title">Software Engineer Intern</h4>
-                                    <p class="card-text">Minimum of 5 years of experience -- aint no way fam</p><button class="btn btn-primary" type="button">View Posting</button>
+                                    <h4 class="card-title">{{job.position}}</h4>
+                                    <p class="card-text">{{job.description|truncatewords:20}}</p>
+                                    <button class="btn btn-primary" type="button">View Posting</button>
                                 </div>
                             </div>
-                            <div class="card" style="margin: auto;width: 626px;">
-                                <div class="card-body" style="width: 624px;">
-                                    <h4 class="card-title">Software Engineer Intern</h4>
-                                    <p class="card-text">Minimum of 5 years of experience -- aint no way fam</p><button class="btn btn-primary" type="button">View Posting</button>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: auto;width: 626px;">
-                                <div class="card-body">
-                                    <h4 class="card-title">Software Engineer Intern</h4>
-                                    <p class="card-text">Minimum of 5 years of experience -- aint no way fam</p><button class="btn btn-primary" type="button">View Posting</button>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: auto;width: 626px;">
-                                <div class="card-body">
-                                    <h4 class="card-title">Software Engineer Intern</h4>
-                                    <p class="card-text">Minimum of 5 years of experience -- aint no way fam</p><button class="btn btn-primary" type="button">View Posting</button>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: auto;width: 626px;">
-                                <div class="card-body">
-                                    <h4 class="card-title">Software Engineer Intern</h4>
-                                    <p class="card-text">Minimum of 5 years of experience -- aint no way fam</p><button class="btn btn-primary" type="button">View Posting</button>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -58,17 +38,20 @@
             <div class="col-md-6">
                 <div style="height: inherit;overflow: hidden;width: 641px;margin: auto;border-width: 1px;border-radius: 6px;margin-top: 5px;">
                     <div class="card shadow-sm" style="height: 652px;margin: auto;overflow: scroll;">
+                        <!-- this should display the job information from job db -->
                         <div class="card" style="height: 150px;"><img class="card-img w-100 d-block" alt="grayscale photo of hanging heart shaped pendant lamp" style="height: inherit;transform: scale(1.03);" src="/static/assets/employer_side/img/photo-1614312385003-dcea7b8b6ab6.jpg">
                             <div class="card-img-overlay text-white">
-                                <h4>Software Engineering Intern</h4>
-                                <p>Paragraph</p>
+                                <h4>{{ selected_job.position }}</h4>
                             </div>
                         </div>
                         <div style="margin-top: 10px;margin-bottom: 10px;padding-left: 20px;padding-top: 10px;">
-                            <div class="btn-group" role="group"><button class="btn btn-primary" type="button" style="border-radius: 6px;">View Applicants</button><button class="btn btn-primary" type="button" style="margin-left: 17px;border-radius: 6px;">Edit Job Listing</button></div>
+                            <div class="btn-group" role="group"><a href="{{url 'edit_job_posting'}}"><button class="btn btn-primary" type="button" style="border-radius: 6px;">View Applicants</button></a><button class="btn btn-primary" type="button" style="margin-left: 17px;border-radius: 6px;">Edit Job Listing</button></div>
                         </div>
                         <div>
-                            <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar elementum integer. Fames ac turpis egestas maecenas. Convallis tellus id interdum velit laoreet id donec. At augue eget arcu dictum varius duis at consectetur. Et pharetra pharetra massa massa ultricies mi quis hendrerit dolor. Nulla aliquet porttitor lacus luctus accumsan tortor. Interdum velit euismod in pellentesque massa. Duis ultricies lacus sed turpis tincidunt id aliquet risus feugiat.Lorem sed risus ultricies tristique nulla aliquet enim tortor at. Aliquam ut porttitor leo a diam sollicitudin tempor id. Neque volutpat ac tincidunt vitae semper quis lectus. Elementum pulvinar etiam non quam lacus suspendisse faucibus. Quam vulputate dignissim suspendisse in est ante in nibh. Rutrum quisque non tellus orci. Tincidunt id aliquet risus feugiat in ante metus dictum at. Egestas sed tempus urna et pharetra pharetra. Vel pharetra vel turpis nunc eget lorem. Nunc sed id semper risus in hendrerit gravida rutrum quisque. Facilisis magna etiam tempor orci. Ut tristique et egestas quis ipsum suspendisse ultrices gravida dictum. Egestas quis ipsum suspendisse ultrices gravida dictum. Lorem mollis aliquam ut porttitor leo a diam sollicitudin. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Dictum varius duis at consectetur lorem donec massa sapien faucibus.Non quam lacus suspendisse faucibus. Enim praesent elementum facilisis leo vel fringilla est. Duis ultricies lacus sed turpis tincidunt. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Mus mauris vitae ultricies leo integer malesuada nunc. Commodo sed egestas egestas fringilla phasellus faucibus scelerisque. Commodo sed egestas egestas fringilla. Tortor posuere ac ut consequat. Cras ornare arcu dui vivamus arcu felis bibendum. Nisi lacus sed viverra tellus. Eget mauris pharetra et ultrices neque. Proin libero nunc consequat interdum varius sit amet. Vestibulum sed arcu non odio euismod lacinia. Tristique senectus et netus et malesuada fames. Accumsan lacus vel facilisis volutpat est velit egestas dui. Vitae aliquet nec ullamcorper sit amet risus nullam eget felis. Nunc sed velit dignissim sodales ut eu sem. Urna porttitor rhoncus dolor purus non enim praesent. Tortor condimentum lacinia quis vel. In fermentum posuere urna nec tincidunt praesent semper feugiat nibh.</span></p>
+                            <!-- job description goes here -->
+                            <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;">
+                                <span style="color: rgb(123, 136, 152);"> {{ selected_job.description }} </span>
+                            </p>
                         </div>
                     </div>
                 </div>
