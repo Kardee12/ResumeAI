@@ -111,4 +111,21 @@ class ResumeParsing:
         except Exception as e:
             print(f"An error occurred while extracting text from DOC: {e}")
             return None
+    def extract_text_from_txt(self):
+        try:
+            resume = UserResume.objects.get(user=self.request.user)
+            if not resume.resume:
+                return None
 
+            if resume.resume.path.endswith('.txt'):
+                with open(resume.resume.path, 'r') as f:
+                    text = f.read()
+                return text.strip()
+
+            return None
+        except ObjectDoesNotExist:
+            print("Resume file does not exist for the user.")
+            return None
+        except Exception as e:
+            print(f"An error occurred while extracting text from TXT: {e}")
+            return None

@@ -15,7 +15,6 @@ class UserProfile(models.Model):
     bio = models.TextField(blank=True, null=True)
     resume = models.ForeignKey('UserResume', on_delete=models.SET_NULL, null=True, blank=True, related_name='profile')
     skills = models.ManyToManyField(UserSkill, blank=True)
-    goal = models.TextField(blank=True, null=True)
     def __str__(self):
         return f"{self.user.username}'s Profile"
 

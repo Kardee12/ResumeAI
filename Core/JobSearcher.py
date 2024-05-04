@@ -1,13 +1,19 @@
+import io
 import os
+
+from django.contrib import messages
 from django.contrib.auth import logout
+from django.core.files import File
+from django.core.files.base import ContentFile
 from django.db import transaction
 from django.shortcuts import render, redirect
 
-from Core.models import UserProfile, UserResume
+from Core.models import UserProfile, UserResume, UserSkill
 from ResumeAI.Generic.generic_decoraters import job_searcher_required
 from django.contrib.auth.decorators import login_required
 from ResumeAI import settings
-from .forms import UserProfileForm
+from .forms import UserProfileForm, ResumeForm
+from .functions.GenerationUtility import generate_resume_text
 from .functions.JobSearcherDBUtility import create_user_skills, update_user_skills
 from .functions.ParsingUtility import ResumeParsing, ParsingFunctions
 
@@ -34,16 +40,12 @@ def jobsearcher_profile(request):
         'profile': profile
     })
 
-
-from django.contrib import messages
-
-
 @login_required
 @job_searcher_required
 def js_setup_profile(request):
     rparser = ResumeParsing(request)
     aiParser = ParsingFunctions()
-    initial_skills = []
+    resume_error = None
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -53,7 +55,10 @@ def js_setup_profile(request):
                 profile.bio = form.cleaned_data['bio']
                 profile.profile_completed = True
                 if 'resume' in request.FILES:
-                    resume = UserResume.objects.create(user=request.user, resume=request.FILES['resume'])
+                    resume = UserResume.objects.create(
+                        user=request.user,
+                        resume=request.FILES['resume']
+                    )
                     profile.resume = resume
                 user_resume = UserResume.objects.get(user=request.user)
                 extracted_text = None
@@ -67,17 +72,26 @@ def js_setup_profile(request):
                 if extracted_text:
                     output = aiParser.gen_query(extracted_text)
                     top_skills = aiParser.post_processing(output)
-                    if top_skills:
+                    if len(top_skills) > 4:
                         create_user_skills(request.user, top_skills)
+                    else:
+                        resume_error = "No skills extracted, parsing error, or we want more information."
+                else:
+                    resume_error = "Unable to parse the resume."
                 profile.save()
+                if resume_error:
+                    messages.error(request, resume_error)
+                    return redirect('create-resume')
             return redirect('home')
+        else:
+            messages.error(request, "Form validation failed.")
     else:
         form = UserProfileForm()
-
     return render(request, 'Authorized/Core/JobSearcher/create-profile.html', {
         'form': form,
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
     })
+
 
 @login_required
 @job_searcher_required
@@ -120,6 +134,8 @@ def edit_profile(request):
                     extracted_text = rparser.extract_text_from_docx()
                 elif new_resume.resume.name.endswith('.doc'):
                     extracted_text = rparser.extract_text_from_doc()
+                elif new_resume.resume.name.endswith('.txt'):
+                    extracted_text = rparser.extract_text_from_txt()
 
                 if extracted_text:
                     output = aiParser.gen_query(extracted_text)
@@ -135,3 +151,32 @@ def edit_profile(request):
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
     }
     return render(request, 'Authorized/Core/JobSearcher/edit-profile.html', context)
+
+
+@login_required
+@job_searcher_required
+def create_resume(request):
+    form = ResumeForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        with transaction.atomic():
+            profile, created = UserProfile.objects.get(user=request.user)
+            resume_text = generate_resume_text(request.user,form.cleaned_data)
+            resume_file = io.BytesIO(resume_text.encode())
+            file_name = f"{request.user.username}_resume.txt"
+            resume, created = UserResume.objects.update_or_create(
+                user=request.user,
+                defaults={'resume': ContentFile(resume_file.read(), name=file_name)}
+            )
+            profile.resume = resume
+            skills = []
+            for i in range(1, 11):
+                skill_name = form.cleaned_data.get(f'skill_{i}')
+                if skill_name:
+                    skill, _ = UserSkill.objects.get_or_create(name=skill_name)
+                    skills.append(skill)
+            profile.skills.set(skills)
+            profile.save()
+            return redirect('home')
+    else:
+        form = ResumeForm()
+    return render(request, 'Authorized/Core/JobSearcher/create-resume.html', {'form': form})
