@@ -108,7 +108,7 @@ DATABASES = {
         'USER': 'core',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': 5433
+        'PORT': 5432
     }
 }
 
@@ -176,8 +176,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 }
 
-GOOGLE_MAPS_API_KEY = 'AIzaSyAX69RmxQGMa_PnFo0NrvklcC9W41bHQHc'
-HF_TOKEN = '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'
+GOOGLE_MAPS_API_KEY = 'AIzaSyByCZTWCMANPMVZD98bUoZaBx1VYc05yG4'
+HF_TOKEN = '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'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

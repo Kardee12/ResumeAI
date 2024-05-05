@@ -39,8 +39,8 @@ def setup_employer_profile(request):
         form = EmployerProfileForm(instance=profile)
 
     return render(request, 'Authorized/Core/Employer/create-employer-profile.html', {'form': form})
-                
-                
+
+
 
 @login_required
 def home(request):
@@ -51,4 +51,3 @@ def home(request):
 def employer_dashboard(request):
     return render(request, 'Authorized/Core/Employer/dashboard.html')
 # make sure to grab dahsboard.html from karthik's branch
-
