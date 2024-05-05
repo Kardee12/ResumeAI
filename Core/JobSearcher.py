@@ -3,7 +3,6 @@ import os
 
 from django.contrib import messages
 from django.core.files.base import ContentFile
-from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
@@ -15,9 +14,12 @@ from ResumeAI.Generic.generic_decoraters import job_searcher_required, js_profil
 from django.contrib.auth.decorators import login_required
 from ResumeAI import settings
 from .forms import UserProfileForm, ResumeForm
+from .functions.ChatUtility import query_model
 from .functions.GenerationUtility import generate_resume_text
 from .functions.JobSearcherDBUtility import create_user_skills, update_user_skills
 from .functions.ParsingUtility import ResumeParsing, ParsingFunctions
+
+from django.db import transaction
 
 
 @login_required
@@ -25,6 +27,7 @@ from .functions.ParsingUtility import ResumeParsing, ParsingFunctions
 @js_profile_completed
 def jobsearcher_dashboard(request):
     return render(request, 'Authorized/Core/JobSearcher/dashboard.html')
+
 
 @login_required
 @job_searcher_required
@@ -57,6 +60,7 @@ def update_skills(request):
 
         return redirect('jobsearcher_profile')
     return redirect('jobsearcher_dashboard')
+
 
 @login_required
 @job_searcher_required
@@ -182,7 +186,7 @@ def create_resume(request):
     if request.method == 'POST' and form.is_valid():
         with transaction.atomic():
             profile, created = UserProfile.objects.get(user=request.user)
-            resume_text = generate_resume_text(request.user,form.cleaned_data)
+            resume_text = generate_resume_text(request.user, form.cleaned_data)
             resume_file = io.BytesIO(resume_text.encode())
             file_name = f"{request.user.username}_resume.txt"
             resume, created = UserResume.objects.update_or_create(
@@ -204,20 +208,18 @@ def create_resume(request):
         form = ResumeForm()
     return render(request, 'Authorized/Core/JobSearcher/create-resume.html', {'form': form})
 
+
 @login_required
 @job_searcher_required
 @js_profile_completed
 def jobsearcher_chat(request):
     return render(request, "Authorized/Core/JobSearcher/chat.html")
 
-
-def query_model(question, context):
-    return "Simulated response based on your resume and question: " + question
 @never_cache
 @csrf_exempt
 @login_required
+@js_profile_completed
 @require_http_methods(["POST"])
-@login_required
 def processMessages(request):
     message = request.POST.get('message', '')
     if not message:
@@ -237,4 +239,14 @@ def processMessages(request):
     elif resume.resume.name.endswith('.txt'):
         extracted_text = rparser.extract_text_from_txt()
     response = query_model(message, extracted_text)
-    return JsonResponse({'api_response': response})
+    print(response)
+    return JsonResponse({'api_response': response['answer']})
+
+@never_cache
+@csrf_exempt
+@js_profile_completed
+@login_required
+def clearChat(request):
+    if 'conversation_memory' in request.session:
+        del request.session['conversation_memory']
+    return JsonResponse({'success': True}, status=200)

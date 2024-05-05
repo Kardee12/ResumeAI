@@ -320,12 +320,11 @@ Chat - ResumeAI
             };
             window.clearChat = function () {
                 $.ajax({
-                    url: "",
+                    url: "{% url 'clearChat' %}",
                     type: "POST",
                     success: function (response) {
                         if (response.success) {
                             document.getElementById("chat-messages").innerHTML = '';
-                            enableUploadOptions();
                         }
                     },
                     error: function (error) {

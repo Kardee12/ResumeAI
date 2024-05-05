@@ -2,13 +2,13 @@ from allauth.account.views import logout
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from Accounts.models import CustomUser
+
 from Core.models import UserProfile
 
-import Accounts.views
 
 def index(request):
     return render(request, "Unauthorized/Core/index.html")
+
 
 @login_required
 def home(request):
@@ -20,9 +20,10 @@ def home(request):
     except UserProfile.DoesNotExist:
         return redirect('js_setup_profile1')
     if request.user.role == 'job_searcher':
-            return redirect('jobsearcher_dashboard')
+        return redirect('jobsearcher_dashboard')
     else:
         return redirect('employer_dashboard')
+
 
 @login_required
 def settings(request):

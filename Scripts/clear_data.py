@@ -1,10 +1,10 @@
 import os
 import django
+import ResumeAI
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ResumeAI.settings')
 django.setup()
-from django.apps import apps
-from django.db import transaction, IntegrityError
+
 
 def clear_data():
     with transaction.atomic():

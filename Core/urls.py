@@ -1,4 +1,5 @@
 from django.urls import path
+
 from Core import JobSearcher, EmployerViews, views, gen_views
 
 urlpatterns = [
@@ -6,13 +7,14 @@ urlpatterns = [
     path("home/", views.home, name="home"),
     path('emdashboard/', EmployerViews.employer_dashboard, name='employer_dashboard'),
     path('jsdashboard/', JobSearcher.jobsearcher_dashboard, name='jobsearcher_dashboard'),
-    path('chat/', JobSearcher.jobsearcher_chat,name='jobsearcher_chat'),
-    path('settings/', views.settings,name='settings'),
-    path('jsprofile/', JobSearcher.jobsearcher_profile,name='jobsearcher_profile'),
-    path('js-setup/', JobSearcher.js_setup_profile,name='js_setup_profile'),
+    path('chat/', JobSearcher.jobsearcher_chat, name='jobsearcher_chat'),
+    path('settings/', views.settings, name='settings'),
+    path('jsprofile/', JobSearcher.jobsearcher_profile, name='jobsearcher_profile'),
+    path('js-setup/', JobSearcher.js_setup_profile, name='js_setup_profile'),
     path('download-resume/', gen_views.download_resume, name='download-resume'),
-    path('edit-jsprofile/', JobSearcher.edit_profile,name='edit-profile'),
+    path('edit-jsprofile/', JobSearcher.edit_profile, name='edit-profile'),
     path('create-resume/', JobSearcher.create_resume, name='create-resume'),
     path('jsprofile/update-skills/', JobSearcher.update_skills, name='update_skills'),
-    path('processMessages/', JobSearcher.processMessages, name='processMessages')
+    path('chat/processMessages/', JobSearcher.processMessages, name='processMessages'),
+    path('chat/clearchat', JobSearcher.clearChat, name='clearChat')
 ]
