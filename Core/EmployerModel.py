@@ -6,6 +6,7 @@ import uuid
 
 class Job(models.Model):
     job_uuid = models.UUIDField(default = uuid.uuid4, editable = False, unique = True)
+    employer_profile = models.ForeignKey('EmployerProfile', on_delete=models.CASCADE, related_name='jobs',null=True)
     applicant_count = models.IntegerField(default = 0, editable=False)
     position = models.CharField(max_length = 200)
     description = models.TextField()
