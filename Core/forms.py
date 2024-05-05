@@ -2,7 +2,7 @@ from profile import Profile
 
 from django import forms
 from django.core.validators import FileExtensionValidator
-from .models import UserProfile, Job, ResumeSkills
+from .models import UserProfile
 class UserProfileForm(forms.Form):
     location = forms.CharField(label='Location', max_length=255, required=False)
     bio = forms.CharField(label='Professional Bio', widget=forms.Textarea, required=False)

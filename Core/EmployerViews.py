@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from Core.EmployerForm import EmployerProfileForm
+from Core.EmployerForms import EmployerProfileForm
 from Core.EmployerModel import EmployerProfile, Job
 from django.db import transaction
 

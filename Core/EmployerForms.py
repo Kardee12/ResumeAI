@@ -1,5 +1,6 @@
 from django import forms
-from .models import  Job, ResumeSkills, EmployerProfile
+from profile import Profile
+from .EmployerModel import  Job, ResumeSkills, EmployerProfile
 
 class JobForm(forms.Form):
     position = forms.CharField(label = 'Job Position', max_length= 200, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Job Position'}))

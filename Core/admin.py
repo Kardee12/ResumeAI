@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import UserProfile, UserResume, Job, ResumeSkills
+from .models import UserProfile, UserResume
+from .EmployerModel import Job, ResumeSkills
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
