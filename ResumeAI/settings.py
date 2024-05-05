@@ -159,7 +159,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': config('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
+
+            # 'client_id': config('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
+            'client_id' : config('SOCIAL_AUTH_GOOGLE_CLIENT_ID') ,
+
             'secret': config('SOCIAL_AUTH_GOOGLE_SECRET'),
             'key': ''
         },
@@ -173,6 +176,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 
 }
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
+HF_TOKEN = config('HF_TOKEN')
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

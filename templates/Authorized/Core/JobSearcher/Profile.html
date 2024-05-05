@@ -1,0 +1,142 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}
+    Profile - ResumeAI
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif; /* Updated font-family to Poppins */
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+        color: #333; /* Slightly darker text color for better readability */
+    }
+    .btn-custom, .btn-edit {
+        background-color: #0044cc; /* Consistent dark blue color */
+        border: none;
+        color: #fff;
+        border-radius: 12px; /* More rounded edges */
+        padding: 10px 16px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .btn-edit {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background-color: #ffb800; /* Yellow color */
+    }
+    .btn-edit:hover {
+        background-color: #cc9400;
+    }
+    .profile-section {
+        padding: 20px 0;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .profile-section.card {
+        background-color: #f8f9fa;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: left;
+        position: relative;
+    }
+    .card-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    .profile-section h3 {
+        margin-bottom: 20px;
+    }
+    .profile-section p {
+        margin-bottom: 10px;
+    }
+    .profile-header {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        position: relative;
+    }
+    .location {
+        text-align: center; /* Center-aligns the location and the LinkedIn link */
+    }
+    .location p, .location a {
+        display: block; /* Makes each element a block to ensure it appears on a new line */
+        margin-bottom: 5px; /* Adds a little space below each for visual separation */
+    }
+    .linkedin-link {
+        color: #0077b5;
+        text-decoration: none;
+        font-size: 24px; /* Adjusted for better icon visibility */
+    }
+    .linkedin-link:hover {
+        color: #005b8f; /* Darker blue on hover */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="profile-header">
+                {% with user.socialaccount_set.all.0 as socialaccount %}
+                {% if socialaccount %}
+                <img src="{{ socialaccount.get_avatar_url }}" alt="{{ user.username }}" class="rounded-circle" style="width: 120px; height: 120px;">
+                {% else %}
+                <i class="fas fa-user-circle fa-lg"></i>
+                {% endif %}
+                {% endwith %}
+                <h2>{{ user.first_name|title }} {{ user.last_name|title }}</h2>
+                <div class="location">
+                    <strong>{{ profile.location }}</strong>
+                    <a href="{{ user.linkedin_url }}" target="_blank" class="linkedin-link"><i class="fab fa-linkedin"></i></a>
+                </div>
+                <a href="{% url 'edit-profile' %}" class="btn btn-edit">Edit</a>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="profile-section card">
+                        <div class="card-body">
+                            <h3 class="card-title">Skills <a href="" class="btn btn-edit">Edit</a></h3>
+                            <ul>
+                            {% for skill in profile.skills.all %}
+                                {% if forloop.counter <= 5 %}
+                                    <li>{{ skill.name |title }}</li>
+                                {% endif %}
+                            {% empty %}
+                                <li>No skills listed</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="profile-section card">
+                        <div class="card-body">
+                            <h3 class="card-title">Professional Summary</h3>
+                            <p>{{ profile.bio }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-section">
+                <h3>Resume</h3>
+                <a href="{% url 'download-resume' %}" class="btn btn-custom">Download Resume</a>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

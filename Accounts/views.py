@@ -13,7 +13,11 @@ def setup_view(request):
             request.user.has_completed_setup = True
             request.user.save()
             print("REDIRECT")
-            return redirect('dashboard')
+            if request.user.role == "job_searcher":
+                return redirect('js_setup_profile')
+            else:
+                return redirect('emp_setupProfile')
+            return redirect('home')
         else:
             print(form.errors)
     else:

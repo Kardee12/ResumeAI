@@ -1,0 +1,68 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static %}
+{% load socialaccount %}
+{% block title %}Candidate List {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="margin-top: 20px;width: 663px;">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Candidate List</h4>
+                        <h6 class="text-muted card-subtitle mb-2">{{ job.title }} @ {{ job.company }}</h6>
+                        <h6 class="text-muted card-subtitle mb-2">Job ID: {{ job.id }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height: 655px;margin-left: -12px;">
+            <div class="col-md-6" style="height: inherit;">
+                <div style="height: inherit;overflow: hidden;width: 641px;margin: auto;border-width: 1px;border-radius: 6px;margin-top: 5px;">
+                    <div class="card shadow-sm" style="height: 655px;margin: auto;overflow: scroll;width: 645px;">
+                        <div class="card-group justify-content-center align-items-center m-auto" style="overflow: scroll;display: block;width: 628px;height: inherit;">
+                            {% for candidate in candidates %}
+                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
+                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
+                                    <div style="margin-top: 5px;">
+                                        <h4 style="margin-top: 5px;">{{ candidate.user.username }}</h4>
+                                        <hr style="width: inherit;margin-top: 5px;">
+                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">{{ candidate.user.email }}</p>
+                                    </div>
+                                    <button class="btn btn-primary" type="button" onclick="location.href='{% url download_resume candidate.id %}'">Resume</button>
+                                    <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#contactModal{{ candidate.id }}">Contact Info</button>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="contactModal{{ candidate.id }}" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="contactModalLabel">Contact Info</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      Email: {{ candidate.user.email }}
+                                      
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            {% empty %}
+                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
+                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
+                                    <h4>No candidates available.</h4>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
