@@ -23,6 +23,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR,'employer_static')
 )
 
 STATICFILES_FINDERS = (
@@ -41,7 +42,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 SITE_ID=1
-LOGIN_REDIRECT_URL = '/dashboard'
+LOGIN_REDIRECT_URL = '/home'
 LOGOUT_URL = '/'
 SOCIALACCOUNT_LOGIN_ON_GET=True
 
@@ -107,7 +108,7 @@ DATABASES = {
         'USER': 'core',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': 5432
+        'PORT': 5433
     }
 }
 
@@ -159,8 +160,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': config('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
-            'secret': config('SOCIAL_AUTH_GOOGLE_SECRET'),
+            # 'client_id': config('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
+            'client_id' : '378414322326-3jf9nuonpp1oq8v83anrp6oaam2pin9f.apps.googleusercontent.com',
+            'secret': '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',
             'key': ''
         },
         'SCOPE': [
@@ -173,6 +175,9 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 
 }
+
+GOOGLE_MAPS_API_KEY = 'AIzaSyDf5TxzMhipgz05piQmyVT3-eNjMlF_920'
+HF_TOKEN = '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'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
