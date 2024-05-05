@@ -30,15 +30,18 @@ def emp_setupProfile(request):
 
 # check this later might be wrong
 @login_required()
+@employer_required
 def jobPostingPage(request):
     job  = get_object_or_404(Job, Job.job_uuid)
     return render(request, "Authorized/Employer/JobPostings_Employer.html")
 
 @login_required
+@employer_required
 def candidatePage(request):
     return render(request, "Authorized/Employer/CandidateList.html")
 
 @login_required
+@employer_required
 def profile(request):
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
@@ -71,6 +74,7 @@ def setup_employer_profile(request):
 #         return redirect('setup')
 
 @login_required
+@employer_required
 def employer_dashboard(request):
     return render(request, 'Authorized/Core/Employer/dashboard.html')
 # make sure to grab dahsboard.html from karthik's branch
