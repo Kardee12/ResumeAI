@@ -4,6 +4,9 @@ from Core import JobSearcher, EmployerViews, views, gen_views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path('custom-logout/', views.custom_logout, name='custom_logout'),
+    path('logout/', views.logoutView, name='logout'),
+    path("login/", views.logView.as_view(), name='login'),
     path("home/", views.home, name="home"),
     path('emdashboard/', EmployerViews.employer_dashboard, name='employer_dashboard'),
     path('jsdashboard/', JobSearcher.jobsearcher_dashboard, name='jobsearcher_dashboard'),

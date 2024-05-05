@@ -1,7 +1,8 @@
-from allauth.account.views import logout
+from django.contrib.auth import logout
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from allauth.account.views import LoginView
 
 from Core.models import UserProfile
 
@@ -43,3 +44,13 @@ def settings(request):
     return render(request, 'Authorized/Core/Settings.html', {
         'social_account': social_account
     })
+
+def logoutView(request):
+    return render(request, 'Unauthorized/Accounts/logout.html')
+
+def custom_logout(request):
+    logout(request)
+    return redirect('/logout')
+
+class logView(LoginView):
+    template_name = 'Unauthorized/Accounts/login.html'

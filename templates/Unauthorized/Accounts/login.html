@@ -2,22 +2,33 @@
 {% load static %}
 {% load socialaccount %}
 
-{% block title %}Login - DocuSum{% endblock %}
+{% block title %}Login - ResumeAI{% endblock %}
+
 {% block content %}
-    <div class="container my-5">
+       <div class="container-fluid mt-5">
+        <!-- Use container-fluid to extend content to full width -->
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="text-center mb-4">Login</h2>
-                        <div class="text-center">
-                            <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn btn-google">
-                                <img src="{% static 'assets/img/google_icon.svg' %}" alt="Google" class="google-logo">
-                                Login with Google
-                            </a>
+            <div class="col-lg-8">
+                <!-- Adjust col-lg-* according to your content width -->
+                <section class="py-5 my-5">
+                        <div class="container my-5">
+                            <div class="row justify-content-center">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h2 class="text-center mb-4">Login</h2>
+                                            <div class="text-center">
+                                                <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn btn-google">
+                                                    <img src="{% static 'assets/img/google_icon.svg' %}" alt="Google" class="google-logo">
+                                                    Login with Google
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                </section>
             </div>
         </div>
     </div>

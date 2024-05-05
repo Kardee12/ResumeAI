@@ -42,8 +42,11 @@ DEBUG = True
 ALLOWED_HOSTS = []
 SITE_ID=1
 LOGIN_REDIRECT_URL = '/home'
-LOGOUT_URL = '/'
+LOGOUT_REDIRECT_URL = '/logout'
+LOGOUT_URL = '/logout'
+LOGIN_URL = '/login'
 SOCIALACCOUNT_LOGIN_ON_GET=True
+SOCIALACCOUNT_LOGOUT_ON_GET=True
 
 # Application definition
 
