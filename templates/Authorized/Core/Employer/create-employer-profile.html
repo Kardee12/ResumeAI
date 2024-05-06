@@ -52,6 +52,10 @@ Create Employer Profile - ResumeAI
                 <h2 class="text-center mb-4">Create Employer Profile</h2>
                 <form method="post">
                     {% csrf_token %}
+                    <div class = "mb-3">
+                        {{ form.position.label_tag}}
+                        {{ form.position }}
+                    </div>
                     <div class="mb-3">
                         {{ form.company_name.label_tag }}
                         {{ form.company_name }}

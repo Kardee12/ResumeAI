@@ -84,7 +84,7 @@
                         </a>
                         <!-- maybe add an if statement that checks if user is authenticated to show  -->
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{% url 'jobsearcher_profile'%}"> Profile</a></li>
+                            <li><a class="dropdown-item" href="{% if user.role == 'jobsearcher'%}{% url 'jobsearcher_profile'%}{% else %}{% url 'employer_profile'%}{% endif %}"> Profile</a></li>
                             <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
                             <li><a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a></li>
                         </ul>

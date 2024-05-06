@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from Core import EmployerModel
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required
 from Core.EmployerForms import EmployerProfileForm, JobForm
@@ -16,6 +15,7 @@ def emp_setupProfile(request):
         if form.is_valid():
             with transaction.atomic():
                 profile, created = EmployerProfile.objects.get_or_create(user = request.user)
+                profile.position = form.cleaned_data['position']
                 profile.company_name = form.cleaned_data['company_name']
                 profile.company_description = form.cleaned_data['company_description']
                 profile.company_website = form.cleaned_data['company_website']

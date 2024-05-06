@@ -25,6 +25,7 @@ class JobForm(forms.Form):
 
 class EmployerProfileForm(forms.Form):
     company_name = forms.CharField(label = 'Company Name',max_length = 255, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter Your Company Name'}))
+    position = forms.CharField(label='Position at Company', max_length=120, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder' : 'Enter Your Job Title'}))
     company_description = forms.CharField(label='Company Description', widget=forms.Textarea(attrs={'class':'form-control', 'rows':4, 'placeholder':'Tell us about your company'}))
     company_website = forms.URLField(label='Company Website', max_length = 200, widget=forms.URLInput(attrs={'class':'form-control', 'placeholder':'https://yourcompany.com'}))
     contact_email = forms.EmailField(label = 'Contact Email', max_length = 200, widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'contact@yourcompany.com'}))
