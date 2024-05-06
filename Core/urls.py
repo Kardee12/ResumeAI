@@ -21,5 +21,6 @@ urlpatterns = [
     path('download-resume/', gen_views.download_resume, name='download-resume'),
     path('edit-jsprofile/', JobSearcherViews.edit_profile, name='edit-profile'),
     # path('edit-job-posting/', EmployerViews.edit_job_posting, name = 'edit_job_posting')
-    path('emp-setup/', EmployerViews.emp_setupProfile, name='emp_setupProfile')
+    path('emp-setup/', EmployerViews.emp_setupProfile, name='emp_setupProfile'),
+    path('employer/dashboard/', EmployerViews.employer_dashboard, name='employer_dashboard')
 ] 

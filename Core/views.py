@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from Accounts.models import CustomUser
 from Core.models import UserProfile
+from Core.EmployerModel import EmployerProfile
+from django.contrib import messages
 
 import Accounts.views
 
@@ -14,13 +16,24 @@ def index(request):
 def home(request):
     if not request.user.has_completed_setup:
         return redirect('setup')
+
     user = request.user
+
     try:
         profile = UserProfile.objects.get(user=user)
+        user_role = 'job_searcher'
     except UserProfile.DoesNotExist:
-        return redirect('js_setup_profile')
-    if request.user.role == 'job_searcher':
-            return redirect('jobsearcher_dashboard')
+        try:
+            profile = EmployerProfile.objects.get(user=user)
+            user_role = 'employer'
+        except EmployerProfile.DoesNotExist:
+            if request.user.role == 'job_searcher':
+                return redirect('js_setup_profile')
+            else:
+                return redirect('emp_setupProfile')
+
+    if user_role == 'job_searcher':
+        return redirect('jobsearcher_dashboard')
     else:
         return redirect('employer_dashboard')
 
@@ -43,3 +56,5 @@ def settings(request):
     return render(request, 'Authorized/Core/Settings.html', {
         'social_account': social_account
     })
+    
+    

@@ -1,0 +1,55 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
+
+{% block title %}Create Job Posting - ResumeAI{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">Create Job Posting</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    {{ form.position.label_tag }}
+                    {{ form.position }}
+                </div>
+                <div class="mb-3">
+                    {{ form.description.label_tag }}
+                    {{ form.description }}
+                </div>
+                <div class="mb-3">
+                    {{ form.pay.label_tag }}
+                    {{ form.pay }}
+                </div>
+                <div class="mb-3">
+                    {{ form.link_to_apply.label_tag }}
+                    {{ form.link_to_apply }}
+                </div>
+                <div class="mb-3">
+                    {{ form.link_to_company.label_tag }}
+                    {{ form.link_to_company }}
+                </div>
+                <div class="mb-3">
+                    {{ form.company_image.label_tag }}
+                    {{ form.company_image }}
+                    <small class="form-text text-muted">{{ form.company_image.help_text }}</small>
+                </div>
+                <div class="mb-3">
+                    {{ form.skills_used.label_tag }}
+                    {{ form.skills_used }}
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Create Job Posting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Add any additional JavaScript code here if needed
+</script>
+{% endblock %}
