@@ -109,14 +109,15 @@
             "
           >
             <div class="btn-group" role="group">
-              <a href="{% url 'candidate_list' job.job_uuid %}"
-                ><button
-                  class="btn btn-primary"
-                  type="button"
-                  style="border-radius: 6px"
-                >
-                  View Applicants
-                </button></a 
+                      {% if job.list_of_applicants.all %}
+            <a href="{% url 'candidate_list' job.job_uuid %}">
+                <button class="btn btn-primary" type="button" style="border-radius: 6px">
+                    View Applicants
+                </button>
+            </a>
+            {% else %}
+                <p>No applicants yet.</p>
+            {% endif %}</a 
               ><button
                 class="btn btn-primary"
                 type="button"

@@ -69,14 +69,17 @@ def setup_employer_profile(request):
     else:
         form = EmployerProfileForm(instance=profile)
 
-    return render(request, 'Authorized/Core/Employer/create-employer-profile.html', context={'form': form})
                 
 # @login_required
 # def home(request):
 #     if not request.user.has_completed_setup:
 #         return redirect('setup')
 
+    return render(request, 'Authorized/Core/Employer/create-employer-profile.html', {'form': form})
+
+
 @login_required
 @employer_required
 def employer_dashboard(request):
+
     return render(request, 'Authorized/Core/Employer/dashboard.html')

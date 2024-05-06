@@ -1,0 +1,148 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/header-Footer-Clean.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/header-Navigation-Clean1.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/Profile-with-data-and-skills.css' %}">
+<style>
+  .card {
+    border: 1px solid #000;
+    border-radius: 15px;
+  }
+
+  .card .badge {
+    background-color: #28a745;
+    /* Green color for positive changes */
+    color: #fff;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .table .btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+  }
+
+  .highlight {
+    background-color: #f8f9fa;
+  }
+
+  .content {
+    padding-top: 0px;
+    margin-top: -42px;
+  }
+</style>
+{% endblock %}
+
+{% block title %}Company Dashboard{% endblock %}
+
+{% block content %}
+<main class="content px-3 py-4">
+  <div class="container-fluid">
+    <h3 class="fs-4 fw-bold mb-3">Employer Dashboard</h3>
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <div class="card">
+          <div class="card-body py-4">
+            <h5 class="fw-bold mb-2">Total Number of Applicants</h5>
+            <p class="fw-bold mb-2">194</p>
+            <div><span class="badge text-success me-2"> +12</span><span class="fw-bold"> Since Last Month</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card">
+          <div class="card-body py-4">
+            <h5 class="fw-bold mb-2">Number of applications awaiting approval</h5>
+            <p class="fw-bold mb-2">23</p>
+            <div><span class="badge text-success me-2"> +12</span><span class="fw-bold"> Since Last Month</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card">
+          <div class="card-body py-4">
+            <h5 class="fw-bold mb-2">Number of applicants hired</h5>
+            <p class="fw-bold mb-2">12</p>
+            <div><span class="badge text-success me-2"> +2</span><span class="fw-bold"> Since Last Month</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h3 class="fs-4 fw-bold my-3">Recent Applicants</h3>
+    <div class="row">
+      <div class="col-12">
+        <table class="table table-striped">
+          <thead>
+            <tr class="highlight">
+              <th scope="col">#</th>
+              <th scope="col">First</th>
+              <th scope="col">Last</th>
+              <th scope="col">Position</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Emily</td>
+              <td>Nguyen</td>
+              <td>Digital Marketing Specialist</td>
+              <td><button class="btn btn-primary btn-sm">Contact Info</button></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Shun</td>
+              <td>Furuya</td>
+              <td>Software Engineer</td>
+              <td><button class="btn btn-primary btn-sm">Contact Info</button></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Robert</td>
+              <td>Veloya</td>
+              <td>Backend Engineer</td>
+              <td><button class="btn btn-primary btn-sm">Contact Info</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <h3 class="fs-4 fw-bold my-3">Positions Currently Listed</h3>
+    <div class="row">
+      <div class="col-12">
+        <table class="table table-striped">
+          <thead>
+            <tr class="highlight">
+              <th scope="col">#</th>
+              <th scope="col">Position</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Digital Marketing Specialist</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Software Engineer</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Backend Engineer</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-center">
+          <button class="btn btn-primary">View All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

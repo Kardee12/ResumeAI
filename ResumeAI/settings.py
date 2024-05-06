@@ -176,8 +176,10 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 
 }
+
 GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
 HF_TOKEN = config('HF_TOKEN')
+
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
