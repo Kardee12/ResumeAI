@@ -1,5 +1,5 @@
-{% extends "Authorized/Core/Employer/base.html" %}
-{% load static%}
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
 {% load socialaccount %}
 {% block title %}Candidate List {% endblock %}
 
@@ -10,10 +10,8 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Candidate List</h4>
-                        <!-- job information goes here  -->
-                        <h6 class="text-muted card-subtitle mb-2">Software Engineering Intern @ Apple</h6>
-                        <!-- job id is job uuid  -->
-                        <h6 class="text-muted card-subtitle mb-2">Job ID: 12345</h6>
+                        <h6 class="text-muted card-subtitle mb-2">{{ job.title }} @ {{ job.company }}</h6>
+                        <h6 class="text-muted card-subtitle mb-2">Job ID: {{ job.id }}</h6>
                     </div>
                 </div>
             </div>
@@ -23,50 +21,45 @@
                 <div style="height: inherit;overflow: hidden;width: 641px;margin: auto;border-width: 1px;border-radius: 6px;margin-top: 5px;">
                     <div class="card shadow-sm" style="height: 655px;margin: auto;overflow: scroll;width: 645px;">
                         <div class="card-group justify-content-center align-items-center m-auto" style="overflow: scroll;display: block;width: 628px;height: inherit;">
+                            {% for candidate in candidates %}
                             <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
                                 <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
                                     <div style="margin-top: 5px;">
-                                        <h4 style="margin-top: 5px;">Emily Nguyen</h4>
+                                        <h4 style="margin-top: 5px;">{{ candidate.user.username }}</h4>
                                         <hr style="width: inherit;margin-top: 5px;">
-                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">emilynguyen@email.com</p>
-                                    </div><button class="btn btn-primary" type="button" style="margin-top: 5px;">Resume</button><button class="btn btn-primary" type="button" style="margin-left: 10px;margin-top: 5px;">Contact</button>
+                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">{{ candidate.user.email }}</p>
+                                    </div>
+                                    <button class="btn btn-primary" type="button" onclick="location.href='{% url download_resume candidate.id %}'">Resume</button>
+                                    <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#contactModal{{ candidate.id }}">Contact Info</button>
                                 </div>
                             </div>
+                            <div class="modal fade" id="contactModal{{ candidate.id }}" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="contactModalLabel">Contact Info</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      Email: {{ candidate.user.email }}
+                                      
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            {% empty %}
                             <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
                                 <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
-                                    <div style="margin-top: 5px;">
-                                        <!-- h4 should have the applicant's name  -->
-                                        <h4 style="margin-top: 5px;">Not Emily Nguyen</h4>
-                                        <hr style="width: inherit;margin-top: 5px;">
-                                        <!-- this hsould store the applicant's email -->
-                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">emilynguyen@email.com</p>
-                                        <!-- resume button should display the applicant's resume -->
-                                    </div><button class="btn btn-primary" type="button" style="margin-top: 5px;">Resume</button>
+                                    <h4>No candidates available.</h4>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-xxl-6" style="margin-top: -118px;">
-                <div style="height: inherit;overflow: hidden;width: 641px;margin: auto;border-width: 1px;border-radius: 6px;margin-top: 0px;">
-                    <div class="card shadow-sm" style="height: 780px;margin: auto;overflow: scroll;">
-                        <div style="margin-top: 10px;margin-bottom: 10px;padding-left: 20px;padding-top: 10px;position: sticky;">
-                            <h1>Emily Nguyen</h1>
-                            <div class="btn-group" role="group"><button class="btn btn-primary" type="button" style="border-radius: 6px;">View Resume</button><button class="btn btn-primary" type="button" style="margin-left: 17px;border-radius: 6px;">Contact Info</button></div>
-                        </div>
-                        <hr>
-                        <div>
-                            <h2 style="padding-left: 20px;">Resume</h2>
-                            <h4 style="padding-left: 20px;">Education</h4>
-                            <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;height: inherit;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar</span></p>
-                        </div>
-                        <h4 style="padding-left: 20px;">Experience</h4>
-                        <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;height: inherit;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar</span></p>
-                        <h4 style="padding-left: 20px;">Relevant Skills</h4>
-                        <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;height: inherit;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar</span></p>
-                        <h4 style="padding-left: 20px;">Projects</h4>
-                        <p style="margin: auto;padding: 10px;padding-left: 20px;padding-right: 20px;height: inherit;"><span style="color: rgb(123, 136, 152);">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Adipiscing enim eu turpis egestas pretium aenean. Turpis egestas pretium aenean pharetra magna ac placerat vestibulum. Augue ut lectus arcu bibendum. Fames ac turpis egestas integer eget aliquet nibh praesent. Tempor nec feugiat nisl pretium fusce id velit ut. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Sagittis id consectetur purus ut faucibus pulvinar</span></p>
                     </div>
                 </div>
             </div>

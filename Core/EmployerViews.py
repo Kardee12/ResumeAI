@@ -4,7 +4,8 @@ from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required
 from Core.EmployerForms import EmployerProfileForm, JobForm
 from Core.EmployerModel import EmployerProfile, Job, ResumeSkills
-from django.db import transaction
+from django.db import transaction, models
+from django.db.models import Count
 
 
 @login_required
@@ -119,12 +120,33 @@ def employer_dashboard(request):
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
 
 
-# check this later might be wrong
-@login_required()
+# work on this later 5/6/24
+@login_required
 @employer_required
-def jobPostingPage(request):
-    job  = get_object_or_404(Job)
-    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html")
+def company_profile_page(request):
+    return render(request, "Authorized/Core/Employer/company_profile_page.html")
+# work on this later 5/6/24: Check notebook
+@login_required
+@employer_required
+def edit_company_page(request):
+    return render(request, 'Authorized/Core/Employer/edit_company_profile.html')
+
+@login_required
+@employer_required
+def candidatePage(request, job_id):
+    job = get_object_or_404(Job, job_id)
+    required_skills = job.skills_used.all()
+    applicants = job.list_of_applicants.annotate(matching_skills_count=Count('user__resumeskills', filter=models.Q(user__resumeskills__in=required_skills))).order_by('-matching_skills_count')
+
+    return render(request, 'Authorized/Core/Employer/CandidateList.html', {'applicants': applicants, 'job': job})
+
+@login_required
+@employer_required
+def job_posting_page(request):
+
+    jobs = Job.objects.all()
+    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", {'jobs': jobs})
+
 
 @login_required
 @employer_required
