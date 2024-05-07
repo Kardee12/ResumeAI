@@ -23,12 +23,10 @@ urlpatterns = [
     
     #employer side
     path('emp-setup/', EmployerViews.emp_setupProfile, name='emp_setupProfile'),
-        #dont forget to add job id
     path("em-job-posting/",EmployerViews.jobPostingPage, name="job_posting_page"),
-    #add job id -- maybe use jinja? 
     path("em-job-posting-candidatelist/", EmployerViews.candidatePage ,name="candidate_list"),
     path("employer/profile/", EmployerViews.profile, name="employer_profile"),
-    path('employer/job-posting-list', EmployerViews.jobPostingPage, name = 'job_posting_page'),
+    # path('employer/job-posting-page', EmployerViews.job_posting_page, name = 'job_posting_page'),
     path('employer/create-job-posting', EmployerViews.create_job_posting, name='create_job_posting'),
     path('employer/dashboard/', EmployerViews.employer_dashboard, name='employer_dashboard')
 ] 
