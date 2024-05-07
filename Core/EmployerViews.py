@@ -107,6 +107,8 @@ def employer_dashboard(request):
 
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
+    total_job_postings = Job.objects.filter(employer_profile=employer_profile).count()
+
     # Preparing data for the last three applicants for each job
     jobs_with_applicants = []
     for job in jobs:
@@ -116,6 +118,7 @@ def employer_dashboard(request):
     context = {
         'employer_profile': employer_profile,
         'jobs_with_applicants': jobs_with_applicants,
+        'total_job_postings' : total_job_postings,
     }
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
 
