@@ -20,6 +20,6 @@ urlpatterns = [
     path('create-resume/', JobSearcher.create_resume, name='create-resume'),
     path('jsprofile/update-skills/', JobSearcher.update_skills, name='update_skills'),
     path('chat/processMessages/', JobSearcher.processMessages, name='processMessages'),
-    path('chat/clearchat', JobSearcher.clearChat, name='clearChat'),
-    path('search',JobSearcher.search, name='search')
+    path('chat/clearchat/', JobSearcher.clearChat, name='clearChat'),
+    path('search/',JobSearcher.search, name='search')
 ]
