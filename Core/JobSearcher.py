@@ -123,16 +123,15 @@ def js_setup_profile(request):
 def edit_profile(request):
     rparser = ResumeParsing(request)
     aiParser = ParsingFunctions()
+    resume_error = None
     try:
         profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
         profile = None
-
     if request.method == 'POST':
         location = request.POST.get('location')
         bio = request.POST.get('summary')
         resume_file = request.FILES.get('resume')
-
         with transaction.atomic():
             if profile is None:
                 profile = UserProfile.objects.create(user=request.user)
@@ -140,18 +139,13 @@ def edit_profile(request):
                 profile.location = location
             if bio and bio != profile.bio:
                 profile.bio = bio
+            skills_extracted = False
             if resume_file:
-                if profile.resume:
-                    old_resume = profile.resume
-                    if old_resume.resume and os.path.isfile(old_resume.resume.path):
-                        os.remove(old_resume.resume.path)
-                    old_resume.delete()
                 new_resume = UserResume(
                     user=request.user,
                     resume=resume_file
                 )
                 new_resume.save()
-                profile.resume = new_resume
                 extracted_text = None
                 if new_resume.resume.name.endswith('.pdf'):
                     extracted_text = rparser.extract_text_from_pdf()
@@ -161,14 +155,31 @@ def edit_profile(request):
                     extracted_text = rparser.extract_text_from_doc()
                 elif new_resume.resume.name.endswith('.txt'):
                     extracted_text = rparser.extract_text_from_txt()
-
                 if extracted_text:
                     output = aiParser.gen_query(extracted_text)
                     skills = aiParser.post_processing(output)
-                    if skills:
+                    if len(skills) >= 4:
+                        skills_extracted = True
+                        if profile.resume:
+                            old_resume = profile.resume
+                            if old_resume.resume and os.path.isfile(old_resume.resume.path):
+                                os.remove(old_resume.resume.path)
+                            old_resume.delete()
+                        profile.resume = new_resume
                         update_user_skills(request.user, skills)
+                    else:
+                        new_resume.delete()
+                        resume_error = "Insufficient number of skills extracted from resume."
+                else:
+                    new_resume.delete()
+                    resume_error = "Unable to parse the resume."
 
-            profile.save()
+            if not resume_file or (resume_file and skills_extracted):
+                profile.save()
+        if resume_error:
+            messages.error(request, resume_error)
+            return redirect('jobsearcher_profile')
+
         return redirect('jobsearcher_profile')
 
     context = {
@@ -250,3 +261,9 @@ def clearChat(request):
     if 'conversation_memory' in request.session:
         del request.session['conversation_memory']
     return JsonResponse({'success': True}, status=200)
+
+@csrf_exempt
+@js_profile_completed
+@login_required
+def search(request):
+    return render(request,"Authorized/Core/JobSearcher/searcher.html")
