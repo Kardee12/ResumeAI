@@ -1,0 +1,249 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}
+    Profile - ResumeAI
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+<style>
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.btn {
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.btn-outline-primary {
+    background-color: transparent;
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn-outline-danger {
+    background-color: transparent;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.profile-section {
+    padding: 20px 0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.profile-section.card {
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: left;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    background: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.location {
+    text-align: center;
+}
+
+.linkedin-link {
+    color: #0077b5;
+    text-decoration: none;
+    font-size: 24px;
+}
+
+.linkedin-link:hover {
+    color: #005b8f;
+}
+
+.edit-profile-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="profile-header">
+                {% with user.socialaccount_set.all.0 as socialaccount %}
+                {% if socialaccount %}
+                <img src="{{ socialaccount.get_avatar_url }}" alt="{{ user.username }}" class="rounded-circle" style="width: 120px; height: 120px;">
+                {% else %}
+                <i class="fas fa-user-circle fa-lg"></i>
+                {% endif %}
+                {% endwith %}
+                <h2>{{ user.first_name|title }} {{ user.last_name|title }}</h2>
+                <div class="location">
+                    <strong>{{ profile.location }}</strong>
+                </div>
+                <a href="{{ user.linkedin_url }}" target="_blank" class="linkedin-link"><i class="fab fa-linkedin"></i></a>
+                <button class="btn btn-edit edit-profile-button" onclick="location.href='{% url 'edit-profile' %}'">Edit Profile</button>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="profile-section card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="card-title m-0">Skills</h3>
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#skillsModal">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                            </div>
+                            <ul class="list-unstyled" id="skillsList">
+                            {% for skill in skills %}
+                                <li>{{ skill.name|title }}</li>
+                            {% empty %}
+                                <li>No skills listed</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="profile-section card">
+                        <div class="card-body">
+                            <h3 class="card-title">Professional Summary</h3>
+                            <p>{{ profile.bio }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-section">
+                <h3>Resume</h3>
+                <a href="{% url 'download-resume' %}" class="btn btn-custom">Download Resume</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Skills Modal -->
+<div class="modal fade" id="skillsModal" tabindex="-1" aria-labelledby="skillsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="skillsModalLabel">Edit Skills</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="skillsForm" method="post" action="{% url 'update_skills' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <ul class="list-group" id="skillsListModal">
+                        {% for skill in profile.skills.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1 me-2">
+                                <input type="text" class="form-control" name="skills" value="{{ skill.name|title }}">
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSkill(this)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <div class="input-group mt-3">
+                        <input type="text" class="form-control" id="newSkillInput" placeholder="Add new skill">
+                        <button class="btn btn-primary" type="button" onclick="addSkill()">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function addSkill() {
+    var skillsListModal = document.getElementById('skillsListModal');
+    var newSkillInput = document.getElementById('newSkillInput');
+    if (newSkillInput.value.trim() !== '') {
+        var li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.innerHTML = `<div class="flex-grow-1 me-2">
+                            <input type="text" class="form-control" name="skills" value="${newSkillInput.value.trim()}">
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSkill(this)">
+                            <i class="bi bi-trash"></i>
+                        </button>`;
+        skillsListModal.appendChild(li);
+        newSkillInput.value = ''; // Clear input after adding
+    }
+}
+
+function removeSkill(button) {
+    var li = button.closest('li');
+    li.remove();
+}
+</script>
+{% endblock %}

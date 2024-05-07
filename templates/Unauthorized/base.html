@@ -8,8 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>{% block title %}ResumeAI{% endblock %}</title>
     <link rel="stylesheet" href="{% static "assets/bootstrap/css/bootstrap.min.css" %}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
-    {% block extra_head %}{% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css">
+    <link rel="stylesheet" href=""{% static "assets/css/styles.min.css" %}>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    {% block extra_head %}
+    {% endblock %}
 </head>
 
 <body>
@@ -38,7 +42,7 @@
     {% block content %}
     <!-- Main content goes here. This block will be overridden by child templates. -->
     {% endblock content %}
-    
+
     <footer>
         <div class="container py-4 py-lg-5">
             <div class="text-muted d-flex justify-content-between align-items-center pt-3">

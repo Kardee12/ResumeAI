@@ -1,0 +1,164 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
+{% load socialaccount %}
+{% block title %}
+Dashboard - ResumeAI
+{% endblock %}
+
+{% block extra_head %}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+        <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            color: #525f7f;
+        }
+        .navbar {
+            background-color: #fff;
+        }
+        .card, .chart-container {
+            background-color: #fff;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 20px; /* Space between cards */
+        }
+        .small-card {
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+            background-color: #e7f1ff; /* Light blue background for small cards */
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        .btn-custom, .btn-update {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 8px; /* Adjust border-radius for slight roundness */
+            padding: 8px 15px; /* Adjust padding for rectangular shape */
+        }
+
+        .btn-update:hover {
+            background-color: #0056b3;
+        }
+        .table {
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden; /* To prevent overflow from rounded corners */
+        }
+        .table th,
+        .table td {
+            border: none; /* Remove default border */
+            border-radius: 10px; /* Apply border-radius to cells */
+        }
+        .badge-custom {
+            background-color: #28a745; /* Green color for badges */
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+        }
+        .company-link {
+            color: #007bff;
+        }
+        .company-link:hover {
+            color: #0056b3;
+        }
+        .greeting {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+<main class="container">
+    <h3 class="greeting">Hello <strong>{{ user.first_name |title }}</strong></h3>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="grid-container">
+                <div class="small-card">
+                    <h5 class="card-title fw-bold">Open Applications</h5>
+                    <p class="h3 fw-bold">34</p>
+                    <span class="badge badge-custom">+10 Since Last Month</span>
+                </div>
+                <div class="small-card">
+                    <h5 class="card-title fw-bold">Current Interviews</h5>
+                    <p class="h3 fw-bold">5</p>
+                    <span class="badge badge-custom">+1 Since Last Month</span>
+                </div>
+            </div>
+            <div class="card">
+                <h5 class="card-title fw-bold">Applications</h5>
+                <p class="h3 fw-bold">23</p>
+                <span class="badge badge-custom">+5 Since Last Month</span>
+            </div>
+            <div class="card">
+                <h5 class="card-title fw-bold">Job Offers</h5>
+                <p class="h3 fw-bold">2</p>
+                <span class="badge badge-custom">8.6% Success</span>
+            </div>
+            <div class="card">
+                <h5 class="card-title fw-bold">Rejections</h5>
+                <p class="h3 fw-bold">17</p>
+                <span class="badge badge-custom">+2 Since Last Month</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h3 class="fs-4 fw-light my-4">Your Job Applications</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Job#</th>
+                        <th scope="col">Company</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Position</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><a href="https://www.google.com" class="company-link">Google</a></td>
+                        <td>Applied</td>
+                        <td>Backend Engineer</td>
+                        <td><button class="btn btn-update">Update</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><a href="https://www.pwc.com" class="company-link">PwC</a></td>
+                        <td>Applied</td>
+                        <td>IT Consultant</td>
+                        <td><button class="btn btn-update">Update</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><a href="https://www.tesla.com" class="company-link">Tesla</a></td>
+                        <td>Rejected</td>
+                        <td>Software Engineer</td>
+                        <td><button class="btn btn-update">Update</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex align-items-center justify-content-center">
+                <button id="viewMoreBtn" class="btn btn-custom">View More</button>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
