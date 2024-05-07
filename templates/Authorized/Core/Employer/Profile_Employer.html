@@ -1,126 +1,114 @@
-{% extends "Authorized/Core/Employer/base.html" %}
-{% load static%}
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
 {% load socialaccount %}
-{% block title %}Candidate List {% endblock %}
+
+{% block title %}Candidate List{% endblock %}
 
 {% block content %}
+<style>
+    .container {
+        max-width: 1200px; /* Set a max-width for better control over layout */
+        padding: 2rem 0; /* Top and bottom padding */
+    }
+    .profile-box {
+        background-color: #ffffff;
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 20px; /* Rounded corners for the profile box */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* Deeper shadow for a 3D effect */
+        margin-bottom: 2rem; /* Space between profile box and cards */
+    }
+    .profile-image-bg {
+        height: 150px;
+        background-image: url('{% static "assets/employer_side/img/photo-1542831371-29b0f74f9713-2.jpg" %}');
+        background-size: cover;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+    }
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%; /* Circle */
+        border: 5px solid white; /* White border for standout effect */
+        margin-top: -75px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    }
+    .card {
+        border-radius: 18px; /* Rounded corners for cards */
+        overflow: scroll;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        margin-bottom: 2rem; /* Space between cards */
+    }
+    .card-body {
+        padding: 20px;
+    }
+    .btn-primary {
+        border-radius: 30px; /* Very rounded edges for buttons */
+        padding: 0.75rem 2rem; /* Appropriate padding for button size */
+        font-size: 1rem; /* Slightly larger font size for readability */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Shadow for button for a lifted effect */
+    }
+    .list-group-item {
+        border: none; /* Remove default list borders */
+        padding: 0.5rem 1rem; /* Padding within list items */
+    }
+    .card-img-overlay {
+        background: rgba(0, 0, 0, 0.6); /* Darker overlay for better text visibility */
+        color: white;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    h4, p {
+        margin: 0.5rem 0; /* Reduced margin for tight spacing */
+    }
+</style>
 <section>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12 col-xxl-12" style="height: 350px">
-        <div
-          class="text-center border rounded shadow-sm profile-box"
-          style="
-            width: 1291px;
-            height: 338px;
-            background-color: #ffffff;
-            margin: 5px;
-          "
-        >
-          <div
-            class="border rounded"
-            style="
-              height: 150px;
-              background-image: url('assets/img/photo-1542831371-29b0f74f9713-2.jpg');
-              background-color: rgba(54, 162, 177, 0);
-            "
-          ></div>
-          <div>
-            <img
-              class="rounded-circle"
-              alt="man standing beside wall"
-              src="assets/img/photo-1560250097-0b93528c311a-1.jpg"
-              width="104"
-              height="104"
-              style="
-                background-color: rgb(255, 255, 255);
-                padding: 2px;
-                width: 150px;
-                height: 150px;
-                margin-top: -80px;
-              "
-            />
-          </div>
-          <div style="height: 80px">
-            <h4 style="margin-bottom: 2px">{{John Smith}}</h4>
-            <p style="font-size: 12px">Senior Software Developer @ Apple</p>
-            <a href="#">Manage Profile</a>
-          </div>
+    <div class="container" style="margin-top: 1rem;">
+        <div class="profile-box text-center">
+            <div class="profile-image-bg"></div>
+            {% with user.socialaccount_set.all.0 as socialaccount %}
+            {% if socialaccount %}
+            <img src="{{ socialaccount.get_avatar_url }}" alt="{{ user.username }}" class="rounded-circle" style="width: 120px; height: 120px;">
+            {% else %}
+            <i class="fas fa-user-circle fa-lg"></i>
+            {% endif %}
+            {% endwith %}
+            <h4>{{ user.first_name|title }} {{user.last_name|title}}</h4>
+            <p>{{ user.employer_profile.position|title }} @ {{ user.employer_profile.company_name|title }}</p>
+            <a href="#" class="btn btn-primary mt-3">Manage Profile</a>
         </div>
-      </div>
-    </div>
-    <div class="row" style="height: 410.797px">
-      <div class="col-md-6">
-        <div class="card" style="height: 414.797px">
-          <div class="card-body shadow" style="height: 309.797px">
-            <h4 class="card-title">Your Job Postings</h4>
-            <p class="card-text">
-              Here, you can view your job postings and candidates
-            </p>
-            <div
-              class="border rounded border-1 shadow-sm"
-              style="
-                height: 199px;
-                margin: 59px;
-                width: 588px;
-                margin-left: 0px;
-                margin-right: 21px;
-                margin-top: 13px;
-                margin-bottom: 101px;
-                padding-bottom: 0px;
-                overflow: scroll;
-              "
-            >
-              <ul class="list-group">
-                <li class="list-group-item">
-                  <span>Software Engineering Intern I</span>
-                </li>
-                <li class="list-group-item">
-                  <span>Senior Software Engineer</span>
-                </li>
-                <li class="list-group-item">
-                  <span>Software Engineer II</span>
-                </li>
-                <li class="list-group-item">
-                  <span>Software Engineer II</span>
-                </li>
-                <li class="list-group-item">
-                  <span>Software Engineer II</span>
-                </li>
-                <li class="list-group-item">
-                  <span>Software Engineer II</span>
-                </li>
-              </ul>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Your Job Postings</h4>
+                        <p>Here, you can view your job postings.</p>
+                        <ul class="list-group">
+                            <li class="list-group-item">Software Engineering Intern I</li>
+                            <li class="list-group-item">Senior Software Engineer</li>
+                            <li class="list-group-item">Software Engineer II</li>
+                            <li class="list-group-item">Software Engineer III</li>
+                            <li class="list-group-item">Software Engineer IV</li>
+                            <li class="list-group-item">Software Engineer V</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary mt-3">View All</a>
+                    </div>
+                </div>
             </div>
-            <button
-              class="btn btn-primary"
-              type="button"
-              style="margin-top: -163px"
-            >
-              View All
-            </button>
-          </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <img src="{% static 'assets/employer_side/img/g7d10e5072c4043dfdd51b2892c1a8ab2e29e22e1fe7eee54a661f41437f144dc6fcb5ce4d3e535472ffbd5690c2da03b_640.jpg' %}" class="card-img" alt="Company Image">
+                    <div class="card-img-overlay">
+                        <a href="{{user.company_website}}" style="color: white;">Apple, Santa Clara, CA</h4>
+                        <p style="color: white;"><span style="text-decoration: underline">Edit Company Profile</span></p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card">
-          <img
-            class="card-img w-100 d-block"
-            alt="apple inc, mac, apple store"
-            src="assets/img/g7d10e5072c4043dfdd51b2892c1a8ab2e29e22e1fe7eee54a661f41437f144dc6fcb5ce4d3e535472ffbd5690c2da03b_640.jpg"
-            style="height: 417.5px"
-          />
-          <div class="card-img-overlay shadow">
-            <h4 class="text-white">Apple, Santa Clara, CA</h4>
-            <p class="text-white">
-              <span style="text-decoration: underline"
-                >Edit Company Profile</span
-              >
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 </section>
 {% endblock %}
