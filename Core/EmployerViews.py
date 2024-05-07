@@ -6,6 +6,7 @@ from Core.EmployerForms import EmployerProfileForm, JobForm
 from Core.EmployerModel import EmployerProfile, Job, ResumeSkills
 from django.db import transaction, models
 from django.db.models import Count
+from django.core import serializers
 
 
 @login_required
@@ -146,10 +147,9 @@ def candidatePage(request, job_id):
 @login_required
 @employer_required
 def job_posting_page(request):
-
     jobs = Job.objects.all()
-    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", {'jobs': jobs})
-
+    jobs_json = serializers.serialize('json', jobs, fields=('job_uuid', 'position', 'description', 'company_image_url', 'link_to_apply'))
+    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", {'jobs': jobs, 'jobs_json': jobs_json})
 
 @login_required
 @employer_required

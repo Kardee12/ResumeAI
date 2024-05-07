@@ -1,8 +1,12 @@
 from django.db import models
 from django.conf import settings
 from allauth.socialaccount.models import SocialAccount
+from Core.models import UserProfile
 import uuid
 
+
+class Searcher(models.Model):
+    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='searcher')
 
 class Job(models.Model):
     job_uuid = models.UUIDField(default = uuid.uuid4, editable = False, unique = True)
@@ -13,7 +17,7 @@ class Job(models.Model):
     pay = models.CharField(max_length = 100)
     skills_used = models.ManyToManyField('ResumeSkills')
     company_image_url = models.URLField(max_length=255, blank=True, null=True)
-    list_of_applicants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='applied_jobs', blank=True)
+    list_of_applicants = models.ManyToManyField(Searcher, related_name='applied_jobs', blank=True)
     link_to_apply = models.URLField(max_length = 200, blank=True, null=True)
     link_to_company = models.URLField(max_length = 200, blank=True,null=True)
     
@@ -36,3 +40,13 @@ class EmployerProfile(models.Model):
         
     def __str__(self):
         return f"{self.company_name} Profile"
+
+class JobApplication(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    job_searcher = models.ForeignKey(Searcher, on_delete=models.CASCADE)
+    application_date = models.DateTimeField(auto_now_add = True)
+    status = models.CharField(max_length=50, choices=[('Offer', 'offer'), ('Reject', 'reject'),('Interview', 'interview'), ('Pending', 'pending')],
+                            null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.job_searcher.user.username} - {self.job.position}"
