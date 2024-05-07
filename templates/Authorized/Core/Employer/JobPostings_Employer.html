@@ -1,0 +1,151 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %} 
+{% load static%} 
+{% load socialaccount %} 
+{% block title %}Job Postings - Employer
+{% endblock %} 
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12" style="margin-top: 10px">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Job Postings</h4>
+          <h6 class="text-muted card-subtitle mb-2">
+            Take a look at your job postings and the candidates that applied for
+            them.
+          </h6>
+          <p class="card-text"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="height: 655px">
+    <div class="col-md-6" style="height: inherit">
+      <div
+        style="
+          height: inherit;
+          overflow: hidden;
+          width: 641px;
+          margin: auto;
+          border-width: 1px;
+          border-radius: 6px;
+          margin-top: 5px;
+        "
+      >
+        <div
+          class="card shadow-sm"
+          style="height: 652px; margin: auto; overflow: scroll"
+        >
+          <div
+            class="card-group"
+            style="
+              overflow: scroll;
+              display: block;
+              width: 628px;
+              margin: auto;
+              margin-top: 5px;
+              margin-bottom: 5px;
+              margin-left: 5px;
+              margin-right: 5px;
+              height: inherit;
+            "
+          >
+            {% for job in jobs %}
+            <div class="card" style="margin: auto; width: 626px">
+              <div class="card-body">
+                <h4 class="card-title">{{job.position}}</h4>
+                <p class="card-text">{{job.description|truncatewords:20}}</p>
+                <button class="btn btn-primary" type="button">
+                  View Posting
+                </button>
+              </div>
+            </div>
+
+            {% empty %}
+            <p>There are no jobs posted.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div
+        style="
+          height: inherit;
+          overflow: hidden;
+          width: 641px;
+          margin: auto;
+          border-width: 1px;
+          border-radius: 6px;
+          margin-top: 5px;
+        "
+      >
+        <div
+          class="card shadow-sm"
+          style="height: 652px; margin: auto; overflow: scroll"
+        >
+          <!-- this should display the job information from job db -->
+          <div class="card" style="height: 150px">
+            <img
+              class="card-img w-100 d-block"
+              alt="grayscale photo of hanging heart shaped pendant lamp"
+              style="height: inherit; transform: scale(1.03)"
+              src="{{ job.image.url }}"
+            />
+            <div class="card-img-overlay text-white">
+              <h4>{{ selected_job.position }}</h4>
+            </div>
+          </div>
+          <div
+            style="
+              margin-top: 10px;
+              margin-bottom: 10px;
+              padding-left: 20px;
+              padding-top: 10px;
+            "
+          >
+            <div class="btn-group" role="group">
+                      {% if job.list_of_applicants.all %}
+            <a href="{% url 'candidate_list' job.job_uuid %}">
+                <button class="btn btn-primary" type="button" style="border-radius: 6px">
+                    View Applicants
+                </button>
+            </a>
+            {% else %}
+                <p>No applicants yet.</p>
+            {% endif %}</a 
+              ><button
+                class="btn btn-primary"
+                type="button"
+                style="margin-left: 17px; border-radius: 6px"
+              >
+                Edit Job Listing
+              </button>
+            </div>
+          </div>
+          <div>
+            <!-- job description goes here -->
+            <p
+              style="
+                margin: auto;
+                padding: 10px;
+                padding-left: 20px;
+                padding-right: 20px;
+              "
+            >
+              <span style="color: rgb(123, 136, 152)">
+                {{ selected_job.description }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

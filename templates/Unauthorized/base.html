@@ -16,6 +16,7 @@
     {% endblock %}
 </head>
 
+
 <body>
     <nav class="navbar navbar-expand-md fixed-top navbar-shrink py-3 navbar-light" id="mainNav">
         <div class="container">
@@ -26,6 +27,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-user-circle"></i> Profile
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="#">Log Out</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
                         <div id="signin-button" class="text-center">
                             <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn btn-google">
@@ -58,5 +68,4 @@
     <script src="{% static "assets/js/script.min.js" %}"></script>
     {% block extra_scripts %}{% endblock %}
 </body>
-
 </html>
