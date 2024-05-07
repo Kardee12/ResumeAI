@@ -1,0 +1,84 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static%}
+{% load socialaccount %}
+{% block title %}Employer Profile {% endblock %}
+
+{% block content %}
+<section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-xxl-12" style="height: 350px;">
+                    <div class="text-center border rounded shadow-sm profile-box"
+                        style="width: 1291px;height: 338px;background-color: #ffffff;margin: 5px;">
+                        <div class="border rounded"
+                            style="height: 150px;background-image: url(&quot;assets/img/photo-1542831371-29b0f74f9713-2.jpg&quot;);background-color: rgba(54,162,177,0);">
+                        <!-- </div> don't see profile img/banner in models to store??? -->
+                        <div><img class="rounded-circle" alt="man standing beside wall"
+                                src="assets/img/photo-1560250097-0b93528c311a-1.jpg" width="104" height="104"
+                                style="background-color: rgb(255,255,255);padding: 2px;width: 150px;height: 150px;margin-top: -80px;">
+                        </div>
+                        <div style="height: 80px;">
+                            <h4 style="margin-bottom: 2px;">{{ profile.user.first_name|title }} {{ profile.user.last_name|title }}</h4>
+                            <p style="font-size: 12px;">{{ profile.company_description }}</p><a href="{% url 'edit_profile' %}">Manage
+                                Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="height: 410.797px;">
+                <div class="col-md-6">
+                    <div class="card" style="height: 414.797px;">
+                        <div class="card-body shadow" style="height: 309.797px;">
+                            <h4 class="card-title">Your Job Postings</h4>
+                            <p class="card-text">Here, you can view your job postings</p>
+                            <div class="border rounded border-1 shadow-sm"
+                                style="height: 199px;margin: 59px;width: 588px;margin-left: 0px;margin-right: 21px;margin-top: 13px;margin-bottom: 101px;padding-bottom: 0px;overflow: scroll;">
+                                <ul class="list-group">
+                                {% for job in jobs %}
+                                  <li class="list-group-item">
+                                    <!-- unsure where to click to here, dont rlly know how to delete..
+                                    dont have page to see job listing -->
+                                      <a href="#" class="me-3">{{ job.position }}</a>
+                                      <a href="#" class="float-end delete" style="display: none;"><i class="fa fa-trash" style="color: gray;"></i></a>
+                                  </li>
+                                {% empty %}
+                                <li class="list-group-item">No job postings available.</li>
+                                {% endfor %}
+                                    
+                                </ul>
+                            </div>
+                            <a href="{% url 'job_posting_page' %}"><button class="btn btn-primary" type="button" style="margin-top: -163px;">View All</button></a> 
+                            <button class="btn btn-primary" type="button" style="margin-top: -163px;">Edit</button>
+                            <button class="btn btn-primary" type="button" id="createbtn" style="margin-top: -163px;">Create</button>
+                            <script>
+                              document.getElementById('createbtn').addEventListener('click', function() {
+                                  var deleteIcons = document.querySelectorAll('.delete');
+                                  deleteIcons.forEach(function(icon) {
+                                      if (icon.style.display === 'none') {
+                                          icon.style.display = 'block';
+                                      } else {
+                                          icon.style.display = 'none';
+                                      }
+                                  });
+                              });
+                              </script>
+                              
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card"><img class="card-img w-100 d-block" alt="apple inc, mac, apple store"
+                            src="assets/img/g7d10e5072c4043dfdd51b2892c1a8ab2e29e22e1fe7eee54a661f41437f144dc6fcb5ce4d3e535472ffbd5690c2da03b_640.jpg"
+                            style="height: 417.5px;">
+                        <div class="card-img-overlay shadow">
+                            <h4 class="text-white">{{ profile.company_name}}</h4>
+                            <!-- help -->
+                            <p class="text-white"><span style="text-decoration: underline;">Edit Company Profile</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
