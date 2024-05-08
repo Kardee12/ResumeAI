@@ -90,15 +90,17 @@
 
     // Replace the placeholder '00000000-0000-0000-0000-000000000000' with the actual job_id
     var candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
+    var edit_job_postingUrl = "{% url 'edit_job_posting' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
 
     jobDetailsDiv.innerHTML = `
       <div class="card card-custom scrollable-card">
-        <img class="card-img-top" src="https://logo.clearbit.com/${job.fields.company_domain}" alt="Company Image" onerror="this.onerror=null; this.src='{{ default_image_url }}';">
+        <img class="card-img-top" src="https://logo.clearbit.com/${job.fields.company_name}.com" alt="Company Image" onerror="this.onerror=null; this.src='{{ default_image_url }}';">
         <div class="card-body">
           <h5 class="card-title">${job.fields.position}</h5>
           <p class="card-text">${job.fields.description}</p>
           <a href="${job.fields.link_to_apply}" class="btn btn-primary" style="border-radius: 10px">Company Website</a>
           <a href="${candidateListUrl}" class="btn btn-primary" style="border-radius: 10px">View Candidate List</a>
+          <a href="${edit_job_postingUrl}" class="btn btn-primary" style="border-radius: 10px">Edit Job Posting</a>
         </div>
       </div>
     `;

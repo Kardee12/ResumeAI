@@ -98,6 +98,19 @@ def create_job_posting(request):
 
     return render(request, 'Authorized/Core/Employer/create_job_posting1.html', {'form': form})
 
+@login_required
+@employer_required
+def edit_job_posting(request, job_id):
+    job = get_object_or_404(Job, job_uuid=job_id)
+    if request.method == 'POST':
+        form = JobForm(request.POST, instance=job)
+        if form.is_valid():
+            form.save()
+            return redirect('job_posting_page')  # Redirect to the job posting overview page
+    else:
+        form = JobForm(instance=job)
+
+    return render(request, 'edit_job_posting.html', {'form': form, 'job': job})
     
 
 @login_required
