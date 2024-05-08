@@ -160,6 +160,7 @@ def employer_dashboard(request):
 @emp_profile_completed
 def company_profile_page(request):
     return render(request, "Authorized/Core/Employer/company_profile_page.html")
+
 # work on this later 5/6/24: Check notebook
 @login_required
 @employer_required

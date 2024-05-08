@@ -2,3 +2,7 @@
 .idea
 user_resumes
 /venv
+/Accounts/__pycache__
+*.pyc
+*.pyc
+/Core/__pycache__
