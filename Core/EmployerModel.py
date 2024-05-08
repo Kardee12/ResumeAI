@@ -8,7 +8,7 @@ class EmployerProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employer_profile')
     position = models.CharField(max_length=120, blank=False, null=False, default='Unknown')
     company_name = models.CharField(max_length=255)
-    company_description = models.TextField(blank=True, null=True)
+    company_role_description = models.TextField(blank=True, null=True)
     company_website = models.URLField(max_length=200, blank=True, null=True)
     employer_completed = models.BooleanField(default=False)
     def __str__(self):

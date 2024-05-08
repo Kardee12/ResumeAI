@@ -140,29 +140,29 @@ function showDetails(jobId) {
     const candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
 
     jobDetailsDiv.innerHTML = `
-        <div class="card card-custom rounded-lg">
-            <div class="row no-gutters">
-                <div class="col-md-4">
-                    <img src="https://logo.clearbit.com/${encodeURIComponent(job.fields.link_to_company)}" alt="${job.fields.company} Logo" onerror="this.onerror=null;this.src='{% static 'img/default-logo.png' %}'">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h4 class="card-title">${job.fields.position}</h4>
-                        <span class="badge" style="background-color: ${jobTypeColor}; color: white; padding: 5px 10px; border-radius: 5px;">${job.fields.job_type}</span>
-                        <p><strong>Company:</strong> ${job.fields.company}</p>
-                        <p><strong>Location:</strong> ${job.fields.location}</p>
-                        <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
-                        <p>${job.fields.description}</p>
-                        <p><strong>Skills:</strong> ${skillsDisplay}</p>
-                        <div class="d-flex justify-content-around mt-4"> 
-                            <a href="${job.fields.link_to_apply}" class="btn btn-primary btn-custom">Edit Now</a>
-                            <a href="${candidateListUrl}" class="btn btn-primary btn-custom">View Candidate List</a>
-                        </div>
-
-                    </div>
+<div class="card card-custom rounded-lg">
+    <div class="row no-gutters">
+        <div class="col-md-3">
+            <img src="https://logo.clearbit.com/${encodeURIComponent(job.fields.link_to_company)}" alt="${job.fields.company} Logo" class="img-fluid rounded-start" onerror="this.onerror=null; this.src='{% static 'img/default-logo.png' %}'">
+        </div>
+        <div class="col-md-9">
+            <div class="card-body">
+                <h4 class="card-title">${job.fields.position}</h4>
+                <span class="badge" style="background-color: ${jobTypeColor}; color: white; padding: 5px 10px; border-radius: 5px;">${job.fields.job_type}</span>
+                <p><strong>Company:</strong> ${job.fields.company}</p>
+                <p><strong>Location:</strong> ${job.fields.location}</p>
+                <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
+                <p>${job.fields.description}</p>
+                <p><strong>Meet the recruiter:</strong> ${job.fields.company_role_description}</p>
+                <p><strong>Skills:</strong> ${skillsDisplay}</p>
+                <div class="d-flex justify-content-around mt-4">
+                    <a href="${job.fields.link_to_apply}" class="btn btn-primary btn-custom">Edit Now</a>
+                    <a href="${candidateListUrl}" class="btn btn-primary btn-custom">View Candidate List</a>
                 </div>
             </div>
         </div>
+    </div>
+</div>
     `;
 }
 </script>

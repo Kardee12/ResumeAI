@@ -186,7 +186,7 @@ function updateJobListings(jobs) {
 
 function showDetails(jobId) {
     const job = globalJobs.find(job => job.pk === jobId);
-    console.log("Showing details for Job ID:", jobId);  
+    console.log("Showing details for Job ID:", jobId);
     const jobType = job.fields.job_type || 'Unknown';  // Fallback to 'Unknown' if job type is not specified
     const jobTypeColor = getJobTypeColor(jobType);
     const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';  // Join skills array into a string

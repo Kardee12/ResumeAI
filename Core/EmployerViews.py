@@ -186,7 +186,6 @@ def candidatePage(request, job_id):
         'employer_profile' : employer_profile,
     }
 
-
     return render(request, 'Authorized/Core/Employer/CandidateList.html', context = context)
 
 def update_candidate_status(request, application_id):
@@ -212,6 +211,8 @@ def custom_job_serializer(jobs):
                 'company': job.employer_profile.company_name,
                 'position': job.position,
                 'description': job.description,
+                'company_role_description': job.employer_profile.company_role_description,
+                'linkedin': job.employer_profile.user.linkedin_url,
                 'location': job.location,
                 'pay': job.pay,
                 'link_to_apply': job.link_to_apply,
