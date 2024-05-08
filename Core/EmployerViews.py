@@ -152,21 +152,16 @@ def job_posting_page(request):
 @login_required
 @employer_required
 @emp_profile_completed
-def candidatePage(request, job_id):
-    job = get_object_or_404(Job, job_id)
-    required_skills = job.skills_used.all()
-    applicants = job.list_of_applicants.annotate(matching_skills_count=Count('user__resumeskills', filter=models.Q(user__resumeskills__in=required_skills))).order_by('-matching_skills_count')
+def candidatePage(request):
+    return render(request, "Authorized/Core/Employer/CandidateList.html")
 
-    return render(request, 'Authorized/Core/Employer/CandidateList.html', {'applicants': applicants, 'job': job})
 @login_required
 @employer_required
 @emp_profile_completed
 def profile(request):
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
-
     return render(request,"Authorized/Core/Employer/Profile_Employer.html", context={'profile' : profile})
-
 
 @login_required
 @employer_required
@@ -189,6 +184,3 @@ def setup_employer_profile(request):
         form = EmployerProfileForm(instance=profile)
 
     return render(request, 'Authorized/Core/Employer/create-employer-profile.html', context={'form': form})
-
-
-    return render(request, 'Authorized/Core/Employer/dashboard.html')
