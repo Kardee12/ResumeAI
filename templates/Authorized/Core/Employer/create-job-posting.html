@@ -1,0 +1,141 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static %}
+
+{% block title %}Create Job Posting - ResumeAI{% endblock %}
+
+{% block content %}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAol5-69FX2_kEVFyUC_rByOsu_4cQmd-s&libraries=places&callback=initAutocomplete" async defer></script>
+<style>
+    .form-control, .btn {
+        border-radius: 0.5rem;
+    }
+    .form-control {
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+    }
+    .form-control:focus {
+        border-color: #0056b3;
+        box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+    }
+    .btn-primary {
+        background-color: #0056b3;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #004085;
+    }
+    label {
+        font-weight: 600;
+        color: #333;
+    }
+    .btn-outline-primary {
+    border-color: #0056b3;
+    color: #0056b3;
+}
+
+    .btn-outline-primary:hover,
+    .btn-outline-primary:focus,
+    .btn-outline-primary:active,
+    .btn-check:checked + .btn-outline-primary {
+        background-color: #0056b3;
+        color: #fff;
+    }
+</style>
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Create Job Posting</h1>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="company" class="form-label">Company</label>
+                        <input type="text" class="form-control" id="company" name="company" placeholder="Enter Company Name" required>
+                        <div class="invalid-feedback">Please enter a company name.</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="position" class="form-label">Job Position</label>
+                        <input type="text" class="form-control" id="position" name="position" placeholder="Enter Job Position" required>
+                        <div class="invalid-feedback">Please enter a job position.</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Job Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Job Description" required></textarea>
+                    <div class="invalid-feedback">Please enter a job description.</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="pay" class="form-label">Job Pay</label>
+                        <input type="text" class="form-control" id="pay" name="pay" placeholder="Enter Job Payment Details" required>
+                        <div class="invalid-feedback">Please enter job payment details.</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="locationInput" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="locationInput" name="location" placeholder="Enter your location">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Job Type</label>
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <input type="radio" class="btn-check" name="job_type" id="Contractor" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary" for="Contractor">Contractor</label>
+                            <input type="radio" class="btn-check" name="job_type" id="Internship" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="Internship">Internship</label>
+                            <input type="radio" class="btn-check" name="job_type" id="Full-time" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="Full-time">Full-time</label>
+                            <input type="radio" class="btn-check" name="job_type" id="Part-time" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="Part-time">Part-time</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="link_to_apply" class="form-label">Link to Apply</label>
+                        <input type="url" class="form-control" id="link_to_apply" name="link_to_apply" placeholder="Enter Link to Application">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="link_to_company" class="form-label">Link to Company Page</label>
+                    <input type="url" class="form-control" id="link_to_company" name="link_to_company" placeholder="Enter Link to Company Page">
+                </div>
+                <div class="row">
+                    {% for i in "12345" %}
+                    <div class="col-md-6 mb-3">
+                        <label for="skill_{{ forloop.counter }}" class="form-label">Skill #{{ forloop.counter }}</label>
+                        <input type="text" class="form-control" id="skill_{{ forloop.counter }}" name="skill_{{ forloop.counter }}" placeholder="Enter a skill">
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">Create Job Posting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+window.initAutocomplete = function() {
+    var locationInput = document.getElementById('locationInput');
+    var options = {
+        types: ['(cities)'],
+        componentRestrictions: {country: 'us'}
+    };
+    var autocomplete = new google.maps.places.Autocomplete(locationInput, options);
+
+    autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+        }
+        console.log(place);
+    });
+};
+</script>
+{% endblock %}

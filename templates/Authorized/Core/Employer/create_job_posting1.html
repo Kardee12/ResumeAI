@@ -1,0 +1,66 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static %}
+
+{% block title %}Post New Job - ResumeAI{% endblock %}
+
+{% block content %}
+<style>
+    .form-control, .btn {
+        border-radius: 0.75rem; /* Adjust the border-radius to make edges rounder */
+    }
+    .form-control {
+        padding: 0.75rem 1.25rem; /* Increase padding for better aesthetics */
+    }
+    .btn-primary {
+        background-color: #0056b3;
+        border: none; /* Optional: remove border for a cleaner look */
+        padding: 0.5rem 1rem; /* Adjust button padding */
+    }
+    .btn-primary:hover {
+        background-color: #004085; /* Darken the button on hover for better interaction feedback */
+    }
+    label {
+        font-weight: 600; /* Make labels slightly bolder */
+    }
+</style>
+<div class="container mt-5">
+    <h1 class="mb-4">Post a New Job</h1>
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="position" class="form-label">Job Position</label>
+            <input type="text" class="form-control" id="position" name="position" placeholder="Enter Job Position" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Job Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter Job Description" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="pay" class="form-label">Job Pay</label>
+            <input type="text" class="form-control" id="pay" name="pay" placeholder="Enter Job Payment Details" required>
+        </div>
+        <div class="mb-3">
+            <label for="link_to_apply" class="form-label">Link to Apply</label>
+            <input type="url" class="form-control" id="link_to_apply" name="link_to_apply" placeholder="Enter Link to Application">
+        </div>
+        <div class="mb-3">
+            <label for="link_to_company" class="form-label">Link to Company Page</label>
+            <input type="url" class="form-control" id="link_to_company" name="link_to_company" placeholder="Enter Link to Company Page">
+        </div>
+        <div class="mb-3">
+            <label for="company_image" class="form-label">Company Image</label>
+            <input type="file" class="form-control" id="company_image" name="company_image">
+        </div>
+        <div class="mb-3">
+            <label for="skills_used" class="form-label">Skills Used</label>
+            <select multiple class="form-control" id="skills_used" name="skills_used">
+                <!-- Dynamically populate with skills -->
+                {% for skill in skills %}
+                <option value="{{ skill.id }}">{{ skill.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Post Job</button>
+    </form>
+</div>
+{% endblock %}

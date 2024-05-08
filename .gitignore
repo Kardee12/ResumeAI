@@ -1,4 +1,8 @@
 /.env
 .idea
+<<<<<<< HEAD
 /Accounts/__pycache__
 *.pyc
+=======
+user_resumes
+>>>>>>> origin/Karthik

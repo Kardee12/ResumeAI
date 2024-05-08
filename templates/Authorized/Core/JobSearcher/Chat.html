@@ -187,6 +187,7 @@ Chat - ResumeAI
             <div class="chat-messages d-flex flex-column align-items-end" id="chat-messages">
 
             </div>
+<<<<<<< HEAD
             <div class="selected-files" id="selected-files"></div>
             <div class="input-bar-container">
                 <label for="file-upload" class="file-upload-label">
@@ -194,6 +195,9 @@ Chat - ResumeAI
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
                     </svg>
                 </label>
+=======
+            <div class="input-bar-container">
+>>>>>>> origin/Karthik
                 <label class="reset-label" onclick="clearChat()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333">
                         <path d="M21 11a8.6 8.6 0 0 0-8.6-8.6"></path>
@@ -202,6 +206,7 @@ Chat - ResumeAI
                         <polyline points="21 21 21 11 11 11"></polyline>
                     </svg>
                 </label>
+<<<<<<< HEAD
                 <button id="record-btn" class="record-btn">
                     <svg class="record-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333">
                         <svg class="record-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333">
@@ -212,6 +217,8 @@ Chat - ResumeAI
                         </svg>
                     </svg>
                 </button>
+=======
+>>>>>>> origin/Karthik
                 <input id="file-upload" type="file" multiple hidden>
                 <input type="text" placeholder="Message ResumeAI..." id="chat-input" class="form-control"/>
                 <button onclick="sendMessage()">
@@ -256,16 +263,21 @@ Chat - ResumeAI
         const userAvatarUrl = "{{ user.get_avatar_url}}";
         const avatarImageUrl = "{% static 'assets/img/apple-touch-icon.png' %}";
         document.addEventListener('DOMContentLoaded', function () {
+<<<<<<< HEAD
             const input = document.getElementById("chat-input");
             const fileInput = document.getElementById('file-upload');
             const selectedFilesContainer = document.getElementById('selected-files');
             let selectedFiles = [];
+=======
+            const input = document.getElementById("chat-input");;
+>>>>>>> origin/Karthik
             input.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
                 }
             });
+<<<<<<< HEAD
             function updateFilePreviews() {
                 selectedFilesContainer.innerHTML = '';
                 selectedFiles.forEach((file, index) => {
@@ -310,6 +322,11 @@ Chat - ResumeAI
             window.sendMessage = function () {
                 const message = input.value.trim();
                 if (!message && selectedFiles.length === 0) {
+=======
+            window.sendMessage = function () {
+                const message = input.value.trim();
+                if (!message) {
+>>>>>>> origin/Karthik
                     console.log("No message or files to send.");
                     return;
                 }
@@ -326,12 +343,17 @@ Chat - ResumeAI
 
                 let formData = new FormData();
                 formData.append('message', message);
+<<<<<<< HEAD
                 selectedFiles.forEach((file, index) => {
                     formData.append('file' + index, file);
                 });
 
                 $.ajax({
                     url: "",
+=======
+                $.ajax({
+                    url: "{% url 'processMessages' %}",
+>>>>>>> origin/Karthik
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -341,8 +363,11 @@ Chat - ResumeAI
                             appendMessage("ResumeAI", response.api_response, "ai-response");
                         }
                         input.value = "";
+<<<<<<< HEAD
                         selectedFiles = [];
                         updateFilePreviews();
+=======
+>>>>>>> origin/Karthik
                     },
                     error: function (error) {
                         console.error("Error:", error);
@@ -379,19 +404,30 @@ Chat - ResumeAI
                 messageText.style.color = "#000"; // Ensure message text color is set properly
                 messageContent.appendChild(senderName);
                 messageContent.appendChild(messageText);
+<<<<<<< HEAD
                 <!-- {# messageBubble.appendChild(avatar); #} --> // check this later and ask karthik if there is a missing script tag
+=======
+                {#messageBubble.appendChild(avatar);#}
+>>>>>>> origin/Karthik
                 messageBubble.appendChild(messageContent);
                 messagesContainer.appendChild(messageBubble);
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             };
             window.clearChat = function () {
                 $.ajax({
+<<<<<<< HEAD
                     url: "",
+=======
+                    url: "{% url 'clearChat' %}",
+>>>>>>> origin/Karthik
                     type: "POST",
                     success: function (response) {
                         if (response.success) {
                             document.getElementById("chat-messages").innerHTML = '';
+<<<<<<< HEAD
                             enableUploadOptions();
+=======
+>>>>>>> origin/Karthik
                         }
                     },
                     error: function (error) {
@@ -401,4 +437,8 @@ Chat - ResumeAI
             }
         });
     </script>
+<<<<<<< HEAD
 {% endblock %}
+=======
+{% endblock %}
+>>>>>>> origin/Karthik

@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 from allauth.account.views import logout
+=======
+from django.contrib.auth import logout
+>>>>>>> origin/Karthik
 from allauth.socialaccount.models import SocialAccount
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
+<<<<<<< HEAD
 from Accounts.models import CustomUser
 from Core.models import UserProfile
 
@@ -25,6 +31,39 @@ def home(request):
         return redirect('employer_dashboard')
 
 
+=======
+from allauth.account.views import LoginView
+from django.template import RequestContext
+
+from Core.EmployerModel import EmployerProfile
+from Core.models import UserProfile
+
+def index(request):
+    return render(request, "Unauthorized/Core/index.html")
+
+
+
+@login_required
+def home(request):
+    user = request.user
+
+    # Redirect if the user setup is not complete
+    if not user.has_completed_setup:
+        return redirect('setup')
+
+    if user.role == 'job_searcher':
+        try:
+            UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            return redirect('js_setup_profile')
+        return redirect('jobsearcher_dashboard')
+    else:  # Assuming the only other role is 'employer'
+        try:
+            EmployerProfile.objects.get(user=user)
+        except EmployerProfile.DoesNotExist:
+            return redirect('emp_setupProfile')
+        return redirect('employer_dashboard')
+>>>>>>> origin/Karthik
 @login_required
 def settings(request):
     try:
@@ -42,4 +81,25 @@ def settings(request):
 
     return render(request, 'Authorized/Core/Settings.html', {
         'social_account': social_account
+<<<<<<< HEAD
     })
+=======
+    })
+
+
+def logoutView(request):
+    return render(request, 'Unauthorized/Accounts/logout.html')
+
+
+def custom_logout(request):
+    logout(request)
+    return redirect('/logout')
+
+
+class logView(LoginView):
+    template_name = 'Unauthorized/Accounts/login.html'
+
+def permission_denied(request, exception):
+    context = {}
+    return render(request, 'Authorized/Errors/403.html', context, status=403)
+>>>>>>> origin/Karthik

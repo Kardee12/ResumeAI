@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 {% extends "Authorized/Core/JobSearcher/Base.html" %}
+=======
+{% extends "Authorized/Core/Employer/base.html" %}
+>>>>>>> origin/Karthik
 {% load static %}
 {% load socialaccount %}
 
@@ -52,6 +56,13 @@ Create Employer Profile - ResumeAI
                 <h2 class="text-center mb-4">Create Employer Profile</h2>
                 <form method="post">
                     {% csrf_token %}
+<<<<<<< HEAD
+=======
+                    <div class = "mb-3">
+                        {{ form.position.label_tag}}
+                        {{ form.position }}
+                    </div>
+>>>>>>> origin/Karthik
                     <div class="mb-3">
                         {{ form.company_name.label_tag }}
                         {{ form.company_name }}
@@ -64,10 +75,13 @@ Create Employer Profile - ResumeAI
                         {{ form.company_website.label_tag }}
                         {{ form.company_website }}
                     </div>
+<<<<<<< HEAD
                     <div class="mb-3">
                         {{ form.contact_email.label_tag }}
                         {{ form.contact_email }}
                     </div>
+=======
+>>>>>>> origin/Karthik
                     <div class="text-center">
                         <button type="submit" class="btn btn-custom">Create Profile</button>
                     </div>

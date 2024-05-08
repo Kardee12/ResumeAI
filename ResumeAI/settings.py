@@ -14,6 +14,8 @@ from pathlib import Path
 
 from decouple import config
 
+import Core
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,13 +41,19 @@ SECRET_KEY = "django-insecure-)%*1#lrapu2w+be$tdg4=he765x1#2a9)2%#)*cnsr9#2#ig&*
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 SITE_ID=1
 LOGIN_REDIRECT_URL = '/home'
+<<<<<<< HEAD
 LOGOUT_URL = '/'
+=======
+LOGOUT_REDIRECT_URL = '/logout'
+LOGOUT_URL = '/logout'
+LOGIN_URL = '/login'
+>>>>>>> origin/Karthik
 SOCIALACCOUNT_LOGIN_ON_GET=True
-
+SOCIALACCOUNT_LOGOUT_ON_GET=True
+HANDLER403 = 'Core.gen_views.forbidden_response'
 # Application definition
 
 INSTALLED_APPS = [
@@ -176,8 +184,13 @@ SOCIALACCOUNT_PROVIDERS = {
 
 }
 
+<<<<<<< HEAD
 GOOGLE_MAPS_API_KEY = 'AIzaSyDf5TxzMhipgz05piQmyVT3-eNjMlF_920'
 HF_TOKEN = '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'
+=======
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
+HF_TOKEN = config('HF_TOKEN')
+>>>>>>> origin/Karthik
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

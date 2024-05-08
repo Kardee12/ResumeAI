@@ -1,6 +1,9 @@
 {% extends "Authorized/Core/JobSearcher/Base.html" %}
 {% load static %}
+<<<<<<< HEAD
 {% load socialaccount %}
+=======
+>>>>>>> origin/Karthik
 
 {% block title %}
 Create Resume - ResumeAI
@@ -10,6 +13,7 @@ Create Resume - ResumeAI
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
 <style>
+<<<<<<< HEAD
    body {
        font-family: 'Roboto', sans-serif;
        background-color: #f8f9fa;
@@ -43,11 +47,42 @@ Create Resume - ResumeAI
        background-color: #0069d9;
        border-color: #0062cc;
    }
+=======
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f8f9fa;
+    }
+    .container {
+        max-width: 800px;
+    }
+    .resume-form {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    .form-group label {
+        font-weight: 500;
+    }
+    .form-control {
+        border-radius: 10px;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 8px;
+    }
+    .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+>>>>>>> origin/Karthik
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container my-5">
+<<<<<<< HEAD
    <div class="resume-form">
        <h2 class="text-center mb-4">Create Your Resume</h2>
        <form>
@@ -183,3 +218,42 @@ Create Resume - ResumeAI
    }
 </script>
 {% endblock %}
+=======
+    <div class="resume-form">
+        <h2 class="text-center mb-4">Create Your Resume</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Work Experiences -->
+            {% for i in "123" %}
+            <div class="form-group mb-3">
+                <label>Work Experience #{{ forloop.counter }}</label>
+                <input type="text" class="form-control mb-2" name="job_title_{{ forloop.counter }}" placeholder="Job Title">
+                <input type="text" class="form-control mb-2" name="company_name_{{ forloop.counter }}" placeholder="Company Name">
+                <input type="date" class="form-control mb-2" name="start_date_{{ forloop.counter }}" placeholder="Start Date">
+                <input type="date" class="form-control mb-2" name="end_date_{{ forloop.counter }}" placeholder="End Date">
+                <textarea class="form-control" name="job_description_{{ forloop.counter }}" rows="3" placeholder="Job Description"></textarea>
+            </div>
+            {% endfor %}
+            <!-- Education -->
+            <div class="form-group mb-3">
+                <label>Education</label>
+                <input type="text" class="form-control mb-2" name="degree" placeholder="Degree/Certification">
+                <input type="text" class="form-control mb-2" name="institution_name" placeholder="Institution Name">
+                <input type="date" class="form-control mb-2" name="education_start_date" placeholder="Start Date">
+                <input type="date" class="form-control mb-2" name="education_end_date" placeholder="End Date">
+            </div>
+            <!-- Skills -->
+            {% for i in "1234567890" %}
+            <div class="form-group mb-2">
+                <label for="skill_{{ forloop.counter }}">Skill #{{ forloop.counter }}</label>
+                <input type="text" class="form-control" name="skill_{{ forloop.counter }}" placeholder="Enter a skill">
+            </div>
+            {% endfor %}
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Create Resume</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+>>>>>>> origin/Karthik

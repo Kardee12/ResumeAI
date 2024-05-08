@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/Karthik
 {% load static %}
 {% load socialaccount %}
 <!DOCTYPE html>
@@ -59,7 +62,11 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link hover-highlight" href="{% url 'jobsearcher_chat' %}">Chat</a></li>
+<<<<<<< HEAD
                     <li class="nav-item"><a class="nav-link hover-highlight" href="#">Search</a></li>
+=======
+                    <li class="nav-item"><a class="nav-link hover-highlight" href="{% url 'search' %}">Search</a></li>
+>>>>>>> origin/Karthik
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
@@ -74,11 +81,18 @@
                             {% endwith %}
                             {{ user.first_name|title}}
                         </a>
+<<<<<<< HEAD
                         <!-- maybe add an if statement that checks if user is authenticated to show  -->
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'jobsearcher_profile'%}"> Profile</a></li>
                             <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
                             <li><a class="dropdown-item" href="{% url 'account_logout' %}">Log Out</a></li>
+=======
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'jobsearcher_profile'%}"> Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
+                            <li><a class="dropdown-item" href="{% url 'custom_logout' %}">Log Out</a></li>
+>>>>>>> origin/Karthik
                         </ul>
                     </li>
                     {% else %}
