@@ -309,13 +309,13 @@ def custom_job_serializer(jobs):
             'pk': job.pk,
             'fields': {
                 'applicant_count': job.applicant_count,
-                'company': job.company,
+                'company': job.employer_profile.company_name,
                 'position': job.position,
                 'description': job.description,
                 'location': job.location,
                 'pay': job.pay,
                 'link_to_apply': job.link_to_apply,
-                'link_to_company': job.link_to_company,
+                'link_to_company': job.employer_profile.company_website,
                 'job_type': job.job_type,
                 'skills': [skill.name for skill in job.skills.all()]  # Include skill names
             }
