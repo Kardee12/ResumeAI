@@ -79,24 +79,27 @@
   var jobs = JSON.parse('{{ jobs_json|safe }}');
 
   function loadJobDetails(jobId) {
+    console.log('ji')
     var job = jobs.find(job => job.fields.job_uuid === jobId);
     if (!job) {
         console.error('Job not found!');
         return;
     }
     var jobDetailsDiv = document.querySelector('.job-details');
+    console.log(job.fields.description)
     jobDetailsDiv.innerHTML = `
       <div class="card card-custom scrollable-card">
         <img class="card-img-top" src="https://logo.clearbit.com/apple.com" alt="Company Image" onerror="this.onerror=null; this.src='{{ default_image_url }}';">
         <div class="card-body">
           <h5 class="card-title">${job.fields.position}</h5>
           <p class="card-text">${job.fields.description}</p>
-          <a href="${job.fields.link_to_apply}" class="btn btn-primary" style="border-radius: '10px'">Company Website</a>
-          <a href="${job.fields.link_to_apply}" class="btn btn-primary" style="border-radius: '10px'">View Candidate List</a>
+          <a href="${job.fields.link_to_apply}" class="btn btn-primary" style="border-radius: 10px">Company Website</a>
+          <a href="${job.fields.link_to_apply}" class="btn btn-primary" style="border-radius: 10px">View Candidate List</a>
         </div>
       </div>
     `;
   }
 </script>
+
 
 {% endblock %}

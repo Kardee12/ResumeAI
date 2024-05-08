@@ -6,6 +6,7 @@ from Core import gen_views
 urlpatterns = [
     path("", views.index, name='index'),
     path("home/", views.home, name="home"),
+    path('settings/',views.settings , name='settings'),
     
     
     #jobsearcher side
@@ -13,7 +14,6 @@ urlpatterns = [
     path('js-dashboard/', JobSearcherViews.jobsearcher_dashboard, name='jobsearcher_dashboard'),
     #added as of 12:54pm may 3
     path('chat/', JobSearcherViews.jobsearcher_chat, name='jobsearcher_chat'),
-    path('settings/',views.settings , name='settings'),
     path('js-profile/', JobSearcherViews.jobsearcher_profile, name='jobsearcher_profile'),
     path('js-setup/',JobSearcherViews.js_setup_profile, name='js_setup_profile'),
     path('download-resume/', gen_views.download_resume, name='download-resume'),

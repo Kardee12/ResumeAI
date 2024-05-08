@@ -148,8 +148,13 @@ def candidatePage(request, job_id):
 @employer_required
 def job_posting_page(request):
     jobs = Job.objects.all()
-    jobs_json = serializers.serialize('json', jobs, fields=('job_uuid', 'position', 'description', 'company_image_url', 'link_to_apply'))
-    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", {'jobs': jobs, 'jobs_json': jobs_json})
+    jobs_json = serializers.serialize('json', jobs, fields=('job_uuid', 'position', 'description', 'company_image_url', 'link_to_apply', 'company_domain'))
+    default_image_url = 'https://example.com/default-image.jpg'  # Provide a default image URL
+    return render(request, "authorized/core/employer/jobpostings_employer.html", {
+        'jobs': jobs,
+        'jobs_json': jobs_json,
+        'default_image_url': default_image_url
+    })
 
 @login_required
 @employer_required
@@ -160,8 +165,14 @@ def candidatePage(request):
 @employer_required
 def profile(request):
     user = request.user
+    employer_profile = EmployerProfile.objects.get(user=request.user)
+    jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
     profile = EmployerProfile.objects.get(user=user)
-    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context={'profile' : profile})
+    context = {
+        'profile' : profile,
+        'jobs' : jobs
+    }
+    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context)
 
 @login_required
 @employer_required
