@@ -1,0 +1,91 @@
+{% extends 'Authorized/Core/JobSearcher/Base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block extra_head %}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Settings - ResumeAI{% endblock %}
+{% block content %}
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #525f7f;
+
+        }
+        .main-card{
+            border-radius: 15px;
+        }
+        .module-card {
+            background-color: #ffffff;
+            border: none;
+            transition: transform .2s;
+        }
+    
+        .module-card:hover {
+            transform: scale(1.05);
+        }
+    
+        .no-border-card {
+            border: none !important;
+        }
+    </style>
+    <div class="container">
+        <div class="row"> <h3 class="float-left"><strong>Settings</strong> </h3></div>
+        <div class="row mb-3">
+            <div class="col-lg-4">
+                <div class="card border-primary shadow mb-3 no-border-card main-card">
+                    <div class="card-body text-center" style="border-radius:20px;">
+                        {% if social_account %}
+                            <img class="rounded-circle mb-3 mt-4" src="{{ social_account.get_avatar_url }}" width="160"
+                                 height="160">
+                        {% endif %}
+                        <div class="mb-3">
+                            <strong>Hello {{ user.first_name }} {{user.last_name}}!</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col">
+                        <div class="card border-primary shadow mb-3 no-border-card">
+                            <div class="card-header text-white bg-primary py-3"
+                                 style="border-top-left-radius: 15px;border-top-right-radius: 15px;">
+                                <p class="fw-bold m-0">User Options</p>
+                            </div>
+                            <div class="card-body">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="card bg-light border-0 module-card">
+                                                <div class="card-body text-center">
+                                                    <button class="btn btn-outline-primary" type="submit"
+                                                            name="sign_out" style="border-radius: 10px;">Sign Out
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="card bg-light border-0 module-card">
+                                                <div class="card-body text-center">
+                                                    <button class="btn btn-outline-danger" type="submit"
+                                                            name="delete_account" style="border-radius: 10px;">Delete
+                                                        Account
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
