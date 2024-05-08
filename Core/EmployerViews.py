@@ -138,9 +138,14 @@ def edit_company_page(request):
 @login_required
 @employer_required
 def candidatePage(request, job_id):
-    job = get_object_or_404(Job, job_id)
+    job = get_object_or_404(Job, job_uuid=job_id)  # Use the correct field name here
     required_skills = job.skills_used.all()
-    applicants = job.list_of_applicants.annotate(matching_skills_count=Count('user__resumeskills', filter=models.Q(user__resumeskills__in=required_skills))).order_by('-matching_skills_count')
+    applicants = job.list_of_applicants.annotate(
+        matching_skills_count=Count(
+            'user__resumeskills',
+            filter=models.Q(user__resumeskills__in=required_skills)
+        )
+    ).order_by('-matching_skills_count')
 
     return render(request, 'Authorized/Core/Employer/CandidateList.html', {'applicants': applicants, 'job': job})
 
@@ -158,8 +163,10 @@ def job_posting_page(request):
 
 @login_required
 @employer_required
-def candidatePage(request):
-    return render(request, "Authorized/Core/Employer/CandidateList.html")
+def candidatePage(request, job_id):  # 'job_id' is correctly expected here
+    # Make sure the field in get_object_or_404 matches your model's field
+    job = get_object_or_404(Job, job_uuid=job_id)
+    return render(request, 'Authorized/Core/Employer/CandidateList.html', {'job': job})
 
 @login_required
 @employer_required
