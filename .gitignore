@@ -1,7 +1,3 @@
 /.env
 .idea
-/.test1
-/.venv
-*.pyc
-/venv
-
+user_resumes

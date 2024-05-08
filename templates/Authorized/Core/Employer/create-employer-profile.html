@@ -1,4 +1,4 @@
-{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% extends "Authorized/Core/Employer/base.html" %}
 {% load static %}
 {% load socialaccount %}
 
@@ -67,10 +67,6 @@ Create Employer Profile - ResumeAI
                     <div class="mb-3">
                         {{ form.company_website.label_tag }}
                         {{ form.company_website }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form.contact_email.label_tag }}
-                        {{ form.contact_email }}
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-custom">Create Profile</button>

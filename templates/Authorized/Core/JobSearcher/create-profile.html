@@ -9,6 +9,7 @@ Create Profile - ResumeAI
 {% block extra_head %}
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete" async defer></script>
 <style>
     body {
         font-family: 'Roboto', sans-serif;
@@ -48,7 +49,6 @@ Create Profile - ResumeAI
         border-color: green;
     }
 </style>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete" async defer></script>
 {% endblock %}
 
 {% block content %}
@@ -74,8 +74,8 @@ Create Profile - ResumeAI
                     </div>
                     <div class="mb-3">
                         <label for="resumeUpload" class="form-label">Upload Resume</label>
-                        <input type="file" class="form-control" id="resumeUpload" name="resume" accept=".pdf,.doc,.docx">
-                        <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
+                        <input type="file" class="form-control" id="resumeUpload" name="resume" accept=".pdf,.doc,.docx, .txt">
+                        <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, TXT</small>
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-custom">Create Profile</button>

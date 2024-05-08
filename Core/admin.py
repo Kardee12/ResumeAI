@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import UserProfile, UserResume
-from .EmployerModel import Job, ResumeSkills
+from .EmployerModel import Job, JobSkills
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
@@ -13,10 +13,10 @@ class UserResumeAdmin(admin.ModelAdmin):
     search_fields = ['user__username']
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ['position', 'description', 'pay', 'company_image_url','link_to_apply', 'link_to_company']
-    search_fields = ['position','description']
-    filter_horizontal = ['skills_used', 'list_of_applicants']
-@admin.register(ResumeSkills)
+    list_display = ['company', 'location', 'position', 'description', 'pay','link_to_apply', 'link_to_company']
+    search_fields = ['company', 'location','position','description']
+    filter_horizontal = ['skills', 'list_of_applicants']
+@admin.register(JobSkills)
 class ResumeSkillsAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']

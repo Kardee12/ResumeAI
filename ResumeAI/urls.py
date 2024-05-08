@@ -14,11 +14,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from ResumeAI import settings
+from django.conf.urls import handler400, handler403, handler404, handler500
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("Core.urls")),
     path("accounts/",include("Accounts.urls"))
 ]
+
+if not settings.DEBUG:
+    handler403 = 'Core.views.permission_denied'

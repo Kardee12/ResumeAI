@@ -1,4 +1,4 @@
-{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% extends "Authorized/Core/Employer/base.html" %}
 {% load static %}
 
 {% block title %}Employer Dashboard - ResumeAI{% endblock %}
@@ -34,7 +34,7 @@
                         {% for job, applicants in jobs_with_applicants %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             {{ job.position }}
-                            <a href="{% url 'job_detail' job.job_uuid %}" class="btn btn-primary btn-sm">View</a>
+{#                            <a href="{% url 'job_detail' job.job_uuid %}" class="btn btn-primary btn-sm">View</a>#}
                         </li>
                         {% empty %}
                         <li class="list-group-item">No recent job postings.</li>
