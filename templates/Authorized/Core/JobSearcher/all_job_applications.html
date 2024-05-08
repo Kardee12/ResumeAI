@@ -8,7 +8,7 @@
 <style>
     body {
         font-family: 'Roboto', sans-serif;
-        background-color: #f8f9fa;
+        background-color: #ffffff;
         margin: 0;
         padding: 0;
         color: #343a40;
@@ -46,13 +46,19 @@
         margin-bottom: 10px;
         padding: 15px;
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: auto repeat(5, 1fr);
         gap: 10px;
         align-items: center;
     }
     .application-detail {
         font-size: 0.9rem;
         color: #495057;
+    }
+    .company-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        margin-right: 10px;
     }
     .text-center {
         text-align: center;
@@ -62,6 +68,9 @@
 
 {% block content %}
 <main class="container mt-5">
+    <a href="{% url 'jobsearcher_dashboard' %}" class="btn btn-back btn-light">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
     <div class="card">
         <div class="card-body">
             <h3 class="fs-4 fw-light mb-4">All Your Job Applications</h3>
@@ -75,6 +84,7 @@
             <div id="applications-container">
                 {% for application in job_applications %}
                 <div class="application-card" data-company="{{ application.job.company }}" data-position="{{ application.job.position }}" data-type="{{ application.job.job_type }}" data-status="{{ application.status }}" data-date="{{ application.application_date|date:"Ymd" }}">
+                    <img src="https://logo.clearbit.com/{{ application.job.link_to_company }}" alt="{{ application.job.link_to_company }} logo" class="company-logo">
                     <div class="application-detail">{{ application.job.company }}</div>
                     <div class="application-detail">{{ application.job.position }}</div>
                     <div class="application-detail">{{ application.job.job_type }}</div>
@@ -89,32 +99,42 @@
     </div>
 </main>
 {% endblock %}
-
 {% block extra_scripts %}
 <script>
+// Function to handle logo loading errors
+function handleLogoError(event) {
+    event.target.src = 'https://path.to/your/default/logo.png'; // Set a default logo
+    event.target.classList.add('default-logo'); // Optionally add a class for default logos
+}
+
+// Sorting functionality
 document.querySelectorAll('.sort-icon').forEach(icon => {
     icon.addEventListener('click', function() {
         const container = document.getElementById('applications-container');
         let cards = Array.from(container.children);
         const order = this.getAttribute('data-order');
         const sortKey = this.getAttribute('data-sort');
+        const isAscending = order === 'asc';
+        const nextOrder = isAscending ? 'desc' : 'asc';
 
         cards.sort((a, b) => {
             const aValue = a.getAttribute(`data-${sortKey}`).toLowerCase();
             const bValue = b.getAttribute(`data-${sortKey}`).toLowerCase();
-
-            if (order === 'asc') {
-                return aValue.localeCompare(bValue);
-            } else {
-                return bValue.localeCompare(aValue);
-            }
+            return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
         });
 
-        this.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
-        this.innerHTML = order === 'asc' ? `&#8595; ${this.textContent.slice(2)}` : `&#8593; ${this.textContent.slice(2)}`;
+        this.setAttribute('data-order', nextOrder);
+        this.innerHTML = `${isAscending ? '&#8595;' : '&#8593;'} ${this.textContent.slice(2)}`;
 
         // Re-append cards to the container
         cards.forEach(card => container.appendChild(card));
+    });
+});
+
+// Initial logo load error handling
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('img.company-logo').forEach(img => {
+        img.onerror = handleLogoError;
     });
 });
 </script>
