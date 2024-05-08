@@ -56,7 +56,7 @@ def employer_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
         if request.user.role != 'employer':
             return HttpResponseForbidden("Access Forbidden: Only Employers are allowed to access this page.")
-        return view_func(request, *args, *kwargs)
+        return view_func(request, *args, **kwargs)
     return _wrapped_view
 def emp_profile_completed(view_func):
     """

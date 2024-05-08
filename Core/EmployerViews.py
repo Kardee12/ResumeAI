@@ -3,12 +3,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from Core.functions import ParsingUtility
 from Core.functions.ParsingUtility import ParsingFunctions
+from Core.models import JobApplication
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
 from Core.EmployerForms import EmployerProfileForm, JobForm
 from Core.EmployerModel import EmployerProfile, Job, JobSkills
 from django.db import transaction, models
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.core import serializers
 
 
@@ -135,11 +136,18 @@ def edit_company_page(request):
 @employer_required
 @emp_profile_completed
 def candidatePage(request, job_id):
-    job = get_object_or_404(Job, job_id)
-    required_skills = job.skills_used.all()
-    applicants = job.list_of_applicants.annotate(matching_skills_count=Count('user__resumeskills', filter=models.Q(user__resumeskills__in=required_skills))).order_by('-matching_skills_count')
+    job = get_object_or_404(Job, job_uuid=job_id)
+    job_applications = JobApplication.objects.filter(job=job)
+    employer_profile = EmployerProfile.objects.get(user=request.user)
+    candidates = [app.user.profile for app in job_applications if app.user.profile.profile_completed]
+    
+    context = {
+        'job': job, 
+        'candidates': candidates,
+        'employer_profile' : employer_profile,
+    }
 
-    return render(request, 'Authorized/Core/Employer/CandidateList.html', {'applicants': applicants, 'job': job})
+    return render(request, 'Authorized/Core/Employer/CandidateList.html', context = context)
 
 @login_required
 @employer_required
@@ -155,11 +163,11 @@ def job_posting_page(request):
     return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", context=context)
 
 
-@login_required
-@employer_required
-@emp_profile_completed
-def candidatePage(request):
-    return render(request, "Authorized/Core/Employer/CandidateList.html")
+# @login_required
+# @employer_required
+# @emp_profile_completed
+# def candidatePage(request):
+#     return render(request, "Authorized/Core/Employer/CandidateList.html")
 
 @login_required
 @employer_required
