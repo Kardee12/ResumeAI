@@ -3,9 +3,11 @@ from profile import Profile
 from .EmployerModel import  Job, JobSkills, EmployerProfile
 
 class JobForm(forms.Form):
+    company = forms.CharField(label='Company', max_length=200, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter company name'}))
     position = forms.CharField(label='Job Position', max_length=200, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Job Position'}))
     description = forms.CharField(label='Job Description', widget=forms.Textarea(attrs={'class': 'form-control', 'rows': '3'}))
     pay = forms.CharField(label='Job Pay', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Job Payment Details'}))
+    location = forms.CharField(label='Location', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Location Details'}))
     link_to_apply = forms.URLField(label='Link to Apply', max_length=200, required=False, widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Link to Application'}))
     link_to_company = forms.URLField(label='Link to Company', max_length=200, required=False, widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Link to Company Page'}))
     company_image = forms.ImageField(label="Company Image", required=False, help_text="Optional Image for the Company")

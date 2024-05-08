@@ -2,7 +2,9 @@ import io
 import os
 
 from django.contrib import messages
+from django.core import serializers
 from django.core.files.base import ContentFile
+from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
@@ -13,6 +15,8 @@ from Core.models import UserProfile, UserResume, UserSkill
 from ResumeAI.Generic.generic_decoraters import job_searcher_required, js_profile_completed, js_profile_not_completed
 from django.contrib.auth.decorators import login_required
 from ResumeAI import settings
+from . import models
+from .EmployerModel import Job
 from .forms import UserProfileForm, ResumeForm
 from .functions.ChatUtility import query_model
 from .functions.GenerationUtility import generate_resume_text
@@ -20,6 +24,8 @@ from .functions.JobSearcherDBUtility import create_user_skills, update_user_skil
 from .functions.ParsingUtility import ResumeParsing, ParsingFunctions
 
 from django.db import transaction
+from django.db.models import Q
+
 
 
 @login_required
@@ -42,7 +48,6 @@ def jobsearcher_profile(request):
         'profile': profile,
         'skills': skills
     })
-
 
 @login_required
 @job_searcher_required
@@ -115,7 +120,6 @@ def js_setup_profile(request):
         'form': form,
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
     })
-
 
 @login_required
 @job_searcher_required
@@ -266,4 +270,11 @@ def clearChat(request):
 @js_profile_completed
 @login_required
 def search(request):
-    return render(request,"Authorized/Core/JobSearcher/searcher.html")
+    query = request.GET.get('q', '')
+    if query:
+        jobs = Job.objects.filter(Q(position__icontains=query) | Q(description__icontains=query) | Q(company__icontains=query))
+    else:
+        jobs = Job.objects.all()
+    jobs_json = serialize('json', jobs, use_natural_foreign_keys=True)
+    print(jobs_json)
+    return render(request, 'Authorized/Core/JobSearcher/searcher.html', {'jobs_json': jobs_json, 'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY})

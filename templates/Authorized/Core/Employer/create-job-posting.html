@@ -4,6 +4,7 @@
 {% block title %}Create Job Posting - ResumeAI{% endblock %}
 
 {% block content %}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAol5-69FX2_kEVFyUC_rByOsu_4cQmd-s&libraries=places&callback=initAutocomplete" async defer></script>
 <style>
     .form-control, .btn {
         border-radius: 0.75rem;
@@ -30,6 +31,11 @@
             <form method="post" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
                 <div class="mb-3">
+                    <label for="position" class="form-label">Company</label>
+                    <input type="text" class="form-control" id="company" name="company" placeholder="Enter Company Name" required>
+                    <div class="invalid-feedback">Please enter a company name.</div>
+                </div>
+                <div class="mb-3">
                     <label for="position" class="form-label">Job Position</label>
                     <input type="text" class="form-control" id="position" name="position" placeholder="Enter Job Position" required>
                     <div class="invalid-feedback">Please enter a job position.</div>
@@ -44,6 +50,10 @@
                     <input type="text" class="form-control" id="pay" name="pay" placeholder="Enter Job Payment Details" required>
                     <div class="invalid-feedback">Please enter job payment details.</div>
                 </div>
+                    <div class="mb-3">
+                        <label for="locationInput" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="locationInput" name="location" placeholder="Enter your location">
+                    </div>
                 <div class="mb-3">
                     <label for="link_to_apply" class="form-label">Link to Apply</label>
                     <input type="url" class="form-control" id="link_to_apply" name="link_to_apply" placeholder="Enter Link to Application">
@@ -65,4 +75,27 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+window.initAutocomplete = function() {
+    var locationInput = document.getElementById('locationInput');
+    var options = {
+        types: ['(cities)'],
+        componentRestrictions: {country: 'us'}
+    };
+    var autocomplete = new google.maps.places.Autocomplete(locationInput, options);
+
+    autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+            // User entered the name of a Place that was not suggested and pressed the Enter key, or the Place Details request failed.
+            window.alert("No details available for input: '" + place.name + "'");
+            return;
+        }
+        console.log(place);
+    });
+};
+</script>
 {% endblock %}

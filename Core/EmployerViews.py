@@ -72,23 +72,22 @@ def create_job_posting(request):
         # Handling manual fields like link to company and skills
         link_to_company = request.POST.get('link_to_company')
         skills = [request.POST.get(f'skill_{i}') for i in range(1, 11)]  # Adjust the range as needed
-
         new_job = Job(
+            company=request.POST.get('company'),
             employer_profile=employer_profile,
             position=request.POST.get('position'),
             description=request.POST.get('description'),
             pay=request.POST.get('pay'),
+            location=request.POST.get('location'),
             link_to_apply=request.POST.get('link_to_apply'),
-            link_to_company=link_to_company,
-            company_image_url=request.FILES.get('company_image').url if 'company_image' in request.FILES else None
+            link_to_company=request.POST.get('link_to_company'),
         )
-        new_job.save()
-
         # Assuming you handle skills as strings for now, adapt this part if you use JobSkills model
         for skill_name in skills:
             if skill_name:  # Ensure no empty strings are processed
                 skill, created = JobSkills.objects.get_or_create(name=skill_name)
                 new_job.skills.add(skill)
+        new_job.save()
 
         return redirect('employer_dashboard')
     else:

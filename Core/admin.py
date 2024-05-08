@@ -13,8 +13,8 @@ class UserResumeAdmin(admin.ModelAdmin):
     search_fields = ['user__username']
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ['position', 'description', 'pay', 'company_image_url','link_to_apply', 'link_to_company']
-    search_fields = ['position','description']
+    list_display = ['company', 'location', 'position', 'description', 'pay','link_to_apply', 'link_to_company']
+    search_fields = ['company', 'location','position','description']
     filter_horizontal = ['skills', 'list_of_applicants']
 @admin.register(JobSkills)
 class ResumeSkillsAdmin(admin.ModelAdmin):
