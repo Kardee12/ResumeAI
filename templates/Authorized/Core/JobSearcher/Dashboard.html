@@ -60,12 +60,19 @@ Dashboard - ResumeAI
             border: none; /* Remove default border */
             border-radius: 10px; /* Apply border-radius to cells */
         }
-        .badge-custom {
-            background-color: #28a745; /* Green color for badges */
-            color: #fff;
+        .badge-custom { 
             border: none;
             border-radius: 10px;
         }
+        .badge-positive {
+            background-color: #007bff; /* Blue for positive changes */
+            color: white;
+        }
+        .badge-negative {
+            background-color: #ffc107; /* Gold for negative changes */
+            color: black;
+        }
+
         .company-link {
             color: #007bff;
         }
@@ -94,29 +101,39 @@ Dashboard - ResumeAI
             <div class="grid-container">
                 <div class="small-card">
                     <h5 class="card-title fw-bold">Open Applications</h5>
-                    <p class="h3 fw-bold">34</p>
-                    <span class="badge badge-custom">+10 Since Last Month</span>
+                    <p class="h3 fw-bold">{{ total_open_applications }}</p>
+                    <span class="badge badge-custom {% if change_open_applications >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if change_open_applications >= 0 %}+{{ change_open_applications }}{% else %}{{ change_open_applications }}{% endif %} Since Last Month
+                    </span>
                 </div>
                 <div class="small-card">
                     <h5 class="card-title fw-bold">Current Interviews</h5>
-                    <p class="h3 fw-bold">5</p>
-                    <span class="badge badge-custom">+1 Since Last Month</span>
+                    <p class="h3 fw-bold">{{ total_interviews }}</p>
+                    <span class="badge badge-custom {% if change_interviews >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if change_interviews >= 0 %}+{{ change_interviews }}{% else %}{{ change_interviews }}{% endif %} Since Last Month
+                    </span>
                 </div>
             </div>
             <div class="card">
                 <h5 class="card-title fw-bold">Applications</h5>
-                <p class="h3 fw-bold">23</p>
-                <span class="badge badge-custom">+5 Since Last Month</span>
+                <p class="h3 fw-bold">{{ total_applications }}</p>
+                <span class="badge badge-custom {% if change_applications >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if change_applications >= 0 %}+{{ change_applications }}{% else %}{{ change_applications }}{% endif %} Since Last Month
+                </span>
             </div>
             <div class="card">
                 <h5 class="card-title fw-bold">Job Offers</h5>
-                <p class="h3 fw-bold">2</p>
-                <span class="badge badge-custom">8.6% Success</span>
+                <p class="h3 fw-bold">{{ total_offers }}</p>
+                <span class="badge badge-custom {% if success_rate >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if success_rate >= 0 %}+{{ success_rate }}{% else %}{{ success_rate }}{% endif %} Since Last Month
+                </span>
             </div>
             <div class="card">
                 <h5 class="card-title fw-bold">Rejections</h5>
-                <p class="h3 fw-bold">17</p>
-                <span class="badge badge-custom">+2 Since Last Month</span>
+                <p class="h3 fw-bold">{{ total_rejections }}</p>
+                <span class="badge badge-custom {% if change_rejections >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if change_rejections >= 0 %}+{{ change_rejections }}{% else %}{{ change_rejections }}{% endif %} Since Last Month
+                </span>
             </div>
         </div>
         <div class="col-md-6">
@@ -124,39 +141,31 @@ Dashboard - ResumeAI
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">Job#</th>
                         <th scope="col">Company</th>
-                        <th scope="col">Status</th>
                         <th scope="col">Position</th>
-                        <th scope="col">Actions</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date Applied</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for application in job_applications %}
                     <tr>
-                        <td>1</td>
-                        <td><a href="https://www.google.com" class="company-link">Google</a></td>
-                        <td>Applied</td>
-                        <td>Backend Engineer</td>
-                        <td><button class="btn btn-update">Update</button></td>
+                        <td>{{ application.job.company }}</td>
+                        <td>{{ application.job.position }}</td>
+                        <td>{{ application.job.job_type }}</td>
+                        <td>{{ application.status }}</td>
+                        <td>{{ application.application_date|date:"M d, Y" }}</td>
                     </tr>
+                    {% empty %}
                     <tr>
-                        <td>2</td>
-                        <td><a href="https://www.pwc.com" class="company-link">PwC</a></td>
-                        <td>Applied</td>
-                        <td>IT Consultant</td>
-                        <td><button class="btn btn-update">Update</button></td>
+                        <td colspan="4">No applications found.</td>
                     </tr>
-                    <tr>
-                        <td>3</td>
-                        <td><a href="https://www.tesla.com" class="company-link">Tesla</a></td>
-                        <td>Rejected</td>
-                        <td>Software Engineer</td>
-                        <td><button class="btn btn-update">Update</button></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
             <div class="d-flex align-items-center justify-content-center">
-                <button id="viewMoreBtn" class="btn btn-custom">View More</button>
+                <a href="{% url 'all_job_apps' %}" class="btn btn-custom">View More</a>
             </div>
         </div>
     </div>

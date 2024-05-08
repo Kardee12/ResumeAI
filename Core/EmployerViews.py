@@ -78,7 +78,6 @@ def create_job_posting(request):
         aiParser = ParsingFunctions()
         normalized_skills = aiParser.normalize_skills([skill for skill in skills if skill])  # Normalize and filter out empty
         new_job = Job(
-            company=request.POST.get('company'),
             employer_profile=employer_profile,
             position=request.POST.get('position'),
             description=request.POST.get('description'),

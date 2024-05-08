@@ -1,6 +1,7 @@
 import io
 import json
 import os
+from datetime import timedelta, datetime
 
 from django.contrib import messages
 from django.core import serializers
@@ -32,7 +33,41 @@ from django.db.models import Q, Count
 @job_searcher_required
 @js_profile_completed
 def jobsearcher_dashboard(request):
-    return render(request, 'Authorized/Core/JobSearcher/dashboard.html')
+    user = request.user
+    today = datetime.today()
+    last_month = today - timedelta(days=30)
+
+    total_applications = JobApplication.objects.filter(user=user).count()
+    total_open_applications = JobApplication.objects.filter(user=user, status='applied').count()
+    total_interviews = JobApplication.objects.filter(user=user, status='interview').count()
+    total_offers = JobApplication.objects.filter(user=user, status='offer').count()
+    total_rejections = JobApplication.objects.filter(user=user, status='rejected').count()
+    last_month_applications = JobApplication.objects.filter(user=user, application_date__lt=last_month).count()
+    last_month_open_applications = JobApplication.objects.filter(user=user, status='applied', application_date__lt=last_month).count()
+    last_month_interviews = JobApplication.objects.filter(user=user, status='interview', application_date__lt=last_month).count()
+    last_month_offers = JobApplication.objects.filter(user=user, status='offer', application_date__lt=last_month).count()
+    last_month_rejections = JobApplication.objects.filter(user=user, status='rejected', application_date__lt=last_month).count()
+    change_applications = total_applications - last_month_applications
+    change_open_applications = total_open_applications - last_month_open_applications
+    change_interviews = total_interviews - last_month_interviews
+    change_offers = total_offers - last_month_offers
+    change_rejections = total_rejections - last_month_rejections
+    success_rate = float (float(total_offers) / float(total_applications)) if (total_applications and total_offers) > 0 else 0
+    context = {
+        'job_applications': JobApplication.objects.filter(user=user).order_by('-application_date')[:3],
+        'total_applications': total_applications,
+        'total_open_applications': total_open_applications,
+        'total_interviews': total_interviews,
+        'total_offers': total_offers,
+        'total_rejections': total_rejections,
+        'change_applications': change_applications,
+        'change_open_applications': change_open_applications,
+        'change_interviews': change_interviews,
+        'change_offers': change_offers,
+        'change_rejections': change_rejections,
+        'success_rate': success_rate,
+    }
+    return render(request, 'Authorized/Core/JobSearcher/dashboard.html', context)
 
 
 @login_required
@@ -311,9 +346,6 @@ def search(request):
     return render(request, 'Authorized/Core/JobSearcher/searcher.html', {'jobs_json': jobs_json, 'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY})
 
 
-from django.db import transaction
-
-
 @require_POST
 @login_required
 def apply_for_job(request):
@@ -342,3 +374,15 @@ def apply_for_job(request):
     except Exception as e:
         print(f"Error applying for job: {str(e)}")
         return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+
+@csrf_exempt
+@js_profile_completed
+@login_required
+def all_job_apps(request):
+    user = request.user
+    job_applications = JobApplication.objects.filter(user=user).order_by('-application_date')
+    context = {
+        'job_applications': job_applications,
+    }
+    return render(request, 'Authorized/Core/JobSearcher/all_job_applications.html', context)

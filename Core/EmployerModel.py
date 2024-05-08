@@ -3,6 +3,18 @@ from django.conf import settings
 from allauth.socialaccount.models import SocialAccount
 import uuid
 
+
+class EmployerProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employer_profile')
+    position = models.CharField(max_length=120, blank=False, null=False, default='Unknown')
+    company_name = models.CharField(max_length=255)
+    company_description = models.TextField(blank=True, null=True)
+    company_website = models.URLField(max_length=200, blank=True, null=True)
+    employer_completed = models.BooleanField(default=False)
+    def __str__(self):
+        return f"{self.company_name} Profile"
+
+
 class JobSkills(models.Model):
     name = models.CharField(max_length=120, unique=True)
 
@@ -32,13 +44,3 @@ class Job(models.Model):
 
     def __str__(self):
         return self.position
-
-class EmployerProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employer_profile')
-    position = models.CharField(max_length=120, blank=False, null=False, default='Unknown')
-    company_name = models.CharField(max_length=255)
-    company_description = models.TextField(blank=True, null=True)
-    company_website = models.URLField(max_length=200, blank=True, null=True)
-    employer_completed = models.BooleanField(default=False)
-    def __str__(self):
-        return f"{self.company_name} Profile"

@@ -1,0 +1,121 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
+
+{% block title %}Job Applications - ResumeAI{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700|Roboto:300,400,500,700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+        color: #343a40;
+    }
+    .container {
+        max-width: 960px;
+        margin: auto;
+        padding: 20px;
+    }
+    .card {
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        padding: 20px;
+    }
+    .sort-controls {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 15px;
+    }
+    .sort-icon {
+        font-weight: 500;
+        cursor: pointer;
+        margin-left: 10px;
+        user-select: none;
+        transition: color 0.2s;
+    }
+    .sort-icon:hover {
+        color: #007bff;
+    }
+    .application-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+        margin-bottom: 10px;
+        padding: 15px;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        align-items: center;
+    }
+    .application-detail {
+        font-size: 0.9rem;
+        color: #495057;
+    }
+    .text-center {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h3 class="fs-4 fw-light mb-4">All Your Job Applications</h3>
+            <div class="sort-controls">
+                <span class="sort-icon" data-sort="company" data-order="asc">&#8593; Company</span>
+                <span class="sort-icon" data-sort="position" data-order="asc">&#8593; Position</span>
+                <span class="sort-icon" data-sort="type" data-order="asc">&#8593; Type</span>
+                <span class="sort-icon" data-sort="status" data-order="asc">&#8593; Status</span>
+                <span class="sort-icon" data-sort="date" data-order="asc">&#8593; Date Applied</span>
+            </div>
+            <div id="applications-container">
+                {% for application in job_applications %}
+                <div class="application-card" data-company="{{ application.job.company }}" data-position="{{ application.job.position }}" data-type="{{ application.job.job_type }}" data-status="{{ application.status }}" data-date="{{ application.application_date|date:"Ymd" }}">
+                    <div class="application-detail">{{ application.job.company }}</div>
+                    <div class="application-detail">{{ application.job.position }}</div>
+                    <div class="application-detail">{{ application.job.job_type }}</div>
+                    <div class="application-detail">{{ application.status }}</div>
+                    <div class="application-detail">{{ application.application_date|date:"M d, Y" }}</div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4">No applications found.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.querySelectorAll('.sort-icon').forEach(icon => {
+    icon.addEventListener('click', function() {
+        const container = document.getElementById('applications-container');
+        let cards = Array.from(container.children);
+        const order = this.getAttribute('data-order');
+        const sortKey = this.getAttribute('data-sort');
+
+        cards.sort((a, b) => {
+            const aValue = a.getAttribute(`data-${sortKey}`).toLowerCase();
+            const bValue = b.getAttribute(`data-${sortKey}`).toLowerCase();
+
+            if (order === 'asc') {
+                return aValue.localeCompare(bValue);
+            } else {
+                return bValue.localeCompare(aValue);
+            }
+        });
+
+        this.setAttribute('data-order', order === 'asc' ? 'desc' : 'asc');
+        this.innerHTML = order === 'asc' ? `&#8595; ${this.textContent.slice(2)}` : `&#8593; ${this.textContent.slice(2)}`;
+
+        // Re-append cards to the container
+        cards.forEach(card => container.appendChild(card));
+    });
+});
+</script>
+{% endblock %}

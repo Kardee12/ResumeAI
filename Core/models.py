@@ -41,17 +41,17 @@ class UserResume(models.Model):
 
 class JobApplication(models.Model):
     STATUS_CHOICES = (
-        ('applied', 'Applied'),
-        ('interview', 'Interview'),
-        ('offer', 'Offer'),
-        ('rejected', 'Rejected'),
-        ('accepted', 'Accepted'),
-        ('declined', 'Declined'),
+        ('Applied', 'Applied'),
+        ('Interview', 'Interview'),
+        ('Offer', 'Offer'),
+        ('Rejected', 'Rejected'),
+        ('Accepted', 'Accepted'),
+        ('Declined', 'Declined'),
     )
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applications')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='job_applications')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='applied')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Applied')
     application_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
