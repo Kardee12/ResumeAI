@@ -1,151 +1,170 @@
 {% extends "Authorized/Core/Employer/base.html" %}
-{% load static%} 
-{% load socialaccount %} 
-{% block title %}Job Postings - Employer
-{% endblock %} 
+{% load static %}
+
+{% block title %}Job Postings - ResumeAI{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700|Roboto:300,400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+        color: #343a40;
+    }
+    .container {
+        padding: 20px;
+    }
+    .card-custom {
+        background-color: #ffffff;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .rounded-lg {
+        border-radius: 20px;
+    }
+    .scrollable-card {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    .list-group-item {
+        border: none;
+        border-radius: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        background-color: #f8f9fa;
+        padding: 20px;
+    }
+    .btn-custom {
+        border-radius: 25px;  /* More pronounced rounded corners */
+        font-weight: bold;
+        padding: 10px 20px;
+        margin: 5px;  /* Added margin for spacing */
+        background-color: #1a73e8;
+        border-color: #1a73e8;
+        color: white;
+    }
+    .btn-custom:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+    .card-img-top {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+    .card-body {
+        padding: 20px;
+    }
+    .text-muted {
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
 
 {% block content %}
-
-<div class="container">
-  <div class="row">
-    <div class="col-md-12" style="margin-top: 10px">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Job Postings</h4>
-          <h6 class="text-muted card-subtitle mb-2">
-            Take a look at your job postings and the candidates that applied for
-            them.
-          </h6>
-          <p class="card-text"></p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row" style="height: 655px">
-    <div class="col-md-6" style="height: inherit">
-      <div
-        style="
-          height: inherit;
-          overflow: hidden;
-          width: 641px;
-          margin: auto;
-          border-width: 1px;
-          border-radius: 6px;
-          margin-top: 5px;
-        "
-      >
-        <div
-          class="card shadow-sm"
-          style="height: 652px; margin: auto; overflow: scroll"
-        >
-          <div
-            class="card-group"
-            style="
-              overflow: scroll;
-              display: block;
-              width: 628px;
-              margin: auto;
-              margin-top: 5px;
-              margin-bottom: 5px;
-              margin-left: 5px;
-              margin-right: 5px;
-              height: inherit;
-            "
-          >
-            {% for job in jobs %}
-            <div class="card" style="margin: auto; width: 626px">
-              <div class="card-body">
-                <h4 class="card-title">{{job.position}}</h4>
-                <p class="card-text">{{job.description|truncatewords:20}}</p>
-                <button class="btn btn-primary" type="button">
-                  View Posting
-                </button>
-              </div>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <h4 class="card-title">Job Postings</h4>
+                    <h6 class="text-muted card-subtitle mb-2">Take a look at your job postings and the candidates that applied for them.</h6>
+                </div>
             </div>
+        </div>
+    </div>
 
-            {% empty %}
-            <p>There are no jobs posted.</p>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="col-md-6">
-      <div
-        style="
-          height: inherit;
-          overflow: hidden;
-          width: 641px;
-          margin: auto;
-          border-width: 1px;
-          border-radius: 6px;
-          margin-top: 5px;
-        "
-      >
-        <div
-          class="card shadow-sm"
-          style="height: 652px; margin: auto; overflow: scroll"
-        >
-          <!-- this should display the job information from job db -->
-          <div class="card" style="height: 150px">
-            <img
-              class="card-img w-100 d-block"
-              alt="grayscale photo of hanging heart shaped pendant lamp"
-              style="height: inherit; transform: scale(1.03)"
-              src="{{ job.image.url }}"
-            />
-            <div class="card-img-overlay text-white">
-              <h4>{{ selected_job.position }}</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card card-custom rounded-lg scrollable-card">
+                <ul class="list-group list-group-flush">
+                    {% for job in jobs %}
+                    <li class="list-group-item rounded-lg">
+                        <h5>{{ job.position }}</h5>
+                        <p class="text-muted">{{ job.description|truncatewords:20 }}</p>
+                        <button class="btn btn-primary btn-custom" onclick="showDetails('{{ job.job_uuid }}')">View Posting</button>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item rounded-lg">There are no jobs posted.</li>
+                    {% endfor %}
+                </ul>
             </div>
-          </div>
-          <div
-            style="
-              margin-top: 10px;
-              margin-bottom: 10px;
-              padding-left: 20px;
-              padding-top: 10px;
-            "
-          >
-            <div class="btn-group" role="group">
-                      {% if job.list_of_applicants.all %}
-            <a href="{% url 'candidate_list' job.job_uuid %}">
-                <button class="btn btn-primary" type="button" style="border-radius: 6px">
-                    View Applicants
-                </button>
-            </a>
-            {% else %}
-                <p>No applicants yet.</p>
-            {% endif %}</a 
-              ><button
-                class="btn btn-primary"
-                type="button"
-                style="margin-left: 17px; border-radius: 6px"
-              >
-                Edit Job Listing
-              </button>
-            </div>
-          </div>
-          <div>
-            <!-- job description goes here -->
-            <p
-              style="
-                margin: auto;
-                padding: 10px;
-                padding-left: 20px;
-                padding-right: 20px;
-              "
-            >
-              <span style="color: rgb(123, 136, 152)">
-                {{ selected_job.description }}
-              </span>
-            </p>
-          </div>
         </div>
-      </div>
+        <div class="col-md-6">
+            <div class="card card-custom rounded-lg scrollable-card job-details">
+                <p class="text-center py-3 text-muted">Select a job to see the details here.</p>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-
 {% endblock %}
+
+{% block extra_scripts %}
+<script>
+var globalJobs = JSON.parse('{{ jobs_json|safe }}');  // Ensure this is parsing correctly and contains all job information
+
+function getJobTypeColor(jobType) {
+    switch (jobType) {
+        case 'Contractor':
+            return '#ff7f50';  // Coral for Contractor
+        case 'Internship':
+            return '#6495ed';  // CornflowerBlue for Internship
+        case 'Full-time':
+            return '#32cd32';  // LimeGreen for Full-time
+        case 'Part-time':
+            return '#ff4500';  // OrangeRed for Part-time
+        default:
+            return '#808080';  // Gray for unknown or other types
+    }
+}
+
+function showDetails(jobId) {
+    const job = globalJobs.find(job => job.job_uuid === jobId);
+    if (!job) {
+        console.error('Job not found:', jobId);
+        return;
+    }
+
+    const jobDetailsDiv = document.querySelector('.job-details');
+    const jobTypeColor = getJobTypeColor(job.fields.job_type);
+    const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';
+    const candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
+
+    jobDetailsDiv.innerHTML = `
+        <div class="card card-custom rounded-lg">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="https://logo.clearbit.com/${encodeURIComponent(job.fields.link_to_company)}" alt="${job.fields.company} Logo" onerror="this.onerror=null;this.src='{% static 'img/default-logo.png' %}'">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h4 class="card-title">${job.fields.position}</h4>
+                        <span class="badge" style="background-color: ${jobTypeColor}; color: white; padding: 5px 10px; border-radius: 5px;">${job.fields.job_type}</span>
+                        <p><strong>Company:</strong> ${job.fields.company}</p>
+                        <p><strong>Location:</strong> ${job.fields.location}</p>
+                        <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
+                        <p>${job.fields.description}</p>
+                        <p><strong>Skills:</strong> ${skillsDisplay}</p>
+                        <div class="d-flex justify-content-around mt-4"> 
+                            <a href="${job.fields.link_to_apply}" class="btn btn-primary btn-custom">Edit Now</a>
+                            <a href="${candidateListUrl}" class="btn btn-primary btn-custom">View Candidate List</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+</script>
+{% endblock %}
+

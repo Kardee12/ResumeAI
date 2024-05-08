@@ -1,4 +1,7 @@
+import json
+
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.shortcuts import render, redirect, get_object_or_404
 
 from Core.functions import ParsingUtility
@@ -146,15 +149,38 @@ def candidatePage(request, job_id):
 
     return render(request, 'Authorized/Core/Employer/CandidateList.html', {'applicants': applicants, 'job': job})
 
+def custom_job_serializer(jobs):
+    job_list = []
+    for job in jobs:
+        job_info = {
+            'job_uuid': str(job.job_uuid),
+            'fields': {
+                'applicant_count': job.applicant_count,
+                'company': job.employer_profile.company_name,
+                'position': job.position,
+                'description': job.description,
+                'location': job.location,
+                'pay': job.pay,
+                'link_to_apply': job.link_to_apply,
+                'link_to_company': job.employer_profile.company_website,
+                'job_type': job.job_type,
+                'skills': [skill.name for skill in job.skills.all()]
+            }
+        }
+        job_list.append(job_info)
+    return job_list
+
 @login_required
 @employer_required
 @emp_profile_completed
 def job_posting_page(request):
-
     jobs = Job.objects.all()
-    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", {'jobs': jobs})
-
-
+    jobs_json = custom_job_serializer(jobs)  # Use your custom serializer here
+    context = {
+        'jobs': jobs,
+        'jobs_json': json.dumps(jobs_json)
+    }
+    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", context)
 @login_required
 @employer_required
 @emp_profile_completed
