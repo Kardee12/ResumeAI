@@ -15,40 +15,36 @@ def job_searcher_required(view_func):
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
-def js_profile_not_completed(view_func):
-    """
-    Decorator to restrict access to views based on user's profile being completed.
-    Only allows users with the role 'job_searcher' to access the view if their profile has not been completed.
-    Redirects to setup if no profile exists.
-    """
-    def _wrapped_view(request, *args, **kwargs):
-        user = request.user
-        if user.role == 'job_searcher':  # Ensure this attribute exists or is properly managed.
-            try:
-                profile = UserProfile.objects.get(user=user)
-                if profile.profile_completed:
-                    raise PermissionDenied("Access Forbidden: Can only access page if profile has not been completed")
-            except UserProfile.DoesNotExist:
-                return redirect('setup')  # Redirect to setup if no profile exists
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
-
 def js_profile_completed(view_func):
     """
-    Decorator to restrict access to views based on user's profile being completed.
-    Only allows users with the role 'job_searcher' whose profile has been completed.
-    Redirects to setup if no profile exists.
+    Ensure that only employers with a completed profile can access certain views.
     """
-    def _wrapped_view(request, *args, **kwargs):
+    def wrapper(request, *args, **kwargs):
         user = request.user
         try:
             profile = UserProfile.objects.get(user=user)
             if not profile.profile_completed:
-                raise PermissionDenied("Access Forbidden: Can only access page if profile has been completed")
+                return redirect('js_setup_profile')
         except UserProfile.DoesNotExist:
-            return redirect('setup')  # Redirect to setup if no profile exists
+            return redirect('js_setup_profile')
         return view_func(request, *args, **kwargs)
-    return _wrapped_view
+    return wrapper
+
+def js_profile_not_completed(view_func):
+    """
+    Ensure that employers without a completed profile are redirected to complete their profile.
+    """
+    def wrapper(request, *args, **kwargs):
+        user = request.user
+        try:
+            profile = UserProfile.objects.get(user=user)
+            if profile.profile_completed:
+                return HttpResponseForbidden("Access Forbidden: Profile already completed.")
+        except UserProfile.DoesNotExist:
+            return view_func(request, *args, **kwargs)
+        return redirect('jobsearcher_dashboard')
+    return wrapper
+
 
 def employer_required(view_func):
     """
@@ -62,29 +58,32 @@ def employer_required(view_func):
             return HttpResponseForbidden("Access Forbidden: Only Employers are allowed to access this page.")
         return view_func(request, *args, *kwargs)
     return _wrapped_view
+def emp_profile_completed(view_func):
+    """
+    Ensure that only employers with a completed profile can access certain views.
+    """
+    def wrapper(request, *args, **kwargs):
+        user = request.user
+        try:
+            profile = EmployerProfile.objects.get(user=user)
+            if not profile.employer_completed:
+                return redirect('emp_setup')
+        except EmployerProfile.DoesNotExist:
+            return redirect('emp_setup')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 def emp_profile_not_completed(view_func):
     """
-    Decorator to restrict access to views based on user's profile being completed.
-    Only allows users with the role 'employer' to access the view.
+    Ensure that employers without a completed profile are redirected to complete their profile.
     """
-    def _wrapped_view(request, *args, **kwargs):
+    def wrapper(request, *args, **kwargs):
         user = request.user
-        profile = EmployerProfile.objects.get(user=user)
-        if profile.employer_completed:
-            raise PermissionDenied("Access Forbidden: Can only access page if profile has been completed")
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
-
-def emp_profile_completed(view_func):
-    """
-    Decorator to restrict access to views based on user's profile being completed.
-    Only allows users with the role 'employer' to access the view.
-    """
-    def _wrapped_view(request, *args, **kwargs):
-        user = request.user
-        profile = EmployerProfile.objects.get(user=user)
-        if not profile.employer_completed:
-            raise PermissionDenied("Access Forbidden: Can only access page if profile has not been completed")
-        return view_func(request, *args, **kwargs)
-    return _wrapped_view
+        try:
+            profile = EmployerProfile.objects.get(user=user)
+            if profile.employer_completed:
+                return HttpResponseForbidden("Access Forbidden: Profile already completed.")
+        except EmployerProfile.DoesNotExist:
+            return view_func(request, *args, **kwargs)
+        return redirect('emp_dashboard')
+    return wrapper

@@ -22,6 +22,7 @@ urlpatterns = [
     path('chat/processMessages/', JobSearcher.processMessages, name='processMessages'),
     path('chat/clearchat/', JobSearcher.clearChat, name='clearChat'),
     path('search/', JobSearcher.search, name='search'),
+    path('apply-for-job/', JobSearcher.apply_for_job, name='apply_for_job'),
 
     path('emp-setup/', EmployerViews.emp_setupProfile, name='emp_setupProfile'),
     path("employer/job_posting/",EmployerViews.job_posting_page, name="job_posting_page"),

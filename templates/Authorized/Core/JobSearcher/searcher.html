@@ -11,97 +11,131 @@
         font-family: 'Roboto', sans-serif;
         background-color: #ffffff;
         margin: 0;
-        padding: 20px;
+        padding: 0;
         color: #333;
     }
     .search-panel {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     }
-    .form-control, .btn {
-        border-radius: 8px;
+    .search-icon {
+        max-width: 200px;
+        height: auto;
+    }
+    .search-form .form-control {
+        font-size: 1.1rem;
+        padding: 0.75rem 1.25rem;
+        border: 1px solid #ced4da;
+        border-top-left-radius: 0.5rem;
+        border-bottom-left-radius: 0.5rem;
+    }
+    .search-form .btn {
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
+        border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+        box-shadow: none;
+        transition: all 0.3s ease;
+    }
+    .search-form .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
     }
     .btn-primary {
         background-color: #1a73e8;
-        color: white;
-        padding: 10px 20px;
+        border-color: #1a73e8;
     }
     .btn-primary:hover {
         background-color: #0c49b5;
+        border-color: #0c49b5;
     }
     .dropdown-menu {
-        border-radius: 8px;
+        border-radius: 0.5rem;
     }
     .job-listings-container {
-        position: relative;
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 0.75rem;
         max-height: 600px;
         overflow-y: auto;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     }
     .job-listing {
         background: #ffffff;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
         display: flex;
         align-items: center;
         cursor: pointer;
+        transition: all 0.3s ease;
     }
     .job-listing:hover {
         background-color: #e8f0fe;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     }
     .icon-container {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 20px;
+        margin-right: 1.5rem;
     }
     .icon-container img {
         width: 100%;
         height: auto;
     }
     .details-panel {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        background: #fff;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
         height: 100%;
         overflow: hidden;
     }
     h4, h5 {
         margin-top: 0;
         color: #333;
-        font-size: 22px;
+        font-size: 1.5rem;
     }
     p {
         color: #666;
-        font-size: 16px;
+        font-size: 1rem;
         line-height: 1.5;
     }
+    .filters-panel {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
 </style>
+
 {% endblock %}
 
 {% block content %}
 <main class="container mt-5">
-    <div class="row">
-        <div class="col-md-8">
+    <div class="row mb-5">
+        <div class="col-md-12 text-center mb-4">
+            <img src="{% static 'assets/img/illustrations/login.svg' %}" alt="Search Icon" class="search-icon">
+        </div>
+        <div class="col-md-8 offset-md-2">
             <div class="search-panel">
-                <form class="d-flex flex-wrap align-items-center" method="get" action="{% url 'search' %}">
-                    <div class="input-group me-3">
-                        <input class="form-control rounded-pill" type="text" name="q" placeholder="Search Job Title..." aria-label="Job Title">
-                        <button class="btn btn-primary rounded-pill" type="submit"><i class="fas fa-search"></i></button>
+                <form class="d-flex flex-wrap align-items-center search-form" method="get" action="{% url 'search' %}">
+                    <div class="input-group">
+                        <input class="form-control border-0 shadow-sm" type="text" name="q" placeholder="Search Job Title..." aria-label="Job Title">
+                        <button class="btn btn-primary ms-2" type="submit"><i class="fas fa-search"></i></button>
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
             <div class="job-listings-container" id="jobListings">
                 <!-- Job listings will be dynamically inserted by JavaScript -->
             </div>
@@ -132,11 +166,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function updateJobListings(jobs) {
     let listingsHTML = jobs.map(job => {
-        const companyWebsite = job.fields.company_website || '#';  // Use a fallback if the URL is not specified
+        const companyWebsite = job.fields.company_website ? `https://logo.clearbit.com/${encodeURIComponent(job.fields.company_website)}` : '{% static "img/default-logo.png" %}';
         return `
             <div class="job-listing" onclick="showDetails(${job.pk})">
                 <div class="icon-container">
-                    <img src="https://logo.clearbit.com/${companyWebsite}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';">
+                    <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}'">
+                    <img src="${companyWebsite}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';">
                 </div>
                 <div>
                     <h5>${job.fields.position}</h5>
@@ -151,26 +186,85 @@ function updateJobListings(jobs) {
 
 function showDetails(jobId) {
     const job = globalJobs.find(job => job.pk === jobId);
+    console.log("Showing details for Job ID:", jobId);  
+    const jobType = job.fields.job_type || 'Unknown';  // Fallback to 'Unknown' if job type is not specified
+    const jobTypeColor = getJobTypeColor(jobType);
+    const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';  // Join skills array into a string
+
     if (job) {
-        const companyWebsite = job.fields.company_website || '#';
+        const companyWebsite = job.fields.company_website ? `https://logo.clearbit.com/${encodeURIComponent(job.fields.company_website)}` : '{% static "img/default-logo.png" %}';
+        console.log({{ job.pk }})
         document.getElementById('jobDetails').innerHTML = `
-            <div style="padding: 20px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                <img src="https://logo.clearbit.com/${companyWebsite}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';" style="width: 80px; height: auto; border-radius: 8px; margin-bottom: 20px;">
-                <h4>${job.fields.position}</h4>
-                <p><strong>Company:</strong> ${job.fields.company}</p>
-                <p><strong>Location:</strong> ${job.fields.location}</p>
-                <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
-                <p>${job.fields.description}</p>
-                <button class="btn btn-primary" onclick="applyJob(${job.pk})">Apply Now</button>
-            </div>
+            <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';" alt="${job.fields.company} Logo" style="width: 80px; height: auto; border-radius: 8px; margin-bottom: 20px;">
+            <h4>${job.fields.position}</h4>
+            <span class="job-type-badge" style="background-color: ${jobTypeColor}; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; display: inline-block;">${jobType}</span>
+            <p><strong>Company:</strong> ${job.fields.company}</p>
+            <p><strong>Location:</strong> ${job.fields.location}</p>
+            <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
+            <p style="white-space: pre-wrap; word-wrap: break-word;">${job.fields.description}</p>
+            <p><strong>Skills:</strong> ${skillsDisplay}</p>
+            <button class="btn btn-primary" id="apply-btn-${jobId}" onclick="applyJob(${jobId})">Apply Now</button>
         `;
     } else {
         document.getElementById('jobDetails').innerHTML = '<p>No job details available.</p>';
     }
 }
 
-function applyJob(jobId) {
-    alert("Application sent for job ID " + jobId);
+function getJobTypeColor(jobType) {
+    switch (jobType) {
+        case 'Contractor':
+            return '#3b93f8';  // Orange for contractor
+        case 'Internship':
+            return '#57017c';  // Purple for internship
+        case 'Full-time':
+            return '#27ae60';  // Green for full-time
+        default:
+            return '#95a5a6';  // Grey for unknown
+    }
 }
+function applyJob(jobId) {
+    console.log("Applying for job ID:", jobId); // Debugging log
+    fetch(`{% url 'apply_for_job' %}?job_id=${jobId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Application sent for job ID " + jobId);
+            const applyButton = document.getElementById(`apply-btn-${jobId}`);
+            if (applyButton) {
+                applyButton.textContent = "Applied";
+                applyButton.disabled = true;
+            }
+        } else {
+            alert("Failed to apply. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error('Error applying for job:', error);
+        alert("There was an error applying for the job. Please try again.");
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 </script>
 {% endblock %}

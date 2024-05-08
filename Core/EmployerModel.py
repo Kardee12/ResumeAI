@@ -9,6 +9,11 @@ class JobSkills(models.Model):
     def __str__(self):
         return self.name
 
+class JobType(models.TextChoices):
+    CONTRACTOR = 'Contractor', 'Contractor'
+    INTERNSHIP = 'Internship', 'Internship'
+    FULL_TIME = 'Full-time', 'Full-time'
+    PART_TIME = 'Part-time', 'Part-time'
 
 class Job(models.Model):
     job_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -23,6 +28,7 @@ class Job(models.Model):
     list_of_applicants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='applied_jobs', blank=True)
     link_to_apply = models.URLField(max_length=200, blank=True, null=True)
     link_to_company = models.URLField(max_length=200, blank=True, null=True)
+    job_type = models.CharField(max_length=20, choices=JobType.choices, default=JobType.FULL_TIME)
 
     def __str__(self):
         return self.position

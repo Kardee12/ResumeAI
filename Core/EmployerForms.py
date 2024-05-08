@@ -1,6 +1,7 @@
 from django import forms
 from profile import Profile
-from .EmployerModel import  Job, JobSkills, EmployerProfile
+from .EmployerModel import Job, JobSkills, EmployerProfile, JobType
+
 
 class JobForm(forms.Form):
     company = forms.CharField(label='Company', max_length=200, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter company name'}))
@@ -10,7 +11,7 @@ class JobForm(forms.Form):
     location = forms.CharField(label='Location', max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Location Details'}))
     link_to_apply = forms.URLField(label='Link to Apply', max_length=200, required=False, widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Link to Application'}))
     link_to_company = forms.URLField(label='Link to Company', max_length=200, required=False, widget=forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Link to Company Page'}))
-    company_image = forms.ImageField(label="Company Image", required=False, help_text="Optional Image for the Company")
+    job_type = forms.ChoiceField(choices=JobType.choices, label='Job Type', widget=forms.Select(attrs={'class': 'form-control'}))
     skill_1 = forms.ModelChoiceField(queryset=JobSkills.objects.all(), required=False, widget=forms.Select(attrs={'class': 'form-control'}))
     skill_2 = forms.ModelChoiceField(queryset=JobSkills.objects.all(), required=False, widget=forms.Select(attrs={'class': 'form-control'}))
     skill_3 = forms.ModelChoiceField(queryset=JobSkills.objects.all(), required=False, widget=forms.Select(attrs={'class': 'form-control'}))

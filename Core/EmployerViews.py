@@ -1,5 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+
+from Core.functions import ParsingUtility
+from Core.functions.ParsingUtility import ParsingFunctions
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
 from Core.EmployerForms import EmployerProfileForm, JobForm
@@ -72,23 +75,26 @@ def create_job_posting(request):
         # Handling manual fields like link to company and skills
         link_to_company = request.POST.get('link_to_company')
         skills = [request.POST.get(f'skill_{i}') for i in range(1, 11)]  # Adjust the range as needed
+        aiParser = ParsingFunctions()
+        normalized_skills = aiParser.normalize_skills([skill for skill in skills if skill])  # Normalize and filter out empty
         new_job = Job(
             company=request.POST.get('company'),
             employer_profile=employer_profile,
             position=request.POST.get('position'),
             description=request.POST.get('description'),
+            job_type=request.POST.get('job_type'),
             pay=request.POST.get('pay'),
             location=request.POST.get('location'),
             link_to_apply=request.POST.get('link_to_apply'),
             link_to_company=request.POST.get('link_to_company'),
         )
-        # Assuming you handle skills as strings for now, adapt this part if you use JobSkills model
-        for skill_name in skills:
-            if skill_name:  # Ensure no empty strings are processed
+        new_job.save()
+
+        for skill_name in normalized_skills:
+            if skill_name:
                 skill, created = JobSkills.objects.get_or_create(name=skill_name)
                 new_job.skills.add(skill)
         new_job.save()
-
         return redirect('employer_dashboard')
     else:
         return render(request, 'Authorized/Core/Employer/create-job-posting.html')

@@ -1,4 +1,5 @@
 import io
+import json
 import os
 
 from django.contrib import messages
@@ -9,9 +10,9 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 
-from Core.models import UserProfile, UserResume, UserSkill
+from Core.models import UserProfile, UserResume, UserSkill, JobApplication
 from ResumeAI.Generic.generic_decoraters import job_searcher_required, js_profile_completed, js_profile_not_completed
 from django.contrib.auth.decorators import login_required
 from ResumeAI import settings
@@ -24,8 +25,7 @@ from .functions.JobSearcherDBUtility import create_user_skills, update_user_skil
 from .functions.ParsingUtility import ResumeParsing, ParsingFunctions
 
 from django.db import transaction
-from django.db.models import Q
-
+from django.db.models import Q, Count
 
 
 @login_required
@@ -266,15 +266,79 @@ def clearChat(request):
         del request.session['conversation_memory']
     return JsonResponse({'success': True}, status=200)
 
+
+def custom_job_serializer(jobs):
+    job_list = []
+    for job in jobs:
+        job_info = {
+            'pk': job.pk,
+            'fields': {
+                'applicant_count': job.applicant_count,
+                'company': job.company,
+                'position': job.position,
+                'description': job.description,
+                'location': job.location,
+                'pay': job.pay,
+                'link_to_apply': job.link_to_apply,
+                'link_to_company': job.link_to_company,
+                'job_type': job.job_type,
+                'skills': [skill.name for skill in job.skills.all()]  # Include skill names
+            }
+        }
+        job_list.append(job_info)
+    return job_list
+
 @csrf_exempt
 @js_profile_completed
 @login_required
 def search(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    user_skill_names = user_profile.skills.values_list('name', flat=True)
     query = request.GET.get('q', '')
     if query:
-        jobs = Job.objects.filter(Q(position__icontains=query) | Q(description__icontains=query) | Q(company__icontains=query))
+        jobs = Job.objects.filter(
+            Q(position__icontains=query) | Q(description__icontains=query) |
+            Q(company__icontains=query) | Q(location__icontains=query) |
+            Q(pay__icontains=query) | Q(job_type__icontains=query)
+        ).distinct()
     else:
         jobs = Job.objects.all()
-    jobs_json = serialize('json', jobs, use_natural_foreign_keys=True)
-    print(jobs_json)
+        jobs = jobs.prefetch_related('skills')
+        jobs = jobs.filter(skills__name__in=user_skill_names).distinct() if user_skill_names else jobs
+    print(jobs)
+    jobs_data = custom_job_serializer(jobs)
+    jobs_json = json.dumps(jobs_data)
     return render(request, 'Authorized/Core/JobSearcher/searcher.html', {'jobs_json': jobs_json, 'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY})
+
+
+from django.db import transaction
+
+
+@require_POST
+@login_required
+def apply_for_job(request):
+    job_id = request.GET.get('job_id')
+    user = request.user
+
+    try:
+        job = Job.objects.get(pk=job_id)
+        with transaction.atomic():
+            application, created = JobApplication.objects.get_or_create(user=user, job=job)
+            if created:
+                application.status = 'applied'
+                application.save()
+                job.applicant_count += 1
+                job.list_of_applicants.add(user)
+                print(job.list_of_applicants)
+                job.save()
+                print(f"Application created for user {user.username} to job {job.position}")
+            else:
+                print(f"Application already exists for user {user.username} to job {job.position}")
+
+        return JsonResponse({"success": True}, status=200)
+    except Job.DoesNotExist:
+        print(f"Job with id {job_id} not found")
+        return JsonResponse({"success": False, "error": "Job not found"}, status=404)
+    except Exception as e:
+        print(f"Error applying for job: {str(e)}")
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
