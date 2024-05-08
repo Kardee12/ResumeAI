@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from Core.functions import ParsingUtility
 from Core.functions.ParsingUtility import ParsingFunctions
+from Core.models import JobApplication
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
 from Core.EmployerForms import EmployerProfileForm, JobForm
@@ -144,12 +145,33 @@ def edit_company_page(request):
 @employer_required
 @emp_profile_completed
 def candidatePage(request, job_id):
-    job = get_object_or_404(Job, job_id)
-    required_skills = job.skills_used.all()
-    applicants = job.list_of_applicants.annotate(matching_skills_count=Count('user__resumeskills', filter=models.Q(user__resumeskills__in=required_skills))).order_by('-matching_skills_count')
+    job = get_object_or_404(Job, job_uuid=job_id)
+    job_applications = JobApplication.objects.filter(job=job)
+    employer_profile = EmployerProfile.objects.get(user=request.user)
+    candidates = [app.user.profile for app in job_applications if app.user.profile.profile_completed]
 
-    return render(request, 'Authorized/Core/Employer/CandidateList.html', {'applicants': applicants, 'job': job})
+    context = {
+        'job': job,
+        'candidates': candidates,
+        'employer_profile' : employer_profile,
+    }
 
+
+    return render(request, 'Authorized/Core/Employer/CandidateList.html', context = context)
+
+def update_candidate_status(request, application_id):
+    job_application = get_object_or_404(JobApplication, id=application_id)
+
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in dict(JobApplication.STATUS_CHOICES):
+            job_application.status = new_status
+            job_application.save()
+            return redirect('candidate_list', job_id=job_application.job.job_uuid)
+        else:
+            return redirect('job_posting_page')
+
+    return redirect('some_error_page')  # Redirect somewhere appropriate if not a POST request
 def custom_job_serializer(jobs):
     job_list = []
     for job in jobs:
@@ -182,11 +204,6 @@ def job_posting_page(request):
         'jobs_json': json.dumps(jobs_json)
     }
     return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", context)
-@login_required
-@employer_required
-@emp_profile_completed
-def candidatePage(request):
-    return render(request, "Authorized/Core/Employer/CandidateList.html")
 
 @login_required
 @employer_required
