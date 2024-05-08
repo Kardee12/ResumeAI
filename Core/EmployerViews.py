@@ -1,12 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 
 from Core.functions import ParsingUtility
 from Core.functions.ParsingUtility import ParsingFunctions
 from Core.models import JobApplication
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
-from Core.EmployerForms import EmployerProfileForm, JobForm
+from Core.EmployerForms import EditEmployerProfile, EmployerProfileForm, JobForm
 from Core.EmployerModel import EmployerProfile, Job, JobSkills
 from django.db import transaction, models
 from django.db.models import Count, Q
@@ -123,6 +124,35 @@ def employer_dashboard(request):
         'jobs_with_applicants': jobs_with_applicants,
     }
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
+
+@login_required
+@employer_required
+@emp_profile_completed
+def edit_employer_profile(request):
+    user = request.user
+    profile, created = EmployerProfile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        position = request.POST.get('position')
+        company_description = request.POST.get('company_description')
+        company_website = request.POST.get('company_website')
+
+        with transaction.atomic():
+            if position and position != profile.position:
+                profile.position = position
+            if company_description and company_description != profile.company_description:
+                profile.company_description = company_description
+            if company_website and company_website != profile.company_website:
+                profile.company_website = company_website
+
+            profile.save()
+            messages.success(request, "Your profile has been updated successfully.")
+            return redirect('employer_dashboard')
+
+    context = {
+        'profile': profile
+    }
+    return render(request, 'Authorized/Core/Employer/edit_employer_profile.html', context)
 
 
 # work on this later 5/6/24

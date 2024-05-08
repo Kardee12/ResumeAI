@@ -79,7 +79,7 @@
             {% endwith %}
             <h4>{{ user.first_name|title }} {{user.last_name|title}}</h4>
             <p>{{ user.employer_profile.position|title }} @ {{ user.employer_profile.company_name|title }}</p>
-            <a href="#" class="btn btn-primary mt-3">Manage Profile</a>
+            <a href="{% url 'edit_employer_profile'%}" class="btn btn-primary mt-3">Manage Profile</a>
         </div>
         <div class="row">
             <div class="col-md-6">

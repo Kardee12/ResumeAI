@@ -29,6 +29,7 @@ urlpatterns = [
     path("employer/job_posting/",EmployerViews.job_posting_page, name="job_posting_page"),
     path("employer/<uuid:job_id>/candidate_list", EmployerViews.candidatePage ,name="candidate_list"),
     path("employer/profile/", EmployerViews.profile, name="employer_profile"),
+    path('employer/profile/edit', EmployerViews.edit_employer_profile, name='edit_employer_profile'),
     path('employer/job-posting-page', EmployerViews.job_posting_page, name = 'job_posting_page'),
     path('employer/create-job-posting', EmployerViews.create_job_posting, name='create_job_posting'),
     path('employer/dashboard/', EmployerViews.employer_dashboard, name='employer_dashboard'),

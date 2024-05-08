@@ -1,0 +1,75 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}
+Edit Employer Profile - ResumeAI
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+        color: #525f7f;
+    }
+    .navbar {
+        background-color: #fff;
+    }
+    .create-profile-form {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    .form-control {
+        border-radius: 15px;
+    }
+    .btn-custom {
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    textarea.form-control {
+        border-radius: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="create-profile-form">
+                <form method="post" action="{% url 'edit_employer_profile' %}">
+                    {% csrf_token %}
+                    <h2 class="text-center mb-4">Edit Employer Profile</h2>
+                    <div class="mb-3">
+                        <label for="position" class="form-label">Position</label>
+                        <input type="text" id="position" name="position" class="form-control" value="{{ profile.position }}" placeholder="Position">
+                    </div>
+                    <div class="mb-3">
+                        <label for="company_description" class="form-label">Company Description</label>
+                        <textarea id="company_description" name="company_description" class="form-control" placeholder="Describe your company">{{ profile.company_description }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="company_website" class="form-label">Company Website</label>
+                        <input type="url" id="company_website" name="company_website" class="form-control" value="{{ profile.company_website }}" placeholder="http://">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-custom">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
