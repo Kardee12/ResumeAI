@@ -1,36 +1,37 @@
 from django.db import models
 from django.conf import settings
 from allauth.socialaccount.models import SocialAccount
-from Core.models import UserProfile
 import uuid
 
-
-class Searcher(models.Model):
-    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='searcher')
-
-class Job(models.Model):
-    job_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    employer_profile = models.ForeignKey('EmployerProfile', on_delete=models.CASCADE, related_name='jobs', null=True)
-    applicant_count = models.IntegerField(default=0, editable=False)
-    position = models.CharField(max_length=200)
-    description = models.TextField()
-    pay = models.CharField(max_length=100)
-    skills_used = models.ManyToManyField('ResumeSkills')
-    company_image_url = models.URLField(max_length=255, blank=True, null=True)
-    list_of_applicants = models.ManyToManyField(Searcher, related_name='applied_jobs', blank=True)
-    link_to_apply = models.URLField(max_length = 200, blank=True, null=True)
-    link_to_company = models.URLField(max_length = 200, blank=True,null=True)
-    
-    def __str__(self):
-        return self.position
-
-
-class ResumeSkills(models.Model):
+class JobSkills(models.Model):
     name = models.CharField(max_length=120, unique=True)
 
     def __str__(self):
         return self.name
 
+class JobType(models.TextChoices):
+    CONTRACTOR = 'Contractor', 'Contractor'
+    INTERNSHIP = 'Internship', 'Internship'
+    FULL_TIME = 'Full-time', 'Full-time'
+    PART_TIME = 'Part-time', 'Part-time'
+
+class Job(models.Model):
+    job_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    employer_profile = models.ForeignKey('EmployerProfile', on_delete=models.CASCADE, related_name='jobs', null=True)
+    applicant_count = models.IntegerField(default=0, editable=False)
+    company = models.CharField(max_length=120, null=True, blank=True)
+    position = models.CharField(max_length=200)
+    description = models.TextField()
+    location = models.CharField(max_length=100, blank=True)
+    pay = models.CharField(max_length=100)
+    skills = models.ManyToManyField(JobSkills, blank=True)
+    list_of_applicants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='applied_jobs', blank=True)
+    link_to_apply = models.URLField(max_length=200, blank=True, null=True)
+    link_to_company = models.URLField(max_length=200, blank=True, null=True)
+    job_type = models.CharField(max_length=20, choices=JobType.choices, default=JobType.FULL_TIME)
+
+    def __str__(self):
+        return self.position
 
 class EmployerProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employer_profile')
@@ -41,13 +42,3 @@ class EmployerProfile(models.Model):
     employer_completed = models.BooleanField(default=False)
     def __str__(self):
         return f"{self.company_name} Profile"
-
-class JobApplication(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    job_searcher = models.ForeignKey(Searcher, on_delete=models.CASCADE)
-    application_date = models.DateTimeField(auto_now_add = True)
-    status = models.CharField(max_length=50, choices=[('Offer', 'offer'), ('Reject', 'reject'),('Interview', 'interview'), ('Pending', 'pending')],
-                            null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.job_searcher.user.username} - {self.job.position}"
