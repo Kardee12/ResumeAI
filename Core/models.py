@@ -3,6 +3,8 @@ from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
+from Core.EmployerModel import Job
+
 
 class UserSkill(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -35,3 +37,22 @@ class UserResume(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Resume - {self.resume.name if self.resume else 'No resume uploaded'}"
+
+
+class JobApplication(models.Model):
+    STATUS_CHOICES = (
+        ('Applied', 'Applied'),
+        ('Interview', 'Interview'),
+        ('Offer', 'Offer'),
+        ('Rejected', 'Rejected'),
+        ('Accepted', 'Accepted'),
+        ('Declined', 'Declined'),
+    )
+
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applications')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='job_applications')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Applied')
+    application_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.job.position} - {self.status}"

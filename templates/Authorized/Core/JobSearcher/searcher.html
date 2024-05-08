@@ -1,10 +1,7 @@
 {% extends "Authorized/Core/JobSearcher/Base.html" %}
 {% load static %}
-{% load socialaccount %}
 
-{% block title %}
-    Job Search - ResumeAI
-{% endblock %}
+{% block title %}Create Job Posting - ResumeAI{% endblock %}
 
 {% block extra_head %}
 <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700|Roboto:300,400,500,700&display=swap" rel="stylesheet">
@@ -12,40 +9,73 @@
 <style>
     body {
         font-family: 'Roboto', sans-serif;
-        background-color: #f4f4f4;
+        background-color: #ffffff;
         margin: 0;
-        padding: 20px;
+        padding: 0;
         color: #333;
     }
     .search-panel {
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 1px 3px 13px 7px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+    .search-icon {
+        max-width: 200px;
+        height: auto;
+    }
+    .search-form .form-control {
+        font-size: 1.1rem;
+        padding: 0.75rem 1.25rem;
+        border: 1px solid #ced4da;
+        border-top-left-radius: 0.5rem;
+        border-bottom-left-radius: 0.5rem;
+    }
+    .search-form .btn {
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
+        border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+        box-shadow: none;
+        transition: all 0.3s ease;
+    }
+    .search-form .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .btn-primary {
+        background-color: #1a73e8;
+        border-color: #1a73e8;
+    }
+    .btn-primary:hover {
+        background-color: #0c49b5;
+        border-color: #0c49b5;
+    }
+    .dropdown-menu {
+        border-radius: 0.5rem;
+    }
+    .job-listings-container {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        max-height: 600px;
+        overflow-y: auto;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     }
     .job-listing {
         background: #ffffff;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,.1);
-        cursor: pointer;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
         display: flex;
         align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
     .job-listing:hover {
-        background-color: #f8f9fa;
-    }
-    .details-panel {
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,.1);
-        height: 100%;
-    }
-    .form-control, .btn, .form-select {
-        border-radius: 20px;
+        background-color: #e8f0fe;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     }
     .icon-container {
         width: 50px;
@@ -53,78 +83,61 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 10px;
+        margin-right: 1.5rem;
     }
     .icon-container img {
         width: 100%;
         height: auto;
     }
-    #toggleFilters {
-        display: block;
-        width: 100%;
-        text-align: center;
+    .details-panel {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        height: 100%;
+        overflow: hidden;
+    }
+    h4, h5 {
+        margin-top: 0;
+        color: #333;
+        font-size: 1.5rem;
+    }
+    p {
+        color: #666;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    .filters-panel {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     }
 </style>
+
 {% endblock %}
 
 {% block content %}
 <main class="container mt-5">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="search-panel mb-4">
-                <form class="d-flex justify-content-between flex-wrap">
-                    <div class="input-group mb-3">
-                        <input class="form-control" type="text" placeholder="Search Job Title..." aria-label="Job Title">
-                        <button class="btn btn-outline-primary" type="button" id="searchButton"><i class="fas fa-search"></i></button>
-                    </div>
-                    <button class="btn btn-primary mb-3" id="toggleFilters" data-bs-toggle="collapse" data-bs-target="#filtersPanel" aria-expanded="false" aria-controls="filtersPanel">
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <div class="collapse" id="filtersPanel">
-                        <div class="card card-body">
-                            <div class="d-flex justify-content-between flex-wrap">
-                                <div class="me-3 mb-3">
-                                    <label for="sortBy" class="form-label">Sort by:</label>
-                                    <select class="form-select" id="sortBy">
-                                        <option selected>Newest</option>
-                                        <option>Oldest</option>
-                                        <option>Salary</option>
-                                    </select>
-                                </div>
-                                <div class="me-3 mb-3">
-                                    <label for="jobType" class="form-label">Job Type:</label>
-                                    <select class="form-select" id="jobType">
-                                        <option selected>All</option>
-                                        <option>Full Time</option>
-                                        <option>Part Time</option>
-                                        <option>Internship</option>
-                                    </select>
-                                </div>
-                                <div class="me-3 mb-3">
-                                    <label for="workType" the="form-label">Work Type:</label>
-                                    <select class="form-select" id="workType">
-                                        <option selected>All</option>
-                                        <option>Onsite</option>
-                                        <option>Remote</option>
-                                        <option>Hybrid</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="skills" class="form-label">Skills:</label>
-                                    <select class="form-select" id="skills">
-                                        <option selected>All</option>
-                                        <option>Python</option>
-                                        <option>JavaScript</option>
-                                        <option>Java</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+    <div class="row mb-5">
+        <div class="col-md-12 text-center mb-4">
+            <img src="{% static 'assets/img/illustrations/login.svg' %}" alt="Search Icon" class="search-icon">
+        </div>
+        <div class="col-md-8 offset-md-2">
+            <div class="search-panel">
+                <form class="d-flex flex-wrap align-items-center search-form" method="get" action="{% url 'search' %}">
+                    <div class="input-group">
+                        <input class="form-control border-0 shadow-sm" type="text" name="q" placeholder="Search Job Title..." aria-label="Job Title">
+                        <button class="btn btn-primary ms-2" type="submit"><i class="fas fa-search"></i></button>
                     </div>
                 </form>
             </div>
-            <div id="jobListings">
-                <!-- Job listings will be dynamically inserted here -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="job-listings-container" id="jobListings">
+                <!-- Job listings will be dynamically inserted by JavaScript -->
             </div>
         </div>
         <div class="col-md-4">
@@ -137,82 +150,121 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="application/json" id="jobs-data">
+    {{ jobs_json|safe }}
+</script>
 <script>
-    const filtersPanel = document.getElementById('filtersPanel');
-    const toggleFiltersButton = document.getElementById('toggleFilters');
+let globalJobs = []; // Define globally to access in any function
 
-    toggleFiltersButton.addEventListener('click', () => {
-        const isOpen = filtersPanel.classList.contains('show');
-        toggleFiltersButton.innerHTML = isOpen ? '<i class="fas fa-chevron-down"></i>' : '<i class="fas fa-chevron-up"></i>';
-    });
-
-    const dummyData = [
-        {
-            id: 1,
-            title: 'Software Engineer',
-            company: 'Google',
-            location: 'Mountain View, CA',
-            description: 'Develop scalable applications using a range of technologies and frameworks.',
-            companyLogo: '{% static "img/google-logo.png" %}',
-            jobType: 'full-time',
-            workType: 'remote',
-            skills: ['Python', 'JavaScript']
-        },
-        {
-            id: 2,
-            title: 'Product Manager',
-            company: 'Apple',
-            location: 'Cupertino, CA',
-            description: 'Lead product initiatives.',
-            companyLogo: '{% static "img/apple-logo.png" %}',
-            jobType: 'part-time',
-            workType: 'hybrid',
-            skills: ['Product Management', 'Marketing']
-        },
-        {
-            id: 3,
-            title: 'Web Developer',
-            company: 'Netflix',
-            location: 'Los Gatos, CA',
-            description: 'Build and optimize user interfaces for our streaming platform.',
-            companyLogo: '{% static "img/netflix-logo.png" %}',
-            jobType: 'contract',
-            workType: 'onsite',
-            skills: ['HTML', 'CSS', 'JavaScript']
-        }
-    ];
-
-    function showDetails(jobId) {
-        const job = dummyData.find(job => job.id === parseInt(jobId));
-        if (job) {
-            document.getElementById('jobDetails').innerHTML = `
-                <div>
-                    <img src="${job.companyLogo}" alt="${job.company}" style="width: 100%; border-radius: 8px;">
-                    <h4>${job.title}</h4>
-                    <p>${job.company} - ${job.location}</p>
-                    <p>${job.description}</p>
-                    <a href="#" class="btn btn-primary">Apply Now</a>
-                </div>
-            `;
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    const jobsDataElement = document.getElementById('jobs-data');
+    if (jobsDataElement) {
+        globalJobs = JSON.parse(jobsDataElement.textContent); // Store jobs data in global variable
+        updateJobListings(globalJobs);
     }
+});
 
-    function updateJobListings() {
-        let listingsHTML = dummyData.map(job => `
-            <div class="job-listing" onclick="showDetails(${job.id})">
+function updateJobListings(jobs) {
+    let listingsHTML = jobs.map(job => {
+        const companyWebsite = job.fields.company_website ? `https://logo.clearbit.com/${encodeURIComponent(job.fields.company_website)}` : '{% static "img/default-logo.png" %}';
+        return `
+            <div class="job-listing" onclick="showDetails(${job.pk})">
                 <div class="icon-container">
-                    <img src="${job.companyLogo}" alt="${job.company}">
+                    <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}'">
+                    <img src="${companyWebsite}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';">
                 </div>
                 <div>
-                    <h5>${job.title}</h5>
-                    <p>${job.company} - ${job.location}</p>
+                    <h5>${job.fields.position}</h5>
+                    <p>${job.fields.company} - ${job.fields.location || 'Not specified'}</p>
+                    <p>$${parseFloat(job.fields.pay).toLocaleString()} per year</p>
                 </div>
             </div>
-        `).join('');
-        document.getElementById('jobListings').innerHTML = listingsHTML;
-    }
+        `;
+    }).join('');
+    document.getElementById('jobListings').innerHTML = listingsHTML;
+}
 
-    document.addEventListener('DOMContentLoaded', updateJobListings);
+function showDetails(jobId) {
+    const job = globalJobs.find(job => job.pk === jobId);
+    console.log("Showing details for Job ID:", jobId);  
+    const jobType = job.fields.job_type || 'Unknown';  // Fallback to 'Unknown' if job type is not specified
+    const jobTypeColor = getJobTypeColor(jobType);
+    const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';  // Join skills array into a string
+
+    if (job) {
+        const companyWebsite = job.fields.company_website ? `https://logo.clearbit.com/${encodeURIComponent(job.fields.company_website)}` : '{% static "img/default-logo.png" %}';
+        console.log({{ job.pk }})
+        document.getElementById('jobDetails').innerHTML = `
+            <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';" alt="${job.fields.company} Logo" style="width: 80px; height: auto; border-radius: 8px; margin-bottom: 20px;">
+            <h4>${job.fields.position}</h4>
+            <span class="job-type-badge" style="background-color: ${jobTypeColor}; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; display: inline-block;">${jobType}</span>
+            <p><strong>Company:</strong> ${job.fields.company}</p>
+            <p><strong>Location:</strong> ${job.fields.location}</p>
+            <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
+            <p style="white-space: pre-wrap; word-wrap: break-word;">${job.fields.description}</p>
+            <p><strong>Skills:</strong> ${skillsDisplay}</p>
+            <button class="btn btn-primary" id="apply-btn-${jobId}" onclick="applyJob(${jobId})">Apply Now</button>
+        `;
+    } else {
+        document.getElementById('jobDetails').innerHTML = '<p>No job details available.</p>';
+    }
+}
+
+function getJobTypeColor(jobType) {
+    switch (jobType) {
+        case 'Contractor':
+            return '#3b93f8';  // Orange for contractor
+        case 'Internship':
+            return '#57017c';  // Purple for internship
+        case 'Full-time':
+            return '#27ae60';  // Green for full-time
+        default:
+            return '#95a5a6';  // Grey for unknown
+    }
+}
+function applyJob(jobId) {
+    console.log("Applying for job ID:", jobId); // Debugging log
+    fetch(`{% url 'apply_for_job' %}?job_id=${jobId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Application sent for job ID " + jobId);
+            const applyButton = document.getElementById(`apply-btn-${jobId}`);
+            if (applyButton) {
+                applyButton.textContent = "Applied";
+                applyButton.disabled = true;
+            }
+        } else {
+            alert("Failed to apply. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error('Error applying for job:', error);
+        alert("There was an error applying for the job. Please try again.");
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 </script>
 {% endblock %}
