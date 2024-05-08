@@ -1,6 +1,6 @@
 from django.http import FileResponse, Http404
-from Core.models import UserResume
 
+from Core.models import UserResume
 
 def download_resume(request):
     try:

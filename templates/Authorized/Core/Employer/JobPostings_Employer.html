@@ -1,38 +1,8 @@
-{% extends "Authorized/Core/JobSearcher/Base.html" %}
-{% load static %}
-{% load socialaccount %}
-
-{% block title %}Job Postings - Employer{% endblock %}
-
-{% block extra_head %}
-<style>
-  .container {
-    margin-top: 10px;
-  }
-  .card-custom {
-    width: 100%;
-    margin: auto;
-    overflow: hidden;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  .scrollable-card {
-    height: 652px;
-    overflow-y: auto;
-  }
-  .list-group-item {
-    border-radius: 10px;
-    margin-bottom: 10px;
-    background-color: #f8f9fa;
-    border: none;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding: 15px;
-  }
-  .btn-custom {
-    border-radius: 20px;
-  }
-</style>
-{% endblock %}
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static%} 
+{% load socialaccount %} 
+{% block title %}Job Postings - Employer
+{% endblock %} 
 
 {% block content %}
 <div class="container">

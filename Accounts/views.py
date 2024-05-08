@@ -17,7 +17,6 @@ def setup_view(request):
                 return redirect('js_setup_profile')
             else:
                 return redirect('emp_setupProfile')
-            return redirect('home')
         else:
             print(form.errors)
     else:

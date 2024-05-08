@@ -1,0 +1,293 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}
+    Job Search - ResumeAI
+{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700|Roboto:300,400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+    }
+    .search-panel {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 8px; /* Less rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    .form-control, .btn {
+        border-radius: 8px; /* Less rounded corners */
+    }
+    .btn-primary {
+        background-color: #1a73e8;
+        color: white;
+        padding: 10px 20px;
+    }
+    .btn-primary:hover {
+        background-color: #0c49b5;
+    }
+    .dropdown-menu {
+        border-radius: 8px; /* Less rounded corners */
+    }
+    .job-listings-container {
+        position: relative;
+        background: #f8f9fa; /* Light background for the scrollable container */
+        padding: 20px;
+        border-radius: 8px;
+        max-height: 600px; /* Maximum height before scrolling */
+        overflow-y: auto; /* Enable vertical scrolling */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .job-listing {
+        background: #ffffff;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+    }
+    .job-listing:hover {
+        background-color: #e8f0fe;
+    }
+    .icon-container {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+    }
+    .icon-container img {
+        width: 100%;
+        height: auto;
+    }
+    .details-panel {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        height: 100%;
+        overflow: hidden;
+    }
+    h4, h5 {
+        margin-top: 0;
+        color: #333;
+        font-size: 22px;
+    }
+    p {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="search-panel">
+                <form class="d-flex flex-wrap align-items-center">
+                    <div class="input-group me-3">
+                        <input class="form-control rounded-pill" type="text" placeholder="Search Job Title..." aria-label="Job Title">
+                        <button class="btn btn-primary rounded-pill" type="button"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="dropdown me-3">
+                        <button class="btn btn-outline-secondary rounded-pill dropdown-toggle" type="button" id="locationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Location
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="locationDropdown">
+                            <li><a class="dropdown-item" href="#">All Locations</a></li>
+                            <li><a class="dropdown-item" href="#">New York</a></li>
+                            <li><a class="dropdown-item" href="#">San Francisco</a></li>
+                            <li><a class="dropdown-item" href="#">Los Angeles</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary rounded-pill dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Category
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                            <li><a class="dropdown-item" href="#">All Categories</a></li>
+                            <li><a class="dropdown-item" href="#">Engineering</a></li>
+                            <li><a class="dropdown-item" href="#">Marketing</a></li>
+                            <li><a class="dropdown-item" href="#">Design</a></li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="job-listings-container">
+                <div id="jobListings">
+                    <!-- Job listings will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="details-panel" id="jobDetails">
+                <p>Select a job to view details.</p>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const dummyData = [
+        {
+            id: 1,
+            title: 'Software Engineer',
+            company: 'Google',
+            location: 'Mountain View, CA',
+            description: 'Develop scalable applications using a range of technologies and frameworks.',
+            domain: 'google.com',
+            salary: 120000,
+            jobType: 'full-time',
+            skills: ['python', 'javascript']
+        },
+        {
+            id: 2,
+            title: 'Product Manager',
+            company: 'Apple',
+            location: 'Cupertino, CA',
+            description: 'Lead product initiatives.',
+            domain: 'apple.com',
+            salary: 100000,
+            jobType: 'full-time',
+            skills: ['project management']
+        },
+        {
+            id: 3,
+            title: 'Web Developer',
+            company: 'Netflix',
+            location: 'Los Gatos, CA',
+            description: 'Build and optimize user interfaces for our streaming platform.',
+            domain: 'netflix.com',
+            salary: 80000,
+            jobType: 'internship',
+            skills: ['javascript', 'react']
+        },
+                {
+            id: 4,
+            title: 'Software Engineer',
+            company: 'Google',
+            location: 'Mountain View, CA',
+            description: 'Develop scalable applications using a range of technologies and frameworks.',
+            domain: 'google.com',
+            salary: 120000,
+            jobType: 'full-time',
+            skills: ['python', 'javascript']
+        },
+        {
+            id: 5,
+            title: 'Product Manager',
+            company: 'Apple',
+            location: 'Cupertino, CA',
+            description: 'Lead product initiatives.',
+            domain: 'apple.com',
+            salary: 100000,
+            jobType: 'full-time',
+            skills: ['project management']
+        },
+        {
+            id: 6,
+            title: 'Web Developer',
+            company: 'Netflix',
+            location: 'Los Gatos, CA',
+            description: 'Build and optimize user interfaces for our streaming platform.',
+            domain: 'netflix.com',
+            salary: 80000,
+            jobType: 'internship',
+            skills: ['javascript', 'react']
+        },
+                {
+            id: 1,
+            title: 'Software Engineer',
+            company: 'Google',
+            location: 'Mountain View, CA',
+            description: 'Develop scalable applications using a range of technologies and frameworks.',
+            domain: 'google.com',
+            salary: 120000,
+            jobType: 'full-time',
+            skills: ['python', 'javascript']
+        },
+        {
+            id: 2,
+            title: 'Product Manager',
+            company: 'Apple',
+            location: 'Cupertino, CA',
+            description: 'Lead product initiatives.',
+            domain: 'apple.com',
+            salary: 100000,
+            jobType: 'full-time',
+            skills: ['project management']
+        },
+        {
+            id: 3,
+            title: 'Web Developer',
+            company: 'Netflix',
+            location: 'Los Gatos, CA',
+            description: 'Build and optimize user interfaces for our streaming platform.',
+            domain: 'netflix.com',
+            salary: 80000,
+            jobType: 'internship',
+            skills: ['javascript', 'react']
+        }
+    ];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateJobListings();
+    });
+
+    function updateJobListings() {
+        let listingsHTML = dummyData.map(job => `
+            <div class="job-listing" onclick="showDetails(${job.id})">
+                <div class="icon-container">
+                    <img src="https://logo.clearbit.com/${job.domain}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';" alt="${job.company}">
+                </div>
+                <div>
+                    <h5>${job.title}</h5>
+                    <p>${job.company} - ${job.location}</p>
+                    <p>$${job.salary.toLocaleString()} per year</p>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('jobListings').innerHTML = listingsHTML;
+    }
+
+    function showDetails(jobId) {
+        const job = dummyData.find(job => job.id === parseInt(jobId));
+        if (job) {
+            document.getElementById('jobDetails').innerHTML = `
+                <div style="padding: 20px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                    <img src="https://logo.clearbit.com/${job.domain}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';" alt="${job.company} Logo" style="width: 80px; height: auto; border-radius: 8px; margin-bottom: 20px;">
+                    <h4>${job.title}</h4>
+                    <p><strong>Company:</strong> ${job.company}</p>
+                    <p><strong>Location:</strong> ${job.location}</p>
+                    <p><strong>Salary:</strong> $${job.salary.toLocaleString()}</p>
+                    <p>${job.description}</p>
+                    <p><strong>Job Type:</strong> ${job.jobType.charAt(0).toUpperCase() + job.jobType.slice(1)}</p>
+                    <p><strong>Skills:</strong> ${job.skills.join(', ')}</p>
+                    <button class="btn btn-primary" onclick="applyJob(${job.id})">Apply Now</button>
+                </div>
+            `;
+        } else {
+            document.getElementById('jobDetails').innerHTML = '<p>No job details available.</p>';
+        }
+    }
+
+    function applyJob(jobId) {
+        alert("Application sent for job ID " + jobId);
+    }
+</script>
+{% endblock %}

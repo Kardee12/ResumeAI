@@ -12,7 +12,7 @@ import textract
 
 class ParsingFunctions:
     def __init__(self):
-        self.HF_TOKEN = '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'
+        self.HF_TOKEN = config('HF_TOKEN')
         self.API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
         self.headers = {"Authorization": f"Bearer {self.HF_TOKEN}"}
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -110,4 +110,22 @@ class ResumeParsing:
             return None
         except Exception as e:
             print(f"An error occurred while extracting text from DOC: {e}")
+            return None
+    def extract_text_from_txt(self):
+        try:
+            resume = UserResume.objects.get(user=self.request.user)
+            if not resume.resume:
+                return None
+
+            if resume.resume.path.endswith('.txt'):
+                with open(resume.resume.path, 'r') as f:
+                    text = f.read()
+                return text.strip()
+
+            return None
+        except ObjectDoesNotExist:
+            print("Resume file does not exist for the user.")
+            return None
+        except Exception as e:
+            print(f"An error occurred while extracting text from TXT: {e}")
             return None

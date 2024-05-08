@@ -14,6 +14,8 @@ from pathlib import Path
 
 from decouple import config
 
+import Core
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,13 +40,15 @@ SECRET_KEY = "django-insecure-)%*1#lrapu2w+be$tdg4=he765x1#2a9)2%#)*cnsr9#2#ig&*
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 SITE_ID=1
 LOGIN_REDIRECT_URL = '/home'
-LOGOUT_URL = '/'
+LOGOUT_REDIRECT_URL = '/logout'
+LOGOUT_URL = '/logout'
+LOGIN_URL = '/login'
 SOCIALACCOUNT_LOGIN_ON_GET=True
-
+SOCIALACCOUNT_LOGOUT_ON_GET=True
+HANDLER403 = 'Core.gen_views.forbidden_response'
 # Application definition
 
 INSTALLED_APPS = [
@@ -107,7 +111,7 @@ DATABASES = {
         'USER': 'core',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': 5433
+        'PORT': 5432
     }
 }
 
@@ -159,9 +163,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            # 'client_id': config('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
-            'client_id' : '785778521263-erpmce5nvn3ihgre3hm6l7mitgv69a91.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': config('SOCIAL_AUTH_GOOGLE_CLIENT_ID'),
+            'secret': config('SOCIAL_AUTH_GOOGLE_SECRET'),
             'key': ''
         },
         'SCOPE': [
@@ -175,8 +178,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 }
 
-GOOGLE_MAPS_API_KEY = 'AIzaSyAX69RmxQGMa_PnFo0NrvklcC9W41bHQHc'
-HF_TOKEN = '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'
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
+HF_TOKEN = config('HF_TOKEN')
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
