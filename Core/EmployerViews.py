@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from ResumeAI import settings
-from ResumeAI.Generic.generic_decoraters import employer_required
+from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
 from Core.EmployerForms import EmployerProfileForm, JobForm
 from Core.EmployerModel import EmployerProfile, Job, ResumeSkills
 from django.db import transaction, models
@@ -10,6 +10,7 @@ from django.db.models import Count
 
 @login_required
 @employer_required
+@emp_profile_not_completed
 def emp_setupProfile(request):
     if request.method == 'POST':
         form = EmployerProfileForm(request.POST)
@@ -20,9 +21,9 @@ def emp_setupProfile(request):
                 profile.company_name = form.cleaned_data['company_name']
                 profile.company_description = form.cleaned_data['company_description']
                 profile.company_website = form.cleaned_data['company_website']
-                profile.contact_email = form.cleaned_data['contact_email']
+                profile.employer_completed = True
                 profile.save()
-            return redirect('employer_dashboard')
+            return redirect('home')
     else:
         form = EmployerProfileForm()
     return render(request, 'Authorized/Core/Employer/create-employer-profile.html', {
@@ -64,10 +65,9 @@ def emp_setupProfile(request):
         
 @login_required
 @employer_required
+@emp_profile_completed
 def create_job_posting(request):
     employer_profile = EmployerProfile.objects.get(user=request.user)
-
-
     if request.method == 'POST':
         form = JobForm(request.POST, request.FILES)
         if form.is_valid():
@@ -80,18 +80,17 @@ def create_job_posting(request):
                 link_to_apply=form.cleaned_data['link_to_apply'],
                 link_to_company=form.cleaned_data['link_to_company'],
             )
+
+            employer_profile.save()
             new_job.save()
-            
-            # Handle many-to-many relations after saving the job
             new_job.skills_used.set(form.cleaned_data['skills_used'])
             
             if 'company_image' in request.FILES:
                 new_job.company_image_url = request.FILES['company_image']
                 new_job.save()
 
-            return redirect('employer_dashboard')  # Redirect to the employer dashboard or another appropriate page
+            return redirect('employer_dashboard')
     else:
-        # Prepopulate the skills_used choices
         form = JobForm()
         form.fields['skills_used'].choices = [(skill.id, skill.name) for skill in ResumeSkills.objects.all()]
 
@@ -101,10 +100,8 @@ def create_job_posting(request):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def employer_dashboard(request):
-    if not request.user.is_authenticated:
-        return redirect('index')  # Redirect to login if user is not authenticated
-
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
     # Preparing data for the last three applicants for each job
@@ -123,16 +120,19 @@ def employer_dashboard(request):
 # work on this later 5/6/24
 @login_required
 @employer_required
+@emp_profile_completed
 def company_profile_page(request):
     return render(request, "Authorized/Core/Employer/company_profile_page.html")
 # work on this later 5/6/24: Check notebook
 @login_required
 @employer_required
+@emp_profile_completed
 def edit_company_page(request):
     return render(request, 'Authorized/Core/Employer/edit_company_profile.html')
 
 @login_required
 @employer_required
+@emp_profile_completed
 def candidatePage(request, job_id):
     job = get_object_or_404(Job, job_id)
     required_skills = job.skills_used.all()
@@ -142,6 +142,7 @@ def candidatePage(request, job_id):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def job_posting_page(request):
 
     jobs = Job.objects.all()
@@ -150,11 +151,13 @@ def job_posting_page(request):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def candidatePage(request):
     return render(request, "Authorized/Core/Employer/CandidateList.html")
 
 @login_required
 @employer_required
+@emp_profile_completed
 def profile(request):
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
@@ -162,6 +165,7 @@ def profile(request):
 
 @login_required
 @employer_required
+@emp_profile_not_completed
 def setup_employer_profile(request):
     try:
         profile = EmployerProfile.objects.get(user=request.user)

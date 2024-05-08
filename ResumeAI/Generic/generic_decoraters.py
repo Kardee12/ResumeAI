@@ -1,6 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 
+from Core.EmployerModel import EmployerProfile
 from Core.models import UserProfile
 def job_searcher_required(view_func):
     """
@@ -35,7 +36,7 @@ def js_profile_completed(view_func):
         user = request.user
         profile = UserProfile.objects.get(user=user)
         if not profile.profile_completed:
-            raise PermissionDenied("Access Forbidden: Can only access page if profile has not been completed")
+            raise PermissionDenied("Access Forbidden: Can only access page if profile has  been completed")
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
@@ -50,4 +51,30 @@ def employer_required(view_func):
         if request.user.role != 'employer':
             return HttpResponseForbidden("Access Forbidden: Only Employers are allowed to access this page.")
         return view_func(request, *args, *kwargs)
+    return _wrapped_view
+
+def emp_profile_not_completed(view_func):
+    """
+    Decorator to restrict access to views based on user's profile being completed.
+    Only allows users with the role 'employer' to access the view.
+    """
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        profile = EmployerProfile.objects.get(user=user)
+        if profile.employer_completed:
+            raise PermissionDenied("Access Forbidden: Can only access page if profile has been completed")
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+def emp_profile_completed(view_func):
+    """
+    Decorator to restrict access to views based on user's profile being completed.
+    Only allows users with the role 'employer' to access the view.
+    """
+    def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        profile = EmployerProfile.objects.get(user=user)
+        if not profile.employer_completed:
+            raise PermissionDenied("Access Forbidden: Can only access page if profile has not been completed")
+        return view_func(request, *args, **kwargs)
     return _wrapped_view

@@ -13,28 +13,27 @@ def index(request):
     return render(request, "Unauthorized/Core/index.html")
 
 
+
 @login_required
 def home(request):
-    if not request.user.has_completed_setup:
-        return redirect('setup')
     user = request.user
-    try:
-        profile = UserProfile.objects.get(user=user)
-        user_role = 'job_searcher'
-    except UserProfile.DoesNotExist:
-        try:
-            profile = EmployerProfile.objects.get(user=user)
-            user_role = 'employer'
-        except EmployerProfile.DoesNotExist:
-            if request.user.role == 'job_searcher':
-                return redirect('js_setup_profile')
-            else:
-                return redirect('emp_setupProfile')
-    if user_role == 'job_searcher':
-        return redirect('jobsearcher_dashboard')
-    else:
-        return redirect('employer_dashboard')
 
+    # Redirect if the user setup is not complete
+    if not user.has_completed_setup:
+        return redirect('setup')
+
+    if user.role == 'job_searcher':
+        try:
+            UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            return redirect('js_setup_profile1')
+        return redirect('jobsearcher_dashboard')
+    else:  # Assuming the only other role is 'employer'
+        try:
+            EmployerProfile.objects.get(user=user)
+        except EmployerProfile.DoesNotExist:
+            return redirect('emp_setupProfile')
+        return redirect('employer_dashboard')
 @login_required
 def settings(request):
     try:
