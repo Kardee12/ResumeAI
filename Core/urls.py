@@ -6,15 +6,16 @@ from Core import gen_views
 urlpatterns = [
     path("", views.index, name='index'),
     path("home/", views.home, name="home"),
-    path('custom-logout/', views.custom_logout, name='custom_logout'),
-    path('logout/', views.logoutView, name='logout'),
-    path("login/", views.logView.as_view(), name='login'),
-
-    path('jsdashboard/', JobSearcher.jobsearcher_dashboard, name='jobsearcher_dashboard'),
-    path('chat/', JobSearcher.jobsearcher_chat, name='jobsearcher_chat'),
-    path('settings/', views.settings, name='settings'),
-    path('jsprofile/', JobSearcher.jobsearcher_profile, name='jobsearcher_profile'),
-    path('js-setup/', JobSearcher.js_setup_profile, name='js_setup_profile'),
+    
+    
+    #jobsearcher side
+    
+    path('js-dashboard/', JobSearcherViews.jobsearcher_dashboard, name='jobsearcher_dashboard'),
+    #added as of 12:54pm may 3
+    path('chat/', JobSearcherViews.jobsearcher_chat, name='jobsearcher_chat'),
+    path('settings/',views.settings , name='settings'),
+    path('js-profile/', JobSearcherViews.jobsearcher_profile, name='jobsearcher_profile'),
+    path('js-setup/',JobSearcherViews.js_setup_profile, name='js_setup_profile'),
     path('download-resume/', gen_views.download_resume, name='download-resume'),
     path('edit-jsprofile/', JobSearcher.edit_profile, name='edit-profile'),
     path('create-resume/', JobSearcher.create_resume, name='create-resume'),

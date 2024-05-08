@@ -87,15 +87,14 @@
                     <div class="card-body">
                         <h4 class="card-title">Your Job Postings</h4>
                         <p>Here, you can view your job postings.</p>
+                        {% for  job in jobs %}
                         <ul class="list-group">
-                            <li class="list-group-item">Software Engineering Intern I</li>
-                            <li class="list-group-item">Senior Software Engineer</li>
-                            <li class="list-group-item">Software Engineer II</li>
-                            <li class="list-group-item">Software Engineer III</li>
-                            <li class="list-group-item">Software Engineer IV</li>
-                            <li class="list-group-item">Software Engineer V</li>
+                            <li class="list-group-item">{{job.position}}</li>
+                        {% empty%}
+                            <li class="list-group-item">No recent job postings.</li>
+                        {% endfor %}
                         </ul>
-                        <a href="#" class="btn btn-primary mt-3">View All</a>
+                        <a href="{% url 'job_posting_page' %}" class="btn btn-primary mt-3">View All</a>
                     </div>
                 </div>
             </div>
@@ -103,8 +102,8 @@
                 <div class="card">
                     <img src="{% static 'assets/employer_side/img/g7d10e5072c4043dfdd51b2892c1a8ab2e29e22e1fe7eee54a661f41437f144dc6fcb5ce4d3e535472ffbd5690c2da03b_640.jpg' %}" class="card-img" alt="Company Image">
                     <div class="card-img-overlay">
-                        <a href="{{user.company_website}}" style="color: white;">Apple, Santa Clara, CA</h4>
-                        <p style="color: white;"><span style="text-decoration: underline">Edit Company Profile</span></p>
+                        <a href="{% url 'company_profile_page'%}" style="color: white;"> <h4 style="text-decoration: underline;">{{user.employer_profile.company_name}}</h4>
+                        <a href="{% url 'edit_company_page' %}"><p style="color: white;"><span style="text-decoration: underline">Edit Company Profile</span></p></a>
                     </div>
                 </div>
             </div>

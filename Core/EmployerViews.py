@@ -6,6 +6,7 @@ from Core.EmployerForms import EmployerProfileForm, JobForm
 from Core.EmployerModel import EmployerProfile, Job, ResumeSkills
 from django.db import transaction, models
 from django.db.models import Count
+from django.core import serializers
 
 
 @login_required
@@ -104,6 +105,8 @@ def create_job_posting(request):
 def employer_dashboard(request):
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
+    total_job_postings = Job.objects.filter(employer_profile=employer_profile).count()
+
     # Preparing data for the last three applicants for each job
     jobs_with_applicants = []
     for job in jobs:
@@ -113,6 +116,7 @@ def employer_dashboard(request):
     context = {
         'employer_profile': employer_profile,
         'jobs_with_applicants': jobs_with_applicants,
+        'total_job_postings' : total_job_postings,
     }
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
 
@@ -134,9 +138,14 @@ def edit_company_page(request):
 @employer_required
 @emp_profile_completed
 def candidatePage(request, job_id):
-    job = get_object_or_404(Job, job_id)
+    job = get_object_or_404(Job, job_uuid=job_id)  # Use the correct field name here
     required_skills = job.skills_used.all()
-    applicants = job.list_of_applicants.annotate(matching_skills_count=Count('user__resumeskills', filter=models.Q(user__resumeskills__in=required_skills))).order_by('-matching_skills_count')
+    applicants = job.list_of_applicants.annotate(
+        matching_skills_count=Count(
+            'user__resumeskills',
+            filter=models.Q(user__resumeskills__in=required_skills)
+        )
+    ).order_by('-matching_skills_count')
 
     return render(request, 'Authorized/Core/Employer/CandidateList.html', {'applicants': applicants, 'job': job})
 
@@ -144,24 +153,36 @@ def candidatePage(request, job_id):
 @employer_required
 @emp_profile_completed
 def job_posting_page(request):
-
     jobs = Job.objects.all()
-    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", {'jobs': jobs})
-
+    jobs_json = serializers.serialize('json', jobs, fields=('job_uuid', 'position', 'description', 'company_image_url', 'link_to_apply', 'company_domain'))
+    default_image_url = 'https://example.com/default-image.jpg'  # Provide a default image URL
+    return render(request, "authorized/core/employer/jobpostings_employer.html", {
+        'jobs': jobs,
+        'jobs_json': jobs_json,
+        'default_image_url': default_image_url
+    })
 
 @login_required
 @employer_required
 @emp_profile_completed
-def candidatePage(request):
-    return render(request, "Authorized/Core/Employer/CandidateList.html")
+def candidatePage(request, job_id):  # 'job_id' is correctly expected here
+    # Make sure the field in get_object_or_404 matches your model's field
+    job = get_object_or_404(Job, job_uuid=job_id)
+    return render(request, 'Authorized/Core/Employer/CandidateList.html', {'job': job})
 
 @login_required
 @employer_required
 @emp_profile_completed
 def profile(request):
     user = request.user
+    employer_profile = EmployerProfile.objects.get(user=request.user)
+    jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
     profile = EmployerProfile.objects.get(user=user)
-    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context={'profile' : profile})
+    context = {
+        'profile' : profile,
+        'jobs' : jobs
+    }
+    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context)
 
 @login_required
 @employer_required
