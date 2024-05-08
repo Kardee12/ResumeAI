@@ -84,11 +84,13 @@
             <div id="applications-container">
                 {% for application in job_applications %}
                 <div class="application-card" data-company="{{ application.job.company }}" data-position="{{ application.job.position }}" data-type="{{ application.job.job_type }}" data-status="{{ application.status }}" data-date="{{ application.application_date|date:"Ymd" }}">
-                    <img src="https://logo.clearbit.com/{{ application.job.link_to_company }}" alt="{{ application.job.link_to_company }} logo" class="company-logo">
-                    <div class="application-detail">{{ application.job.company }}</div>
+                    <img src="https://logo.clearbit.com/{{ application.job.employer_profile.company_website }}" alt="{{ application.job.employer_profile.company_website }} logo" class="company-logo">
+                    <div class="application-detail">{{ application.job.employer_profile.company_name }}</div>
                     <div class="application-detail">{{ application.job.position }}</div>
                     <div class="application-detail">{{ application.job.job_type }}</div>
-                    <div class="application-detail">{{ application.status }}</div>
+                    <div class="application-detail">   
+                        <span class="badge">{{ application.status }}</span>
+                    </div>
                     <div class="application-detail">{{ application.application_date|date:"M d, Y" }}</div>
                 </div>
                 {% empty %}
@@ -101,40 +103,67 @@
 {% endblock %}
 {% block extra_scripts %}
 <script>
-// Function to handle logo loading errors
-function handleLogoError(event) {
-    event.target.src = 'https://path.to/your/default/logo.png'; // Set a default logo
-    event.target.classList.add('default-logo'); // Optionally add a class for default logos
-}
-
-// Sorting functionality
-document.querySelectorAll('.sort-icon').forEach(icon => {
-    icon.addEventListener('click', function() {
-        const container = document.getElementById('applications-container');
-        let cards = Array.from(container.children);
-        const order = this.getAttribute('data-order');
-        const sortKey = this.getAttribute('data-sort');
-        const isAscending = order === 'asc';
-        const nextOrder = isAscending ? 'desc' : 'asc';
-
-        cards.sort((a, b) => {
-            const aValue = a.getAttribute(`data-${sortKey}`).toLowerCase();
-            const bValue = b.getAttribute(`data-${sortKey}`).toLowerCase();
-            return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-        });
-
-        this.setAttribute('data-order', nextOrder);
-        this.innerHTML = `${isAscending ? '&#8595;' : '&#8593;'} ${this.textContent.slice(2)}`;
-
-        // Re-append cards to the container
-        cards.forEach(card => container.appendChild(card));
-    });
-});
-
-// Initial logo load error handling
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('img.company-logo').forEach(img => {
-        img.onerror = handleLogoError;
+    // Define a function to get the badge color based on the application status
+    function getStatusColor(status) {
+        switch (status) {
+            case 'Applied':
+                return '#17a2b8'; // Info blue
+            case 'Interview':
+                return '#ffc107'; // Warning yellow
+            case 'Offer':
+                return '#28a745'; // Success green
+            case 'Rejected':
+                return '#dc3545'; // Danger red
+            case 'Accepted':
+                return '#007bff'; // Primary blue
+            case 'Declined':
+                return '#6c757d'; // Secondary gray
+            default:
+                return '#6c757d'; // Default gray for unknown status
+        }
+    }
+
+    // Update badge colors based on their statuses
+    const badges = document.querySelectorAll('.application-detail .badge');
+    badges.forEach(function(badge) {
+        const status = badge.textContent.trim();
+        badge.style.backgroundColor = getStatusColor(status);
+        badge.style.color = 'white'; // Ensures text is readable on colored backgrounds
+    });
+
+    // Function to handle logo loading errors
+    const companyLogos = document.querySelectorAll('img.company-logo');
+    companyLogos.forEach(img => {
+        img.onerror = function() {
+            this.src = 'https://path.to/your/default/logo.png'; // Set a default logo
+            this.classList.add('default-logo'); // Optionally add a class for default logos
+        };
+    });
+
+    // Sorting functionality
+    const sortIcons = document.querySelectorAll('.sort-icon');
+    sortIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const container = document.getElementById('applications-container');
+            let cards = Array.from(container.children);
+            const order = this.getAttribute('data-order');
+            const sortKey = this.getAttribute('data-sort');
+            const isAscending = order === 'asc';
+            const nextOrder = isAscending ? 'desc' : 'asc';
+
+            cards.sort((a, b) => {
+                const aValue = a.getAttribute(`data-${sortKey}`).toLowerCase();
+                const bValue = b.getAttribute(`data-${sortKey}`).toLowerCase();
+                return isAscending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+            });
+
+            this.setAttribute('data-order', nextOrder);
+            this.innerHTML = `${isAscending ? '&#8595;' : '&#8593;'} ${this.textContent.slice(2)}`;
+
+            // Re-append cards to the container
+            cards.forEach(card => container.appendChild(card));
+        });
     });
 });
 </script>

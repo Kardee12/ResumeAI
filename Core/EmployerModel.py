@@ -31,7 +31,6 @@ class Job(models.Model):
     job_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     employer_profile = models.ForeignKey('EmployerProfile', on_delete=models.CASCADE, related_name='jobs', null=True)
     applicant_count = models.IntegerField(default=0, editable=False)
-    company = models.CharField(max_length=120, null=True, blank=True)
     position = models.CharField(max_length=200)
     description = models.TextField()
     location = models.CharField(max_length=100, blank=True)
@@ -39,7 +38,6 @@ class Job(models.Model):
     skills = models.ManyToManyField(JobSkills, blank=True)
     list_of_applicants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='applied_jobs', blank=True)
     link_to_apply = models.URLField(max_length=200, blank=True, null=True)
-    link_to_company = models.URLField(max_length=200, blank=True, null=True)
     job_type = models.CharField(max_length=20, choices=JobType.choices, default=JobType.FULL_TIME)
 
     def __str__(self):
