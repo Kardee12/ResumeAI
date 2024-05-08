@@ -3,6 +3,12 @@ from django.conf import settings
 from allauth.socialaccount.models import SocialAccount
 import uuid
 
+class JobSkills(models.Model):
+    name = models.CharField(max_length=120, unique=True)
+
+    def __str__(self):
+        return self.name
+
 
 class Job(models.Model):
     job_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -11,7 +17,7 @@ class Job(models.Model):
     position = models.CharField(max_length=200)
     description = models.TextField()
     pay = models.CharField(max_length=100)
-    skills_used = models.ManyToManyField('ResumeSkills')
+    skills = models.ManyToManyField(JobSkills, blank=True)
     company_image_url = models.URLField(max_length=255, blank=True, null=True)
     list_of_applicants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='applied_jobs', blank=True)
     link_to_apply = models.URLField(max_length=200, blank=True, null=True)
@@ -19,14 +25,6 @@ class Job(models.Model):
 
     def __str__(self):
         return self.position
-
-
-class ResumeSkills(models.Model):
-    name = models.CharField(max_length=120, unique=True)
-
-    def __str__(self):
-        return self.name
-
 
 class EmployerProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employer_profile')
