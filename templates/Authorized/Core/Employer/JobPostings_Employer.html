@@ -136,9 +136,9 @@ function showDetails(jobId) {
 
     const jobDetailsDiv = document.querySelector('.job-details');
     const jobTypeColor = getJobTypeColor(job.fields.job_type);
+    const editJobUrl = "{% url 'edit_job_posting' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
     const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';
     const candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
-
     jobDetailsDiv.innerHTML = `
 <div class="card card-custom rounded-lg">
     <div class="row no-gutters">
@@ -156,7 +156,7 @@ function showDetails(jobId) {
                 <p><strong>Meet the recruiter:</strong> ${job.fields.company_role_description}</p>
                 <p><strong>Skills:</strong> ${skillsDisplay}</p>
                 <div class="d-flex justify-content-around mt-4">
-                    <a href="${job.fields.link_to_apply}" class="btn btn-primary btn-custom">Edit Now</a>
+                    <a href="${editJobUrl}" class="btn btn-primary btn-custom">Edit Now</a>
                     <a href="${candidateListUrl}" class="btn btn-primary btn-custom">View Candidate List</a>
                 </div>
             </div>

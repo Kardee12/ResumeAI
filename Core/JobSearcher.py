@@ -38,21 +38,21 @@ def jobsearcher_dashboard(request):
     last_month = today - timedelta(days=30)
 
     total_applications = JobApplication.objects.filter(user=user).count()
-    total_open_applications = JobApplication.objects.filter(user=user, status='applied').count()
-    total_interviews = JobApplication.objects.filter(user=user, status='interview').count()
-    total_offers = JobApplication.objects.filter(user=user, status='offer').count()
-    total_rejections = JobApplication.objects.filter(user=user, status='rejected').count()
+    total_open_applications = JobApplication.objects.filter(user=user, status='Applied').count()
+    total_interviews = JobApplication.objects.filter(user=user, status='Interview').count()
+    total_offers = JobApplication.objects.filter(user=user, status='Offer').count()
+    total_rejections = JobApplication.objects.filter(user=user, status='Rejected').count()
     last_month_applications = JobApplication.objects.filter(user=user, application_date__lt=last_month).count()
-    last_month_open_applications = JobApplication.objects.filter(user=user, status='applied', application_date__lt=last_month).count()
-    last_month_interviews = JobApplication.objects.filter(user=user, status='interview', application_date__lt=last_month).count()
-    last_month_offers = JobApplication.objects.filter(user=user, status='offer', application_date__lt=last_month).count()
-    last_month_rejections = JobApplication.objects.filter(user=user, status='rejected', application_date__lt=last_month).count()
+    last_month_open_applications = JobApplication.objects.filter(user=user, status='Applied', application_date__lt=last_month).count()
+    last_month_interviews = JobApplication.objects.filter(user=user, status='Interview', application_date__lt=last_month).count()
+    last_month_offers = JobApplication.objects.filter(user=user, status='Offer', application_date__lt=last_month).count()
+    last_month_rejections = JobApplication.objects.filter(user=user, status='Rejected', application_date__lt=last_month).count()
     change_applications = total_applications - last_month_applications
     change_open_applications = total_open_applications - last_month_open_applications
     change_interviews = total_interviews - last_month_interviews
     change_offers = total_offers - last_month_offers
     change_rejections = total_rejections - last_month_rejections
-    success_rate = float (float(total_offers) / float(total_applications)) if (total_applications and total_offers) > 0 else 0
+    success_rate = 10 * float (float(total_offers) / float(total_applications)) if (total_applications and total_offers) > 0 else 0
     context = {
         'job_applications': JobApplication.objects.filter(user=user).order_by('-application_date')[:3],
         'total_applications': total_applications,

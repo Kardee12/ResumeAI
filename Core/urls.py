@@ -36,5 +36,6 @@ urlpatterns = [
     path('employer/company/page', EmployerViews.company_profile_page, name='company_profile_page'),
     path('employer/company/edit/page', EmployerViews.edit_company_page, name='edit_company_page'),
     path('update-status/<int:application_id>/', EmployerViews.update_candidate_status, name='update_candidate_status'),
+    path('employer/edit-job/<uuid:job_id>/', EmployerViews.edit_job_posting, name='edit_job_posting'),
 
-] 
+]

@@ -113,7 +113,11 @@ Dashboard - ResumeAI
                 <h5 class="card-title fw-bold">Job Offers</h5>
                 <p class="h3 fw-bold">{{ total_offers }}</p>
                 <span class="badge badge-custom {% if success_rate >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
-                        {% if success_rate >= 0 %}+{{ success_rate }}{% else %}{{ success_rate }}{% endif %} Since Last Month
+                    {% if success_rate >= 0 %}
+                        +{{ success_rate|floatformat:2 }}%
+                    {% else %}
+                        {{ success_rate|floatformat:2 }}%
+                    {% endif %} Since Last Month
                 </span>
             </div>
             <div class="card">
