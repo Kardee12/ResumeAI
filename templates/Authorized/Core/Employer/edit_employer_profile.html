@@ -41,6 +41,9 @@ Edit Employer Profile - ResumeAI
     textarea.form-control {
         border-radius: 12px;
     }
+    .btn-back {
+        margin-bottom: 20px; /* Additional margin to separate from the form */
+    }
 </style>
 {% endblock %}
 
@@ -48,6 +51,9 @@ Edit Employer Profile - ResumeAI
 <main class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
+            <a href="{% url 'employer_profile' %}" class="btn btn-back btn-light btn-custom">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a>
             <div class="create-profile-form">
                 <form method="post" action="{% url 'edit_employer_profile' %}">
                     {% csrf_token %}
@@ -57,8 +63,8 @@ Edit Employer Profile - ResumeAI
                         <input type="text" id="position" name="position" class="form-control" value="{{ profile.position }}" placeholder="Position">
                     </div>
                     <div class="mb-3">
-                        <label for="company_description" class="form-label">Company Description</label>
-                        <textarea id="company_description" name="company_description" class="form-control" placeholder="Describe your company">{{ profile.company_description }}</textarea>
+                        <label for="company_role_description" class="form-label">Company Role Description</label>
+                        <textarea id="company_role_description" name="company_role_description" class="form-control" placeholder="Describe your company">{{ profile.company_role_description }}</textarea>
                     </div>
                     <div class="mb-3">
                         <label for="company_website" class="form-label">Company Website</label>

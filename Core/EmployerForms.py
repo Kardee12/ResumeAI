@@ -28,15 +28,15 @@ class JobForm(forms.Form):
 class EmployerProfileForm(forms.Form):
     company_name = forms.CharField(label = 'Company Name',max_length = 255, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter Your Company Name'}))
     position = forms.CharField(label='Position at Company', max_length=120, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder' : 'Enter Your Job Title'}))
-    company_description = forms.CharField(label='Company Description', widget=forms.Textarea(attrs={'class':'form-control', 'rows':4, 'placeholder':'Tell us about your company'}))
+    company_role_description = forms.CharField(label='Company Role Description', widget=forms.Textarea(attrs={'class':'form-control', 'rows':4, 'placeholder':'Tell us about your role at your company'}))
     company_website = forms.URLField(label='Company Website', max_length = 200, widget=forms.URLInput(attrs={'class':'form-control', 'placeholder':'https://yourcompany.com'}))
     
 class EditEmployerProfile(forms.Form):
     model = EmployerProfile
-    fields = ['position', 'company_name', 'company_description', 'company_website']
+    fields = ['position', 'company_name', 'company_role_description', 'company_website']
     widgets = {
         'position': forms.TextInput(attrs={'class': 'form-control'}),
         'company_name': forms.TextInput(attrs={'class': 'form-control'}),
-        'company_description': forms.Textarea(attrs={'class': 'form-control'}),
+        'company_role_description': forms.Textarea(attrs={'class': 'form-control'}),
         'company_website': forms.URLInput(attrs={'class': 'form-control'}),
     }

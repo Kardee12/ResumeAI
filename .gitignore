@@ -5,3 +5,4 @@ user_resumes
 *.py
 *.pyc
 /venv
+ResumeAI/settings.py

@@ -67,9 +67,9 @@ def emp_profile_completed(view_func):
         try:
             profile = EmployerProfile.objects.get(user=user)
             if not profile.employer_completed:
-                return redirect('emp_setup')
+                return redirect('emp_setupProfile')
         except EmployerProfile.DoesNotExist:
-            return redirect('emp_setup')
+            return redirect('emp_setupProfile')
         return view_func(request, *args, **kwargs)
     return wrapper
 

@@ -28,7 +28,7 @@ def emp_setupProfile(request):
                 profile, created = EmployerProfile.objects.get_or_create(user = request.user)
                 profile.position = form.cleaned_data['position']
                 profile.company_name = form.cleaned_data['company_name']
-                profile.company_description = form.cleaned_data['company_description']
+                profile.company_role_description = form.cleaned_data['company_role_description']
                 profile.company_website = form.cleaned_data['company_website']
                 profile.employer_completed = True
                 profile.save()
@@ -116,15 +116,22 @@ def create_job_posting(request):
 def employer_dashboard(request):
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
-    # Preparing data for the last three applicants for each job
+        
+        # Preparing data for the last three applicants for each job
     jobs_with_applicants = []
+    total_applicants = 0  # Initialize total applicants count
     for job in jobs:
         applicants = list(job.list_of_applicants.all())[:3]  # Get the last three applicants for each job
+        total_applicants += job.list_of_applicants.count()  # Sum up all applicants
         jobs_with_applicants.append((job, applicants))
 
+    active_job_listings = Job.objects.filter(employer_profile=employer_profile).count()  # Count of active jobs
+        
     context = {
         'employer_profile': employer_profile,
         'jobs_with_applicants': jobs_with_applicants,
+        'total_applicants': total_applicants,
+        'active_job_listings': active_job_listings,
     }
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
 
@@ -137,14 +144,14 @@ def edit_employer_profile(request):
 
     if request.method == 'POST':
         position = request.POST.get('position')
-        company_description = request.POST.get('company_description')
+        company_role_description = request.POST.get('company_role_description')
         company_website = request.POST.get('company_website')
 
         with transaction.atomic():
             if position and position != profile.position:
                 profile.position = position
-            if company_description and company_description != profile.company_description:
-                profile.company_description = company_description
+            if company_role_description and company_role_description != profile.company_role_description:
+                profile.company_role_description = company_role_description
             if company_website and company_website != profile.company_website:
                 profile.company_website = company_website
 
@@ -242,7 +249,8 @@ def job_posting_page(request):
 def profile(request):
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
-    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context={'profile' : profile})
+    jobs = Job.objects.filter(employer_profile=profile)
+    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context={'profile' : profile,'jobs': jobs})
 
 @login_required
 @employer_required
