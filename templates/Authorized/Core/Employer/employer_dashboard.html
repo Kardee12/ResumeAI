@@ -34,7 +34,6 @@
                         {% for job, applicants in jobs_with_applicants %}
                         <li class="list-group-item d-flex justify-content-between align-items-center" style="border-radius: 15px;">
                             {{ job.position }}
-                            <a href="{{job.job_uuid}}" class="btn btn-primary btn-sm" style="border-radius: 15px;">View</a>
                         </li>
                         {% empty %}
                         <li class="list-group-item">No recent job postings.</li>
@@ -70,7 +69,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Metrics</h5>
                     <p><strong>Total Applicants:</strong> {{ total_applicants }}</p>
-                    <p><strong>Active Job Postings:</strong> {{ total_job_postings }}</p>
+                    <p><strong>Active Job Postings:</strong> {{ active_job_listings }}</p>
                 </div>
             </div>
         </div>

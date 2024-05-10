@@ -3,7 +3,7 @@
 {% load socialaccount %}
 
 {% block title %}
-Create Employer Profile - ResumeAI
+Edit Employer Profile - ResumeAI
 {% endblock %}
 
 {% block extra_head %}
@@ -41,6 +41,9 @@ Create Employer Profile - ResumeAI
     textarea.form-control {
         border-radius: 12px;
     }
+    .btn-back {
+        margin-bottom: 20px; /* Additional margin to separate from the form */
+    }
 </style>
 {% endblock %}
 
@@ -48,28 +51,27 @@ Create Employer Profile - ResumeAI
 <main class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
+            <a href="{% url 'employer_profile' %}" class="btn btn-back btn-light btn-custom">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a>
             <div class="create-profile-form">
-                <h2 class="text-center mb-4">Create Employer Profile</h2>
-                <form method="post">
+                <form method="post" action="{% url 'edit_employer_profile' %}">
                     {% csrf_token %}
-                    <div class = "mb-3">
-                        {{ form.position.label_tag}}
-                        {{ form.position }}
+                    <h2 class="text-center mb-4">Edit Employer Profile</h2>
+                    <div class="mb-3">
+                        <label for="position" class="form-label">Position</label>
+                        <input type="text" id="position" name="position" class="form-control" value="{{ profile.position }}" placeholder="Position">
                     </div>
                     <div class="mb-3">
-                        {{ form.company_name.label_tag }}
-                        {{ form.company_name }}
+                        <label for="company_role_description" class="form-label">Company Role Description</label>
+                        <textarea id="company_role_description" name="company_role_description" class="form-control" placeholder="Describe your company">{{ profile.company_role_description }}</textarea>
                     </div>
                     <div class="mb-3">
-                        {{ form.company_role_description.label_tag }}
-                        {{ form.company_role_description }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form.company_website.label_tag }}
-                        {{ form.company_website }}
+                        <label for="company_website" class="form-label">Company Website</label>
+                        <input type="url" id="company_website" name="company_website" class="form-control" value="{{ profile.company_website }}" placeholder="http://">
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-custom">Create Profile</button>
+                        <button type="submit" class="btn btn-custom">Save Changes</button>
                     </div>
                 </form>
             </div>

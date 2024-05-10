@@ -1,14 +1,20 @@
+import json
+
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+
 from Core.functions import ParsingUtility
 from Core.functions.ParsingUtility import ParsingFunctions
+from Core.models import JobApplication
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
-from Core.EmployerForms import EmployerProfileForm, JobForm
+from Core.EmployerForms import EditEmployerProfile, EmployerProfileForm, JobForm
 from Core.EmployerModel import EmployerProfile, Job, JobSkills
 from django.db import transaction, models
-from django.db.models import Count
+from django.db.models import Count, Q
+from django.core import serializers
 
 
 
@@ -23,7 +29,7 @@ def emp_setupProfile(request):
                 profile, created = EmployerProfile.objects.get_or_create(user = request.user)
                 profile.position = form.cleaned_data['position']
                 profile.company_name = form.cleaned_data['company_name']
-                profile.company_description = form.cleaned_data['company_description']
+                profile.company_role_description = form.cleaned_data['company_role_description']
                 profile.company_website = form.cleaned_data['company_website']
                 profile.employer_completed = True
                 profile.save()
@@ -66,35 +72,40 @@ def emp_setupProfile(request):
 #         return render(request, 'Authorized/Core/Employer/create-job-posting.html', {
 #             'form' : form
 #         })
-        
+
 @login_required
 @employer_required
 @emp_profile_completed
 def create_job_posting(request):
-    employer_profile = EmployerProfile.objects.get(user=request.user)
+    try:
+        employer_profile = EmployerProfile.objects.get(user=request.user)
+    except EmployerProfile.DoesNotExist:
+        return redirect('create_employer_profile')
     if request.method == 'POST':
-        # Handling manual fields like link to company and skills
-        link_to_company = request.POST.get('link_to_company')
-        skills = [request.POST.get(f'skill_{i}') for i in range(1, 11)]  # Adjust the range as needed
-        aiParser = ParsingFunctions()
-        normalized_skills = aiParser.normalize_skills([skill for skill in skills if skill])  # Normalize and filter out empty
+        # Extract data from the POST request
+        position = request.POST.get('position')
+        description = request.POST.get('description')
+        job_type = request.POST.get('job_type')
+        pay = request.POST.get('pay')
+        location = request.POST.get('location')
+        link_to_apply = request.POST.get('link_to_apply')
         new_job = Job(
-            company=request.POST.get('company'),
             employer_profile=employer_profile,
-            position=request.POST.get('position'),
-            description=request.POST.get('description'),
-            job_type=request.POST.get('job_type'),
-            pay=request.POST.get('pay'),
-            location=request.POST.get('location'),
-            link_to_apply=request.POST.get('link_to_apply'),
-            link_to_company=request.POST.get('link_to_company'),
+            position=position,
+            description=description,
+            job_type=job_type,
+            pay=pay,
+            location=location,
+            link_to_apply=link_to_apply
         )
+        print(new_job.job_type)
         new_job.save()
-
-        for skill_name in normalized_skills:
+        for i in range(1, 6):
+            skill_name = request.POST.get(f'skill_{i}')
             if skill_name:
                 skill, created = JobSkills.objects.get_or_create(name=skill_name)
                 new_job.skills.add(skill)
+
         new_job.save()
         return redirect('employer_dashboard')
     else:
@@ -102,38 +113,45 @@ def create_job_posting(request):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def edit_job_posting(request, job_id):
-    # Retrieve the job object by its UUID; ensure the current user is authorized to edit it
-    job = get_object_or_404(Job, job_uuid=job_id, employer_profile__user=request.user)
-
-    # If this is a POST request, we need to process the form data
+    job = get_object_or_404(Job, job_uuid=job_id)
     if request.method == 'POST':
-        # Create a form instance and populate it with data from the request (binding):
-        form = JobForm(request.POST, instance=job)
-        if form.is_valid():
-            # Process the data in form.cleaned_data as required
-            job = form.save(commit=False)  # Don't save immediately to add many-to-many fields
+        position = request.POST.get('position')
+        description = request.POST.get('description')
+        job_type = request.POST.get('job_type')
+        pay = request.POST.get('pay')
+        location = request.POST.get('location')
+        link_to_apply = request.POST.get('link_to_apply')
+        if position and position != job.position:
+            job.position = position
+        if description and description != job.description:
+            job.description = description
+        if job_type and job_type != job.job_type:
+            job.job_type = job_type
+        if pay and pay != job.pay:
+            job.pay = pay
+        if location and location != job.location:
+            job.location = location
+        if link_to_apply and link_to_apply != job.link_to_apply:
+            job.link_to_apply = link_to_apply
+        current_skills = {skill.name for skill in job.skills.all()}
+        new_skills = set(request.POST.get(f'skill_{i}') for i in range(1, 6) if request.POST.get(f'skill_{i}'))
+        if new_skills != current_skills:
+            job.skills.clear()
+            for skill_name in new_skills:
+                if skill_name:
+                    skill, created = JobSkills.objects.get_or_create(name=skill_name)
+                    job.skills.add(skill)
 
-            # Handle the skills manually, assuming they're sent as separate fields like 'skill_1', 'skill_2', etc.
-            job.skills.clear()  # Clear existing skills to avoid duplicates
-            for i in range(1, 6):  # Assuming there are up to 5 skills in the form
-                skill_id = form.cleaned_data.get(f'skill_{i}')
-                if skill_id:
-                    job.skills.add(skill_id)
-            
-            job.save()  # Save the job to include many-to-many relationships
-
-            # Optionally send a success message back to the user
-            messages.success(request, 'Job posting updated successfully!')
-            # Redirect to a new URL:
-            return redirect('job_posting_page')  # Adjust to your named URL for the job listing page
-
-    # If this is a GET (or any other method) create the default form.
+        job.save()
+        return redirect('job_posting_page')
     else:
-        form = JobForm(instance=job)
-
-    return render(request, 'edit_job_posting.html', {'form': form, 'job': job})
-
+        context = {
+            'job': job,
+            'skills': job.skills.all()
+        }
+        return render(request, 'Authorized/Core/Employer/edit-job-posting.html', context)
 
 @login_required
 @employer_required
@@ -141,17 +159,53 @@ def edit_job_posting(request, job_id):
 def employer_dashboard(request):
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
-    # Preparing data for the last three applicants for each job
+        
+        # Preparing data for the last three applicants for each job
     jobs_with_applicants = []
+    total_applicants = 0  # Initialize total applicants count
     for job in jobs:
         applicants = list(job.list_of_applicants.all())[:3]  # Get the last three applicants for each job
+        total_applicants += job.list_of_applicants.count()  # Sum up all applicants
         jobs_with_applicants.append((job, applicants))
 
+    active_job_listings = Job.objects.filter(employer_profile=employer_profile).count()  # Count of active jobs
+        
     context = {
         'employer_profile': employer_profile,
         'jobs_with_applicants': jobs_with_applicants,
+        'total_applicants': total_applicants,
+        'active_job_listings': active_job_listings,
     }
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
+
+@login_required
+@employer_required
+@emp_profile_completed
+def edit_employer_profile(request):
+    user = request.user
+    profile, created = EmployerProfile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        position = request.POST.get('position')
+        company_role_description = request.POST.get('company_role_description')
+        company_website = request.POST.get('company_website')
+
+        with transaction.atomic():
+            if position and position != profile.position:
+                profile.position = position
+            if company_role_description and company_role_description != profile.company_role_description:
+                profile.company_role_description = company_role_description
+            if company_website and company_website != profile.company_website:
+                profile.company_website = company_website
+
+            profile.save()
+            messages.success(request, "Your profile has been updated successfully.")
+            return redirect('employer_dashboard')
+
+    context = {
+        'profile': profile
+    }
+    return render(request, 'Authorized/Core/Employer/edit_employer_profile.html', context)
 
 
 # work on this later 5/6/24
@@ -172,26 +226,66 @@ def edit_company_page(request):
 @employer_required
 @emp_profile_completed
 def candidatePage(request, job_id):
-    job = get_object_or_404(Job, job_id)
-    required_skills = job.skills_used.all()
-    applicants = job.list_of_applicants.annotate(matching_skills_count=Count('user__resumeskills', filter=models.Q(user__resumeskills__in=required_skills))).order_by('-matching_skills_count')
+    job = get_object_or_404(Job, job_uuid=job_id)
+    job_applications = JobApplication.objects.filter(job=job)
+    employer_profile = EmployerProfile.objects.get(user=request.user)
+    candidates = [app.user.profile for app in job_applications if app.user.profile.profile_completed]
 
-    return render(request, 'Authorized/Core/Employer/CandidateList.html', {'applicants': applicants, 'job': job})
+    context = {
+        'job': job,
+        'candidates': candidates,
+        'employer_profile' : employer_profile,
+    }
+
+    return render(request, 'Authorized/Core/Employer/CandidateList.html', context = context)
+
+def update_candidate_status(request, application_id):
+    job_application = get_object_or_404(JobApplication, id=application_id)
+
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in dict(JobApplication.STATUS_CHOICES):
+            job_application.status = new_status
+            job_application.save()
+            return redirect('candidate_list', job_id=job_application.job.job_uuid)
+        else:
+            return redirect('job_posting_page')
+
+    return redirect('some_error_page')  # Redirect somewhere appropriate if not a POST request
+def custom_job_serializer(jobs):
+    job_list = []
+    for job in jobs:
+        job_info = {
+            'job_uuid': str(job.job_uuid),
+            'fields': {
+                'applicant_count': job.applicant_count,
+                'company': job.employer_profile.company_name,
+                'position': job.position,
+                'description': job.description,
+                'company_role_description': job.employer_profile.company_role_description,
+                'linkedin': job.employer_profile.user.linkedin_url,
+                'location': job.location,
+                'pay': job.pay,
+                'link_to_apply': job.link_to_apply,
+                'link_to_company': job.employer_profile.company_website,
+                'job_type': job.job_type,
+                'skills': [skill.name for skill in job.skills.all()]
+            }
+        }
+        job_list.append(job_info)
+    return job_list
 
 @login_required
 @employer_required
 @emp_profile_completed
 def job_posting_page(request):
-
     jobs = Job.objects.all()
-    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", {'jobs': jobs})
-
-
-@login_required
-@employer_required
-@emp_profile_completed
-def candidatePage(request):
-    return render(request, "Authorized/Core/Employer/CandidateList.html")
+    jobs_json = custom_job_serializer(jobs)  # Use your custom serializer here
+    context = {
+        'jobs': jobs,
+        'jobs_json': json.dumps(jobs_json)
+    }
+    return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", context)
 
 @login_required
 @employer_required
@@ -199,7 +293,8 @@ def candidatePage(request):
 def profile(request):
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
-    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context={'profile' : profile})
+    jobs = Job.objects.filter(employer_profile=profile)
+    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context={'profile' : profile,'jobs': jobs})
 
 @login_required
 @employer_required

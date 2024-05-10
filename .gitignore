@@ -1,8 +1,8 @@
 /.env
 .idea
 user_resumes
-/venv
 /Accounts/__pycache__
+*.py
 *.pyc
-*.pyc
-/Core/__pycache__
+/venv
+ResumeAI/settings.py
