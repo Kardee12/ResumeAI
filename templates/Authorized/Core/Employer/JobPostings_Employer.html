@@ -92,6 +92,9 @@
                         <h5>{{ job.position }}</h5>
                         <p class="text-muted">{{ job.description|truncatewords:20 }}</p>
                         <button class="btn btn-primary btn-custom" onclick="showDetails('{{ job.job_uuid }}')">View Posting</button>
+                        <form action="{% url 'delete_job' job.job_uuid %}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this job?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-custom">Delete</button>
                     </li>
                     {% empty %}
                     <li class="list-group-item rounded-lg">There are no jobs posted.</li>
