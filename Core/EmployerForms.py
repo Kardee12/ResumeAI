@@ -2,6 +2,7 @@ from django import forms
 from profile import Profile
 
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 from .EmployerModel import Job, JobSkills, EmployerProfile, JobType
 
@@ -32,12 +33,22 @@ class EmployerProfileForm(forms.Form):
     company_role_description = forms.CharField(label='Company Role Description', widget=forms.Textarea(attrs={'class':'form-control', 'rows':4, 'placeholder':'Tell us about your role at your company'}))
     company_website = forms.URLField(label='Company Website', max_length = 200, widget=forms.URLInput(attrs={'class':'form-control', 'placeholder':'https://yourcompany.com'}))
     
-class EditEmployerProfile(forms.Form):
-    model = EmployerProfile
-    fields = ['position', 'company_name', 'company_role_description', 'company_website']
-    widgets = {
-        'position': forms.TextInput(attrs={'class': 'form-control'}),
-        'company_name': forms.TextInput(attrs={'class': 'form-control'}),
-        'company_role_description': forms.Textarea(attrs={'class': 'form-control'}),
-        'company_website': forms.URLInput(attrs={'class': 'form-control'}),
-    }
+class EditEmployerProfileForm(forms.ModelForm):
+    class Meta:
+        model = EmployerProfile
+        fields = ['position', 'company_name', 'company_role_description', 'company_website']
+        widgets = {
+            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your position at the company'}),
+            'company_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your company name'}),
+            'company_role_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Describe your role at the company'}),
+            'company_website': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://yourcompany.com'}),
+        }
+
+    def clean_company_website(self):
+        website = self.cleaned_data.get('company_website')
+        validator = URLValidator()
+        try:
+            validator(website)
+        except forms.ValidationError:
+            raise forms.ValidationError("Enter a valid URL.")
+        return website

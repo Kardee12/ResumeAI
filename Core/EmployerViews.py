@@ -10,7 +10,7 @@ from Core.functions.ParsingUtility import ParsingFunctions
 from Core.models import JobApplication
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
-from Core.EmployerForms import EditEmployerProfile, EmployerProfileForm, JobForm
+from Core.EmployerForms import EditEmployerProfileForm, EmployerProfileForm, JobForm
 from Core.EmployerModel import EmployerProfile, Job, JobSkills
 from django.db import transaction, models
 from django.db.models import Count, Q

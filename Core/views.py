@@ -40,11 +40,6 @@ def settings(request):
         social_account = SocialAccount.objects.get(user=request.user)
     except SocialAccount.DoesNotExist:
         social_account = None
-        
-    if request.user.role == 'jobsearcher':
-        base_template = 'Authorized/Core/JobSearcher/Base.html'
-    else:
-        base_template = 'Authorized/Core/Employer/base.html'
 
     if request.method == 'POST':
         if 'sign_out' in request.POST:
@@ -54,10 +49,26 @@ def settings(request):
             request.user.delete()
             return redirect('/')
 
-    return render(request, 'Authorized/Core/Settings.html', {
+    return render(request, 'Authorized/Core/JobSearcher/Settings.html', {
         'social_account': social_account,
-        'base_template':base_template,
     })
+
+@login_required
+def empsettings(request):
+    try:
+        social_account = SocialAccount.objects.get(user=request.user)
+    except SocialAccount.DoesNotExist:
+        social_account = None
+    if request.method == 'POST':
+        if 'sign_out' in request.POST:
+            logout(request)
+            return redirect('/')
+        elif 'delete_account' in request.POST:
+            request.user.delete()
+            return redirect('/')
+
+    return render(request, 'Authorized/Core/Employer/Settings.html', {
+        'social_account': social_account    })
 
 
 def logoutView(request):
