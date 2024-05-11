@@ -1,3 +1,5 @@
+import os
+
 import requests
 from decouple import config
 import re
@@ -57,6 +59,21 @@ class ParsingFunctions:
                 high_similarity_skills.append(skill_dataset[highest_index])
         return high_similarity_skills
 
+    def normalize_skills(self, skills):
+        with open("Data/SkillsDataSet", 'r') as file:
+            skill_dataset = [line.strip() for line in file]
+        extracted_embeddings = self.model.encode(skills)
+        dataset_embeddings = self.model.encode(skill_dataset)
+        high_similarity_skills = []
+        for skill, embedding in zip(skills, extracted_embeddings):
+            similarities = util.pytorch_cos_sim(embedding, dataset_embeddings)[0]
+            top_indices = np.where(similarities > 0.75)[0]
+            if len(top_indices) > 0:
+                highest_index = top_indices[np.argmax(similarities[top_indices])]
+                high_similarity_skills.append(skill_dataset[highest_index])
+            else:
+                high_similarity_skills.append(skill)  # Append original skill if no match found
+        return high_similarity_skills
 
 class ResumeParsing:
     def __init__(self, request):
@@ -129,3 +146,43 @@ class ResumeParsing:
         except Exception as e:
             print(f"An error occurred while extracting text from TXT: {e}")
             return None
+
+class NewResumeParsing:
+    def __init__(self, resume_file):
+        self.resume_file = resume_file
+
+    def extract_text(self):
+        if not os.path.exists(self.resume_file.path):
+            print("Resume file does not exist.")
+            return None
+
+        try:
+            if self.resume_file.name.endswith('.pdf'):
+                return self.extract_text_from_pdf()
+            elif self.resume_file.name.endswith('.docx'):
+                return self.extract_text_from_docx()
+            elif self.resume_file.name.endswith('.doc'):
+                return self.extract_text_from_doc()
+            elif self.resume_file.name.endswith('.txt'):
+                return self.extract_text_from_txt()
+        except Exception as e:
+            print(f"An error occurred while extracting text: {e}")
+        return None
+
+    def extract_text_from_pdf(self):
+        text = ""
+        with fitz.open(self.resume_file.path) as doc:
+            for page in doc:
+                text += page.get_text()
+        return text
+
+    def extract_text_from_docx(self):
+        doc = Document(self.resume_file.path)
+        return '\n'.join([paragraph.text for paragraph in doc.paragraphs])
+
+    def extract_text_from_doc(self):
+        return textract.process(self.resume_file.path).decode('utf-8')
+
+    def extract_text_from_txt(self):
+        with open(self.resume_file.path, 'r') as f:
+            return f.read().strip()
