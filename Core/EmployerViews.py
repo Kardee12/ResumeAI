@@ -38,38 +38,6 @@ def emp_setupProfile(request):
         'form': form,
     })
 
-# @login_required
-# @employer_required
-# def create_job_posting(request):
-#     skills = ResumeSkills.objects.all()
-#     skill_choices = [(skill.id, skill.name) for skill in skills]
-    
-#     if request.method == 'POST':
-#         form = JobForm(request.POST, request.FILES)
-#         form.fields['skills_used'].choices = skill_choices
-#         if form.is_valid():
-#             job = Job.objects.create(
-#                 position=form.cleaned_data['position'],
-#                 description=form.cleaned_data['description'],
-#                 pay=form.cleaned_data['pay'],
-#                 link_to_apply=form.cleaned_data['link_to_apply'],
-#                 link_to_company=form.cleaned_data['link_to_company'],
-#                 company_image_url=form.cleaned_data['company_image'],
-#             )
-            
-#             skills_used = form.cleaned_data['skills_used']
-#             for skill_id in skills_used:
-#                 skill = ResumeSkills.objects.get(id = skill_id)
-#                 job.skills_used.add(skill)
-                
-#                 pass
-#         else:
-#             form = JobForm()
-#             form.fields['skills_used'].choices = skill_choices
-            
-#         return render(request, 'Authorized/Core/Employer/create-job-posting.html', {
-#             'form' : form
-#         })
 
 @login_required
 @employer_required
@@ -305,3 +273,15 @@ def setup_employer_profile(request):
 
     return render(request, 'Authorized/Core/Employer/create-employer-profile.html', context={'form': form})
 
+
+@login_required
+@employer_required
+def delete_job(request, job_id):
+    if request.method == 'POST':
+        job = get_object_or_404(Job, job_uuid = job_id, employer_profile__user = request.user)
+        job.delete()
+        messages.success(request, 'Job successfully deleted')
+        return redirect('job_posting_page')
+    else:
+        messages.error(request, "Invalid request")
+        return redirect('job_posting_page')
