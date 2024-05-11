@@ -19,7 +19,6 @@ from django.core import serializers
 
 @login_required
 @employer_required
-@emp_profile_not_completed
 def emp_setupProfile(request):
     if request.method == 'POST':
         form = EmployerProfileForm(request.POST)
@@ -74,7 +73,6 @@ def emp_setupProfile(request):
 
 @login_required
 @employer_required
-@emp_profile_completed
 def create_job_posting(request):
     try:
         employer_profile = EmployerProfile.objects.get(user=request.user)
@@ -112,7 +110,6 @@ def create_job_posting(request):
 
 @login_required
 @employer_required
-@emp_profile_completed
 def edit_job_posting(request, job_id):
     job = get_object_or_404(Job, job_uuid=job_id)
     if request.method == 'POST':
@@ -154,7 +151,6 @@ def edit_job_posting(request, job_id):
 
 @login_required
 @employer_required
-@emp_profile_completed
 def employer_dashboard(request):
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
@@ -179,7 +175,6 @@ def employer_dashboard(request):
 
 @login_required
 @employer_required
-@emp_profile_completed
 def edit_employer_profile(request):
     user = request.user
     profile, created = EmployerProfile.objects.get_or_create(user=user)
@@ -210,19 +205,16 @@ def edit_employer_profile(request):
 # work on this later 5/6/24
 @login_required
 @employer_required
-@emp_profile_completed
 def company_profile_page(request):
     return render(request, "Authorized/Core/Employer/company_profile_page.html")
 # work on this later 5/6/24: Check notebook
 @login_required
 @employer_required
-@emp_profile_completed
 def edit_company_page(request):
     return render(request, 'Authorized/Core/Employer/edit_company_profile.html')
 
 @login_required
 @employer_required
-@emp_profile_completed
 def candidatePage(request, job_id):
     job = get_object_or_404(Job, job_uuid=job_id)
     job_applications = JobApplication.objects.filter(job=job)
@@ -275,7 +267,6 @@ def custom_job_serializer(jobs):
 
 @login_required
 @employer_required
-@emp_profile_completed
 def job_posting_page(request):
     jobs = Job.objects.all()
     jobs_json = custom_job_serializer(jobs)  # Use your custom serializer here
@@ -287,7 +278,6 @@ def job_posting_page(request):
 
 @login_required
 @employer_required
-@emp_profile_completed
 def profile(request):
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
@@ -296,7 +286,6 @@ def profile(request):
 
 @login_required
 @employer_required
-@emp_profile_not_completed
 def setup_employer_profile(request):
     try:
         profile = EmployerProfile.objects.get(user=request.user)

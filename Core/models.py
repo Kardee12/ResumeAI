@@ -46,7 +46,6 @@ class JobApplication(models.Model):
         ('Offer', 'Offer'),
         ('Rejected', 'Rejected'),
         ('Accepted', 'Accepted'),
-        ('Declined', 'Declined'),
     )
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applications')
