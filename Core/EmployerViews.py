@@ -39,43 +39,50 @@ def emp_setupProfile(request):
     })
 
 
-#USE FORM
 @login_required
 @employer_required
 def create_job_posting(request):
-    try:
-        employer_profile = EmployerProfile.objects.get(user=request.user)
-    except EmployerProfile.DoesNotExist:
+    employer_profile = EmployerProfile.objects.filter(user=request.user).first()
+    if not employer_profile:
+        messages.error(request, "Please complete your employer profile first.")
         return redirect('create_employer_profile')
     if request.method == 'POST':
-        # Extract data from the POST request
-        position = request.POST.get('position')
-        description = request.POST.get('description')
-        job_type = request.POST.get('job_type')
-        pay = request.POST.get('pay')
-        location = request.POST.get('location')
-        link_to_apply = request.POST.get('link_to_apply')
-        new_job = Job(
-            employer_profile=employer_profile,
-            position=position,
-            description=description,
-            job_type=job_type,
-            pay=pay,
-            location=location,
-            link_to_apply=link_to_apply
-        )
-        print(new_job.job_type)
-        new_job.save()
-        for i in range(1, 6):
-            skill_name = request.POST.get(f'skill_{i}')
-            if skill_name:
-                skill, created = JobSkills.objects.get_or_create(name=skill_name)
-                new_job.skills.add(skill)
-
-        new_job.save()
-        return redirect('employer_dashboard')
+        form = JobForm(request.POST)
+        if form.is_valid():
+            try:
+                new_job = Job.objects.create(
+                    employer_profile=employer_profile,
+                    position=form.cleaned_data['position'],
+                    description=form.cleaned_data['description'],
+                    job_type=form.cleaned_data['job_type'],
+                    pay=form.cleaned_data['pay'],
+                    location=form.cleaned_data['location'],
+                    link_to_apply=form.cleaned_data['link_to_apply']
+                )
+                skills_added = False
+                skills = [form.cleaned_data.get(f'skill_{i}') for i in range(1, 6) if
+                          form.cleaned_data.get(f'skill_{i}')]
+                for skill_name in skills:
+                    skill, created = JobSkills.objects.get_or_create(name=skill_name)
+                    new_job.skills.add(skill)
+                    skills_added = True
+                if not skills_added:
+                    messages.warning(request, "No skills were added to the job posting.")
+                print("1: ",form.errors)
+                messages.success(request, "Job posting created successfully.")
+                return redirect('employer_dashboard')
+            except Exception as e:
+                messages.error(request, f"Failed to create job posting: {str(e)}")
+        else:
+            messages.error(request, "Please correct the errors below.")
+            print("2: ", form.errors)
     else:
-        return render(request, 'Authorized/Core/Employer/create-job-posting.html')
+        form = JobForm()
+        print("3: ", form.errors)
+    return render(request, 'Authorized/Core/Employer/create-job-posting.html', {
+        'form': form,
+        'profile': employer_profile  # Pass profile to handle it in the template
+    })
 
 #USE FORM
 @login_required

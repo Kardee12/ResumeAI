@@ -90,7 +90,6 @@ def jobsearcher_profile(request):
     })
 
 
-# USE FORM
 @login_required
 @job_searcher_required
 @js_profile_completed
@@ -321,7 +320,7 @@ def search(request):
     if query:
         jobs = Job.objects.filter(
             Q(position__icontains=query) | Q(description__icontains=query) |
-            Q(company__icontains=query) | Q(location__icontains=query) |
+            Q(employer_profile__company_name__icontains=query) | Q(location__icontains=query) |
             Q(pay__icontains=query) | Q(job_type__icontains=query)
         ).distinct()
     else:

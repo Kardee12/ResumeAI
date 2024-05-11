@@ -91,7 +91,7 @@
                     <li class="list-group-item rounded-lg">
                         <h5>{{ job.position }}</h5>
                         <p class="text-muted">{{ job.description|truncatewords:20 }}</p>
-                        <button class="btn btn-primary btn-custom" onclick="showDetails('{{ job.job_uuid }}')">View Posting</button>
+                        <button class="btn btn-primary btn-custom" onclick="showDetails('{{ job.job_uuid|escapejs}}')">View Posting</button>
                         <form action="{% url 'delete_job' job.job_uuid %}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this job?');">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btn-custom">Delete</button>
@@ -113,7 +113,7 @@
 
 {% block extra_scripts %}
 <script>
-var globalJobs = JSON.parse('{{ jobs_json|safe }}');  // Ensure this is parsing correctly and contains all job information
+var globalJobs = JSON.parse('{{ jobs_json|escapejs }}');  // Ensure this is parsing correctly and contains all job information
 
 function getJobTypeColor(jobType) {
     switch (jobType) {

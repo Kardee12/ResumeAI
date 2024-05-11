@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 from Core.models import UserProfile
@@ -69,4 +70,15 @@ class ResumeForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         skills = [cleaned_data.get(f"skill_{i + 1}") for i in range(10) if cleaned_data.get(f"skill_{i + 1}")]
-        return cleaned_data, skills
+        if len(skills) != 10:
+            raise ValidationError("All 10 skills are required.")
+        jobs_required_fields = ['job_title_1', 'company_name_1', 'start_date_1', 'end_date_1', 'job_description_1']
+        if not all(cleaned_data.get(field) for field in jobs_required_fields):
+            raise ValidationError("At least one complete work experience is required.")
+        if cleaned_data['start_date_1'] and cleaned_data['end_date_1']:
+            if cleaned_data['start_date_1'] > cleaned_data['end_date_1']:
+                raise ValidationError("Start date must be before end date for the job.")
+        if cleaned_data['education_start_date'] > cleaned_data['education_end_date']:
+            raise ValidationError("Educational start date must be before the end date.")
+
+        return cleaned_data
