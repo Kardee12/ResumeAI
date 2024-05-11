@@ -39,6 +39,7 @@ def emp_setupProfile(request):
     })
 
 
+#USE FORM
 @login_required
 @employer_required
 def create_job_posting(request):
@@ -76,6 +77,7 @@ def create_job_posting(request):
     else:
         return render(request, 'Authorized/Core/Employer/create-job-posting.html')
 
+#USE FORM
 @login_required
 @employer_required
 def edit_job_posting(request, job_id):
@@ -141,6 +143,7 @@ def employer_dashboard(request):
     }
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
 
+#USE FORM
 @login_required
 @employer_required
 def edit_employer_profile(request):
@@ -170,12 +173,11 @@ def edit_employer_profile(request):
     return render(request, 'Authorized/Core/Employer/edit_employer_profile.html', context)
 
 
-# work on this later 5/6/24
 @login_required
 @employer_required
 def company_profile_page(request):
     return render(request, "Authorized/Core/Employer/company_profile_page.html")
-# work on this later 5/6/24: Check notebook
+
 @login_required
 @employer_required
 def edit_company_page(request):

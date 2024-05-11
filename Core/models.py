@@ -1,3 +1,5 @@
+import os
+
 from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
@@ -34,6 +36,12 @@ class UserResume(models.Model):
         null=True
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def delete(self, *args, **kwargs):
+        if self.resume:
+            if os.path.isfile(self.resume.path):
+                os.remove(self.resume.path)
+        super(UserResume, self).delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username}'s Resume - {self.resume.name if self.resume else 'No resume uploaded'}"

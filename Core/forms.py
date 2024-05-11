@@ -1,6 +1,8 @@
 from django import forms
 from django.core.validators import FileExtensionValidator
 
+from Core.models import UserProfile
+
 
 class UserProfileForm(forms.Form):
     location = forms.CharField(label='Location', max_length=255, required=False)
@@ -13,19 +15,24 @@ class UserProfileForm(forms.Form):
     )
 
 
-class EditProfileForm(forms.Form):
-    location = forms.CharField(label='Location', max_length=255, required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Enter your location', 'id': 'locationInput'}))
-    bio = forms.CharField(label='Professional Bio', widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-                          required=False)
+class EditProfileForm(forms.ModelForm):
+    # location = forms.CharField(max_length=100, required=False)
+    # summary = forms.CharField(widget=forms.Textarea, required=False)
     resume = forms.FileField(
-        label='Upload Resume',
         required=False,
-        validators=[FileExtensionValidator(['pdf', 'doc', 'docx', 'txt'])],
-        help_text='Accepted formats: PDF, DOC, DOCX, TXT',
-        widget=forms.FileInput(attrs={'class': 'form-control'}
-                               )
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx', 'txt'])],
+        help_text="Accepted formats: PDF, DOC, DOCX, TXT"
     )
+    class Meta:
+        model = UserProfile
+        fields = ['location', 'bio']
+
+    def clean_resume(self):
+        resume = self.cleaned_data.get('resume')
+        if resume and not resume.name.endswith(('.pdf', '.docx', '.doc', '.txt')):
+            raise forms.ValidationError("Invalid file type. Accepted formats: PDF, DOC, DOCX, TXT.")
+        return resume
+
 
 
 class ResumeForm(forms.Form):
@@ -62,4 +69,4 @@ class ResumeForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         skills = [cleaned_data.get(f"skill_{i + 1}") for i in range(10) if cleaned_data.get(f"skill_{i + 1}")]
-        return cleaned_data
+        return cleaned_data, skills
