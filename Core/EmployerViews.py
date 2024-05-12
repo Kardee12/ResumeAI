@@ -135,6 +135,8 @@ def edit_employer_profile(request):
             form.save()
             messages.success(request, "Your profile has been updated successfully.")
             return redirect('employer_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = EditEmployerProfileForm(instance=profile)
 
@@ -250,6 +252,8 @@ def setup_employer_profile(request):
                 profile.user = request.user
                 profile.save()
                 return redirect('employer_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
         form = EmployerProfileForm(instance=profile)
 
