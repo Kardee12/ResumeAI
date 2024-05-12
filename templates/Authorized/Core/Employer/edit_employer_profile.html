@@ -58,18 +58,7 @@ Edit Employer Profile - ResumeAI
                 <form method="post" action="{% url 'edit_employer_profile' %}">
                     {% csrf_token %}
                     <h2 class="text-center mb-4">Edit Employer Profile</h2>
-                    <div class="mb-3">
-                        <label for="position" class="form-label">Position</label>
-                        <input type="text" id="position" name="position" class="form-control" value="{{ profile.position }}" placeholder="Position">
-                    </div>
-                    <div class="mb-3">
-                        <label for="company_role_description" class="form-label">Company Role Description</label>
-                        <textarea id="company_role_description" name="company_role_description" class="form-control" placeholder="Describe your company">{{ profile.company_role_description }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="company_website" class="form-label">Company Website</label>
-                        <input type="url" id="company_website" name="company_website" class="form-control" value="{{ profile.company_website }}" placeholder="http://">
-                    </div>
+                    {{ form.as_p }}  <!-- This will render the form fields automatically -->
                     <div class="text-center">
                         <button type="submit" class="btn btn-custom">Save Changes</button>
                     </div>

@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from Core.functions import ParsingUtility
+from Core.functions.ParsingUtility import ParsingFunctions
+from django.contrib import messages
 
 from Core.functions import ParsingUtility
 from Core.functions.ParsingUtility import ParsingFunctions
@@ -11,6 +14,7 @@ from Core.models import JobApplication
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
 from Core.EmployerForms import EditEmployerProfileForm, EmployerProfileForm, JobForm
+from Core.EmployerForms import EditEmployerProfileForm, EmployerProfileForm, JobForm, EditJobPosting
 from Core.EmployerModel import EmployerProfile, Job, JobSkills
 from django.db import transaction, models
 from django.db.models import Count, Q
