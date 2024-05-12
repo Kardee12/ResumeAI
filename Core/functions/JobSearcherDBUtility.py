@@ -14,6 +14,8 @@ def create_user_skills(user, skill_names):
         profile.save()
 
     return profile
+
+
 def update_user_skills(user, skill_names):
     with transaction.atomic():
         profile = UserProfile.objects.get(user=user)

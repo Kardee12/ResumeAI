@@ -1,7 +1,11 @@
+import os
+
 from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
 from django.db import models
+
+from Core.EmployerModel import Job
 
 
 class UserSkill(models.Model):
@@ -33,5 +37,29 @@ class UserResume(models.Model):
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    def delete(self, *args, **kwargs):
+        if self.resume:
+            if os.path.isfile(self.resume.path):
+                os.remove(self.resume.path)
+        super(UserResume, self).delete(*args, **kwargs)
+
     def __str__(self):
         return f"{self.user.username}'s Resume - {self.resume.name if self.resume else 'No resume uploaded'}"
+
+
+class JobApplication(models.Model):
+    STATUS_CHOICES = (
+        ('Applied', 'Applied'),
+        ('Interview', 'Interview'),
+        ('Offer', 'Offer'),
+        ('Rejected', 'Rejected'),
+        ('Accepted', 'Accepted'),
+    )
+
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applications')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='job_applications')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Applied')
+    application_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.job.position} - {self.status}"

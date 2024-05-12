@@ -1,7 +1,8 @@
-from django.contrib.auth import logout
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+
 from .forms import SetupForm
+
 
 @login_required
 def setup_view(request):
@@ -14,11 +15,12 @@ def setup_view(request):
             request.user.has_completed_setup = True
             request.user.save()
             print("REDIRECT")
+            print("request.user.role: ", request.user.role)
             if request.user.role == "job_searcher":
+                print("DONE")
                 return redirect('js_setup_profile')
-            # else:
-            #     return redirect('emp_setupProfile')
-            return redirect('home')
+            else:
+                return redirect('emp_setupProfile')
         else:
             print(form.errors)
     else:

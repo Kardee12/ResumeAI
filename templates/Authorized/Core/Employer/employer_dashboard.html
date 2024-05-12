@@ -1,0 +1,82 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static %}
+
+{% block title %}Employer Dashboard - ResumeAI{% endblock %}
+
+{% block content %}
+    <style>
+        .card {
+            border-radius: 15px; /* Increased border radius for roundness */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+            transition: all 0.3s; /* Smooth transition for hover effects */
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Larger shadow on hover for a "lifted" effect */
+        }
+
+        .list-group-item {
+            border-radius: 10px; /* Rounded corners for list items */
+            margin-bottom: 5px; /* Space between items */
+            transition: transform 0.2s; /* Smooth transform on hover */
+        }
+
+        .list-group-item:hover {
+            transform: translateY(-2px); /* Slight raise effect on hover */
+        }
+    </style>
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Employer Dashboard</h2>
+        <h3 class="greeting">Hello <strong>{{ user.first_name |title }},</strong></h3>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Recent Job Postings</h5>
+                        <ul class="list-group">
+                            {% for job, applicants in jobs_with_applicants %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    style="border-radius: 15px;">
+                                    {{ job.position }}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">No recent job postings.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Recent Applicants</h5>
+                        <ul class="list-group">
+                            {% for job, applicants in jobs_with_applicants %}
+                                {% for applicant in applicants %}
+                                    <li class="list-group-item">
+                                        <div>{{ applicant.get_full_name }}</div>
+                                        <div class="text-muted">Applied for: {{ job.position }}</div>
+                                    </li>
+                                {% endfor %}
+                            {% empty %}
+                                <li class="list-group-item">No recent applicants.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Metrics</h5>
+                        <p><strong>Total Applicants:</strong> {{ total_applicants }}</p>
+                        <p><strong>Active Job Postings:</strong> {{ active_job_listings }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

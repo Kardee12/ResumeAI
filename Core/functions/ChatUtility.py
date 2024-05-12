@@ -1,31 +1,25 @@
 from decouple import config
-from django.apps import apps
-from django.db import transaction, IntegrityError
-from langchain.document_loaders import HuggingFaceDatasetLoader
-from langchain.memory import ConversationBufferMemory
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.chains import ConversationalRetrievalChain
 from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.memory import ConversationBufferMemory
 from langchain.vectorstores import FAISS
 from langchain_community.llms.huggingface_endpoint import HuggingFaceEndpoint
 from langchain_core.prompts import PromptTemplate
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering
-from transformers import AutoTokenizer, pipeline
-from langchain import HuggingFacePipeline
-from langchain.chains import RetrievalQA, ConversationalRetrievalChain
 from langchain_experimental.text_splitter import SemanticChunker
-
 
 REPO_ID = "mistralai/Mistral-7B-Instruct-v0.2"
 LLM = HuggingFaceEndpoint(
-    repo_id=REPO_ID, temperature=0.1, max_length=512, max_new_tokens=512, huggingfacehub_api_token= config('HF_TOKEN')
+    repo_id=REPO_ID, temperature=0.1, max_length=512, max_new_tokens=512, huggingfacehub_api_token=config('HF_TOKEN')
 )
 EMBEDDINGS = HuggingFaceEmbeddings()
+
 
 def create_retriever_from_resume(resume_text):
     text_splitter = SemanticChunker(EMBEDDINGS)
     docs = text_splitter.create_documents([resume_text])
     db = FAISS.from_documents(docs, EMBEDDINGS)
     return db.as_retriever()
+
 
 def build_conversational_chain(retriever, question_prompt):
     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
@@ -36,6 +30,7 @@ def build_conversational_chain(retriever, question_prompt):
         memory=memory,
         condense_question_prompt=question_prompt
     )
+
 
 def query_model(question, resume_text):
     retriever = create_retriever_from_resume(resume_text)

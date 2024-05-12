@@ -1,0 +1,171 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static %}
+
+{% block title %}Edit Job Posting - ResumeAI{% endblock %}
+
+{% block content %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAol5-69FX2_kEVFyUC_rByOsu_4cQmd-s&libraries=places&callback=initAutocomplete"
+            async defer></script>
+    <style>
+        .form-control, .btn {
+            border-radius: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+        }
+
+        .form-control:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #0056b3;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #004085;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn-outline-primary {
+            border-color: #0056b3;
+            color: #0056b3;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active,
+        .btn-check:checked + .btn-outline-primary {
+            background-color: #0056b3;
+            color: #fff;
+        }
+    </style>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Edit Job Posting</h1>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="position" class="form-label">Job Position</label>
+                            <input type="text" class="form-control {% if form.position.errors %}is-invalid{% endif %}"
+                                   id="position" name="position" value="{{ form.position.value|default:job.position }}">
+                            {% for error in form.position.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="locationInput" class="form-label">Location</label>
+                            <input type="text" class="form-control {% if form.location.errors %}is-invalid{% endif %}"
+                                   id="locationInput" name="location"
+                                   value="{{ form.location.value|default:job.location }}">
+                            {% for error in form.location.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Job Description</label>
+                        <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}"
+                                  id="description" name="description"
+                                  rows="4">{{ form.description.value|default:job.description }}</textarea>
+                        {% for error in form.description.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="pay" class="form-label">Job Pay</label>
+                            <input type="text" class="form-control {% if form.pay.errors %}is-invalid{% endif %}"
+                                   id="pay" name="pay" value="{{ form.pay.value|default:job.pay }}">
+                            {% for error in form.pay.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="link_to_apply" class="form-label">Link to Apply</label>
+                            <input type="url"
+                                   class="form-control {% if form.link_to_apply.errors %}is-invalid{% endif %}"
+                                   id="link_to_apply" name="link_to_apply"
+                                   value="{{ form.link_to_apply.value|default:job.link_to_apply }}">
+                            {% for error in form.link_to_apply.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">Update Job Posting</button>
+                        <a href="{% url 'job_posting_page' %}" class="btn btn-secondary">Back to Listings</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        window.initAutocomplete = function () {
+            var locationInput = document.getElementById('locationInput');
+            var options = {
+                types: ['(cities)'], // Restrict search to cities only
+                componentRestrictions: {country: 'us'}
+            };
+            var autocomplete = new google.maps.places.Autocomplete(locationInput, options);
+            autocomplete.addListener('place_changed', function () {
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    // User entered the name of a Place that was not suggested and pressed the Enter key, or the Place Details request failed.
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+            });
+        };
+        document.addEventListener('DOMContentLoaded', initAutocomplete);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var positionInput = document.getElementById('position');
+            var descriptionTextArea = document.getElementById('description');
+            var payInput = document.getElementById('pay');
+
+            // Custom validation to ensure certain fields meet criteria before submission
+            positionInput.addEventListener('input', function () {
+                if (/\d/.test(this.value)) {
+                    this.setCustomValidity('The position field should not contain numbers.');
+                    this.reportValidity();
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+
+            descriptionTextArea.addEventListener('input', function () {
+                if (/\d/.test(this.value)) {
+                    this.setCustomValidity('The description should not contain numbers.');
+                    this.reportValidity();
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+
+            payInput.addEventListener('input', function () {
+                if (!/^[\d]+(\.[\d]{1,2})?$/.test(this.value)) {
+                    this.setCustomValidity('Enter a valid monetary amount.');
+                    this.reportValidity();
+                } else {
+                    this.setCustomValidity('');
+                }
+            });
+        });
+    </script>
+{% endblock %}

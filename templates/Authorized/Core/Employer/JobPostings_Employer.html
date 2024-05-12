@@ -1,0 +1,188 @@
+{% extends "Authorized/Core/Employer/base.html" %}
+{% load static %}
+
+{% block title %}Job Postings - ResumeAI{% endblock %}
+
+{% block extra_head %}
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700|Roboto:300,400,500,700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            color: #343a40;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card-custom {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .rounded-lg {
+            border-radius: 20px;
+        }
+
+        .scrollable-card {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .list-group-item {
+            border: none;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        .btn-custom {
+            border-radius: 25px; /* More pronounced rounded corners */
+            font-weight: bold;
+            padding: 10px 20px;
+            margin: 5px; /* Added margin for spacing */
+            background-color: #1a73e8;
+            border-color: #1a73e8;
+            color: white;
+        }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .card-img-top {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .text-muted {
+            color: #6c757d;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-custom">
+                    <div class="card-body">
+                        <h4 class="card-title">Job Postings</h4>
+                        <h6 class="text-muted card-subtitle mb-2">Take a look at your job postings and the candidates
+                            that applied for them.</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-custom rounded-lg scrollable-card">
+                    <ul class="list-group list-group-flush">
+                        {% for job in jobs %}
+                            <li class="list-group-item rounded-lg">
+                                <h5>{{ job.position }}</h5>
+                                <p class="text-muted">{{ job.description|truncatewords:20 }}</p>
+                                <button class="btn btn-primary btn-custom"
+                                        onclick="showDetails('{{ job.job_uuid|escapejs }}')">View Posting
+                                </button>
+                                <form action="{% url 'delete_job' job.job_uuid %}" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Are you sure you want to delete this job?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-custom">Delete</button>
+                                </form>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item rounded-lg">There are no jobs posted.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-custom rounded-lg scrollable-card job-details">
+                    <p class="text-center py-3 text-muted">Select a job to see the details here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        var globalJobs = JSON.parse('{{ jobs_json|escapejs }}');  // Ensure this is parsing correctly and contains all job information
+
+        function getJobTypeColor(jobType) {
+            switch (jobType) {
+                case 'Contractor':
+                    return '#ff7f50';  // Coral for Contractor
+                case 'Internship':
+                    return '#6495ed';  // CornflowerBlue for Internship
+                case 'Full-time':
+                    return '#32cd32';  // LimeGreen for Full-time
+                case 'Part-time':
+                    return '#ff4500';  // OrangeRed for Part-time
+                default:
+                    return '#808080';  // Gray for unknown or other types
+            }
+        }
+
+        function showDetails(job_uuid) {
+            const job = globalJobs.find(job => job.job_uuid === job_uuid);
+            if (!job) {
+                console.error('Job not found:', job_uuid);
+                return;
+            }
+
+            const jobDetailsDiv = document.querySelector('.job-details');
+            const jobTypeColor = getJobTypeColor(job.fields.job_type);
+            const editJobUrl = "{% url 'edit_job_posting' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", job_uuid);
+            const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';
+            const candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", job_uuid);
+            jobDetailsDiv.innerHTML = `
+<div class="card card-custom rounded-lg">
+    <div class="row no-gutters">
+        <div class="col-md-3">
+            <img src="https://logo.clearbit.com/${encodeURIComponent(job.fields.link_to_company)}" alt="${job.fields.company} Logo" class="img-fluid rounded-start" onerror="this.onerror=null; this.src='{% static 'img/default-logo.png' %}'">
+        </div>
+        <div class="col-md-9">
+            <div class="card-body">
+                <h4 class="card-title">${job.fields.position}</h4>
+                <span class="badge" style="background-color: ${jobTypeColor}; color: white; padding: 5px 10px; border-radius: 5px;">${job.fields.job_type}</span>
+                <p><strong>Company:</strong> ${job.fields.company}</p>
+                <p><strong>Location:</strong> ${job.fields.location}</p>
+                <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
+                <p>${job.fields.description}</p>
+                <p><strong>Skills:</strong> ${skillsDisplay}</p>
+                <div class="d-flex justify-content-around mt-4">
+                    <a href="${editJobUrl}" class="btn btn-primary btn-custom">Edit Now</a>
+                    <a href="${candidateListUrl}" class="btn btn-primary btn-custom">View Candidate List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    `;
+        }
+    </script>
+{% endblock %}
+
