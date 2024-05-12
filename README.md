@@ -18,9 +18,10 @@
 - **APIs:** Hugging Face, Google Maps Places API
 
 ## System Requirements
-- Python 3.8+
-- PostgreSQL 10+
-
+- Python 3.12+
+- PostgreSQL 16+ (We highly recomend using an UNIX machine, or MACOS)
+  - https://www.moncefbelyamani.com/how-to-install-postgresql-on-a-mac-with-homebrew-and-lunchy/ 
+  - https://www.geeksforgeeks.org/install-postgresql-on-windows/
 ### Production Environment
 To set up ResumeAI in a production environment, follow these steps:
 
@@ -50,7 +51,7 @@ To set up ResumeAI in a production environment, follow these steps:
      CREATE USER core WITH PASSWORD 'password';
      GRANT ALL PRIVILEGES ON DATABASE resumeAI TO core;
      ```
-   - Initialize and migrate the database schema:
+   - Initialize and migrate the database schema. If there is anything in the migrations folders, remove everything but the _init_.py:
      ```bash
      python manage.py makemigrations
      python manage.py migrate
@@ -75,3 +76,9 @@ python manage.py runserver
 - [@jrveloya](https://github.com/jrveloya)
 - [@ShunF0712](https://github.com/ShunF0712)
 - [@mich-thy](https://github.com/mich-thy)
+
+## LINKS TO VIDEOS:
+- Employer Perspective
+  - https://www.youtube.com/watch?v=B7x744DQD6A
+- JobSearcher Perspective
+  - https://www.youtube.com/watch?v=quuw8BRcraQ
