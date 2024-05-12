@@ -219,7 +219,7 @@ def create_resume(request):
     form = ResumeForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         with transaction.atomic():
-            profile, created = UserProfile.objects.get(user=request.user)
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
             resume_text = generate_resume_text(request.user, form.cleaned_data)
             resume_file = io.BytesIO(resume_text.encode())
             file_name = f"{request.user.username}_resume.txt"
