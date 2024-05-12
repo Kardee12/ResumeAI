@@ -41,13 +41,13 @@ SECRET_KEY = "django-insecure-)%*1#lrapu2w+be$tdg4=he765x1#2a9)2%#)*cnsr9#2#ig&*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = ['*']
-SITE_ID=1
+SITE_ID = 1
 LOGIN_REDIRECT_URL = '/home'
 LOGOUT_REDIRECT_URL = '/logout'
 LOGOUT_URL = '/logout'
 LOGIN_URL = '/login'
-SOCIALACCOUNT_LOGIN_ON_GET=True
-SOCIALACCOUNT_LOGOUT_ON_GET=True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_LOGOUT_ON_GET = True
 HANDLER403 = 'Core.gen_views.forbidden_response'
 # Application definition
 
@@ -102,7 +102,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ResumeAI.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -116,8 +115,6 @@ DATABASES = {
         'PORT': 5432
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -137,7 +134,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -150,7 +146,6 @@ USE_I18N = True
 USE_TZ = True
 
 AUTH_USER_MODEL = 'Accounts.CustomUser'
-
 
 # static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -187,4 +182,3 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-

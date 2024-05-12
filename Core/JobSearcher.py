@@ -1,12 +1,12 @@
 import io
 import json
-import os
 from datetime import timedelta, datetime
 
 from django.contrib import messages
-from django.core import serializers
+from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
-from django.core.serializers import serialize
+from django.db import transaction
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
@@ -14,19 +14,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 
 from Core.models import UserProfile, UserResume, UserSkill, JobApplication
-from ResumeAI.Generic.generic_decoraters import job_searcher_required, js_profile_completed, js_profile_not_completed
-from django.contrib.auth.decorators import login_required
 from ResumeAI import settings
-from . import models
+from ResumeAI.Generic.generic_decoraters import job_searcher_required, js_profile_completed
 from .EmployerModel import Job
 from .forms import UserProfileForm, ResumeForm, EditProfileForm
 from .functions.ChatUtility import query_model
 from .functions.GenerationUtility import generate_resume_text
 from .functions.JobSearcherDBUtility import create_user_skills, update_user_skills
 from .functions.ParsingUtility import ResumeParsing, ParsingFunctions, NewResumeParsing
-
-from django.db import transaction
-from django.db.models import Q, Count
 
 
 @login_required
@@ -57,7 +52,7 @@ def jobsearcher_dashboard(request):
     change_offers = total_offers - last_month_offers
     change_rejections = total_rejections - last_month_rejections
     success_rate = 10 * float(float(total_offers) / float(total_applications)) if (
-                                                                                              total_applications and total_offers) > 0 else 0
+                                                                                          total_applications and total_offers) > 0 else 0
     context = {
         'job_applications': JobApplication.objects.filter(user=user).order_by('-application_date')[:3],
         'total_applications': total_applications,
@@ -189,8 +184,11 @@ def process_resume(resume_file, profile, request):
     except Exception as e:
         messages.error(request, f"Error processing resume: {str(e)}")
         return False
+
+
 @login_required
 @job_searcher_required
+@js_profile_completed
 def edit_profile(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
@@ -245,6 +243,7 @@ def create_resume(request):
 
 @login_required
 @job_searcher_required
+@js_profile_completed
 def jobsearcher_chat(request):
     return render(request, "Authorized/Core/JobSearcher/chat.html")
 

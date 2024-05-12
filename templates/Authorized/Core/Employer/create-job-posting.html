@@ -52,7 +52,8 @@
             border-radius: 12px;
         }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAol5-69FX2_kEVFyUC_rByOsu_4cQmd-s&libraries=places&callback=initAutocomplete" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAol5-69FX2_kEVFyUC_rByOsu_4cQmd-s&libraries=places&callback=initAutocomplete"
+            async defer></script>
 {% endblock %}
 
 {% block content %}
@@ -65,35 +66,46 @@
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="position" class="form-label">Job Position</label>
-                            <input type="text" class="form-control {% if form.position.errors %}is-invalid{% endif %}" id="position" name="position" placeholder="Enter Job Position" value="{{ form.position.value|default_if_none:'' }}">
+                            <input type="text" class="form-control {% if form.position.errors %}is-invalid{% endif %}"
+                                   id="position" name="position" placeholder="Enter Job Position"
+                                   value="{{ form.position.value|default_if_none:'' }}">
                             {% for error in form.position.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
                         </div>
                         <div class="mb-3">
                             <label for="location" class="form-label">Location</label>
-                            <input type="text" class="form-control {% if form.location.errors %}is-invalid{% endif %}" id="location" name="location" placeholder="Enter location" value="{{ form.location.value|default_if_none:'' }}">
+                            <input type="text" class="form-control {% if form.location.errors %}is-invalid{% endif %}"
+                                   id="location" name="location" placeholder="Enter location"
+                                   value="{{ form.location.value|default_if_none:'' }}">
                             {% for error in form.location.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Job Description</label>
-                            <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}" id="description" name="description" rows="4" placeholder="Enter Job Description">{{ form.description.value|default_if_none:'' }}</textarea>
+                            <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}"
+                                      id="description" name="description" rows="4"
+                                      placeholder="Enter Job Description">{{ form.description.value|default_if_none:'' }}</textarea>
                             {% for error in form.description.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
                         </div>
                         <div class="mb-3">
                             <label for="pay" class="form-label">Job Pay</label>
-                            <input type="text" class="form-control {% if form.pay.errors %}is-invalid{% endif %}" id="pay" name="pay" placeholder="Enter Job Payment Details" value="{{ form.pay.value|default_if_none:10000 }}">
+                            <input type="text" class="form-control {% if form.pay.errors %}is-invalid{% endif %}"
+                                   id="pay" name="pay" placeholder="Enter Job Payment Details"
+                                   value="{{ form.pay.value|default_if_none:10000 }}">
                             {% for error in form.pay.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
                         </div>
                         <div class="mb-3">
                             <label for="link_to_apply" class="form-label">Link to Apply</label>
-                            <input type="url" class="form-control {% if form.link_to_apply.errors %}is-invalid{% endif %}" id="link_to_apply" name="link_to_apply" placeholder="Enter Link to Application" value="{{ form.link_to_apply.value|default_if_none:profile.company_website }}">
+                            <input type="url"
+                                   class="form-control {% if form.link_to_apply.errors %}is-invalid{% endif %}"
+                                   id="link_to_apply" name="link_to_apply" placeholder="Enter Link to Application"
+                                   value="{{ form.link_to_apply.value|default_if_none:profile.company_website }}">
                             {% if form.link_to_apply.errors %}
                                 <div class="invalid-feedback">
                                     {% for error in form.link_to_apply.errors %}
@@ -106,13 +118,17 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Job Type</label>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <input type="radio" class="btn-check" name="job_type" id="Contractor" value="Contractor" autocomplete="off" checked>
+                                    <input type="radio" class="btn-check" name="job_type" id="Contractor"
+                                           value="Contractor" autocomplete="off" checked>
                                     <label class="btn btn-outline-primary" for="Contractor">Contractor</label>
-                                    <input type="radio" class="btn-check" name="job_type" id="Internship" value="Internship" autocomplete="off">
+                                    <input type="radio" class="btn-check" name="job_type" id="Internship"
+                                           value="Internship" autocomplete="off">
                                     <label class="btn btn-outline-primary" for="Internship">Internship</label>
-                                    <input type="radio" class="btn-check" name="job_type" id="Full-time" value="Full-time" autocomplete="off">
+                                    <input type="radio" class="btn-check" name="job_type" id="Full-time"
+                                           value="Full-time" autocomplete="off">
                                     <label class="btn btn-outline-primary" for="Full-time">Full-time</label>
-                                    <input type="radio" class="btn-check" name="job_type" id="Part-time" value="Part-time" autocomplete="off">
+                                    <input type="radio" class="btn-check" name="job_type" id="Part-time"
+                                           value="Part-time" autocomplete="off">
                                     <label class="btn btn-outline-primary" for="Part-time">Part-time</label>
                                 </div>
                             </div>
@@ -120,8 +136,10 @@
                         <div class="row">
                             {% for i in "12345" %}
                                 <div class="col-md-6 mb-3">
-                                    <label for="skill_{{ forloop.counter }}" class="form-label">Skill #{{ forloop.counter }}</label>
-                                    <input type="text" class="form-control" id="skill_{{ forloop.counter }}" name="skill_{{ forloop.counter }}" placeholder="Enter a skill">
+                                    <label for="skill_{{ forloop.counter }}" class="form-label">Skill
+                                        #{{ forloop.counter }}</label>
+                                    <input type="text" class="form-control" id="skill_{{ forloop.counter }}"
+                                           name="skill_{{ forloop.counter }}" placeholder="Enter a skill">
                                 </div>
                             {% endfor %}
                         </div>

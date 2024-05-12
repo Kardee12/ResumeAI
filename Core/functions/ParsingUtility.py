@@ -1,16 +1,17 @@
 import os
-
-import requests
-from decouple import config
 import re
 
-from django.core.exceptions import ObjectDoesNotExist
-from sentence_transformers import SentenceTransformer, util
-import numpy as np
-from Core.models import UserResume
 import fitz
-from docx import Document
+import numpy as np
+import requests
 import textract
+from decouple import config
+from django.core.exceptions import ObjectDoesNotExist
+from docx import Document
+from sentence_transformers import SentenceTransformer, util
+
+from Core.models import UserResume
+
 
 class ParsingFunctions:
     def __init__(self):
@@ -18,6 +19,7 @@ class ParsingFunctions:
         self.API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
         self.headers = {"Authorization": f"Bearer {self.HF_TOKEN}"}
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
+
     def query(self, payload):
         try:
             response = requests.post(self.API_URL, headers=self.headers, json=payload)
@@ -42,6 +44,7 @@ class ParsingFunctions:
             "parameters": {"return_full_text": False, "num_results": 10},
         }
         return self.query(payload)
+
     def post_processing(self, output):
         text = output[0]['generated_text'] if output else ''
         skills_list = [re.sub(r'^\s*\d+\.\s*', '', line).strip() for line in text.split('\n') if line.strip()]
@@ -74,6 +77,7 @@ class ParsingFunctions:
             else:
                 high_similarity_skills.append(skill)  # Append original skill if no match found
         return high_similarity_skills
+
 
 class ResumeParsing:
     def __init__(self, request):
@@ -128,6 +132,7 @@ class ResumeParsing:
         except Exception as e:
             print(f"An error occurred while extracting text from DOC: {e}")
             return None
+
     def extract_text_from_txt(self):
         try:
             resume = UserResume.objects.get(user=self.request.user)
@@ -146,6 +151,7 @@ class ResumeParsing:
         except Exception as e:
             print(f"An error occurred while extracting text from TXT: {e}")
             return None
+
 
 class NewResumeParsing:
     def __init__(self, resume_file):

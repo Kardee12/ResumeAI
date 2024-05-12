@@ -1,20 +1,14 @@
 import json
 
-from django.contrib.auth.decorators import login_required
-from django.core import serializers
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.shortcuts import render, redirect, get_object_or_404
 
-from Core.functions import ParsingUtility
-from Core.functions.ParsingUtility import ParsingFunctions
-from Core.models import JobApplication
-from ResumeAI import settings
-from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
 from Core.EmployerForms import EditEmployerProfileForm, EmployerProfileForm, JobForm, EditJobForm
 from Core.EmployerModel import EmployerProfile, Job, JobSkills
-from django.db import transaction, models
-from django.db.models import Count, Q
-from django.core import serializers
+from Core.models import JobApplication
+from ResumeAI.Generic.generic_decoraters import employer_required
 
 
 @login_required
@@ -24,7 +18,7 @@ def emp_setupProfile(request):
         form = EmployerProfileForm(request.POST)
         if form.is_valid():
             with transaction.atomic():
-                profile, created = EmployerProfile.objects.get_or_create(user = request.user)
+                profile, created = EmployerProfile.objects.get_or_create(user=request.user)
                 profile.position = form.cleaned_data['position']
                 profile.company_name = form.cleaned_data['company_name']
                 profile.company_role_description = form.cleaned_data['company_role_description']
@@ -68,7 +62,7 @@ def create_job_posting(request):
                     skills_added = True
                 if not skills_added:
                     messages.warning(request, "No skills were added to the job posting.")
-                print("1: ",form.errors)
+                print("1: ", form.errors)
                 messages.success(request, "Job posting created successfully.")
                 return redirect('employer_dashboard')
             except Exception as e:
@@ -83,6 +77,7 @@ def create_job_posting(request):
         'form': form,
         'profile': employer_profile  # Pass profile to handle it in the template
     })
+
 
 @login_required
 @employer_required
@@ -103,52 +98,13 @@ def edit_job_posting(request, job_uuid):
     return render(request, 'Authorized/Core/Employer/edit-job-posting.html', {'form': form, 'job': job})
 
 
-# def edit_job_posting(request, job_id):
-#     job = get_object_or_404(Job, job_uuid=job_id)
-#     if request.method == 'POST':
-#         position = request.POST.get('position')
-#         description = request.POST.get('description')
-#         job_type = request.POST.get('job_type')
-#         pay = request.POST.get('pay')
-#         location = request.POST.get('location')
-#         link_to_apply = request.POST.get('link_to_apply')
-#         if position and position != job.position:
-#             job.position = position
-#         if description and description != job.description:
-#             job.description = description
-#         if job_type and job_type != job.job_type:
-#             job.job_type = job_type
-#         if pay and pay != job.pay:
-#             job.pay = pay
-#         if location and location != job.location:
-#             job.location = location
-#         if link_to_apply and link_to_apply != job.link_to_apply:
-#             job.link_to_apply = link_to_apply
-#         current_skills = {skill.name for skill in job.skills.all()}
-#         new_skills = set(request.POST.get(f'skill_{i}') for i in range(1, 6) if request.POST.get(f'skill_{i}'))
-#         if new_skills != current_skills:
-#             job.skills.clear()
-#             for skill_name in new_skills:
-#                 if skill_name:
-#                     skill, created = JobSkills.objects.get_or_create(name=skill_name)
-#                     job.skills.add(skill)
-#
-#         job.save()
-#         return redirect('job_posting_page')
-#     else:
-#         context = {
-#             'job': job,
-#             'skills': job.skills.all()
-#         }
-#         return render(request, 'Authorized/Core/Employer/edit-job-posting.html', context)
-
 @login_required
 @employer_required
 def employer_dashboard(request):
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
-        
-        # Preparing data for the last three applicants for each job
+
+    # Preparing data for the last three applicants for each job
     jobs_with_applicants = []
     total_applicants = 0  # Initialize total applicants count
     for job in jobs:
@@ -157,7 +113,7 @@ def employer_dashboard(request):
         jobs_with_applicants.append((job, applicants))
 
     active_job_listings = Job.objects.filter(employer_profile=employer_profile).count()  # Count of active jobs
-        
+
     context = {
         'employer_profile': employer_profile,
         'jobs_with_applicants': jobs_with_applicants,
@@ -165,6 +121,7 @@ def employer_dashboard(request):
         'active_job_listings': active_job_listings,
     }
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
+
 
 @login_required
 @employer_required
@@ -187,15 +144,18 @@ def edit_employer_profile(request):
     }
     return render(request, 'Authorized/Core/Employer/edit_employer_profile.html', context)
 
+
 @login_required
 @employer_required
 def company_profile_page(request):
     return render(request, "Authorized/Core/Employer/company_profile_page.html")
 
+
 @login_required
 @employer_required
 def edit_company_page(request):
     return render(request, 'Authorized/Core/Employer/edit_company_profile.html')
+
 
 @login_required
 @employer_required
@@ -208,10 +168,11 @@ def candidatePage(request, job_id):
     context = {
         'job': job,
         'candidates': candidates,
-        'employer_profile' : employer_profile,
+        'employer_profile': employer_profile,
     }
 
-    return render(request, 'Authorized/Core/Employer/CandidateList.html', context = context)
+    return render(request, 'Authorized/Core/Employer/CandidateList.html', context=context)
+
 
 def update_candidate_status(request, application_id):
     job_application = get_object_or_404(JobApplication, id=application_id)
@@ -226,6 +187,8 @@ def update_candidate_status(request, application_id):
             return redirect('job_posting_page')
 
     return redirect('some_error_page')  # Redirect somewhere appropriate if not a POST request
+
+
 def custom_job_serializer(jobs):
     job_list = []
     for job in jobs:
@@ -249,6 +212,7 @@ def custom_job_serializer(jobs):
         job_list.append(job_info)
     return job_list
 
+
 @login_required
 @employer_required
 def job_posting_page(request):
@@ -260,13 +224,15 @@ def job_posting_page(request):
     }
     return render(request, "Authorized/Core/Employer/JobPostings_Employer.html", context)
 
+
 @login_required
 @employer_required
 def profile(request):
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
     jobs = Job.objects.filter(employer_profile=profile)
-    return render(request,"Authorized/Core/Employer/Profile_Employer.html", context={'profile' : profile,'jobs': jobs})
+    return render(request, "Authorized/Core/Employer/Profile_Employer.html", context={'profile': profile, 'jobs': jobs})
+
 
 @login_required
 @employer_required
@@ -294,7 +260,7 @@ def setup_employer_profile(request):
 @employer_required
 def delete_job(request, job_uuid):
     if request.method == 'POST':
-        job = get_object_or_404(Job, job_uuid = job_uuid, employer_profile__user = request.user)
+        job = get_object_or_404(Job, job_uuid=job_uuid, employer_profile__user=request.user)
         job.delete()
         messages.success(request, 'Job successfully deleted')
         return redirect('job_posting_page')

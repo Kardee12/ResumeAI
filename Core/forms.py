@@ -24,6 +24,7 @@ class EditProfileForm(forms.ModelForm):
         validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx', 'txt'])],
         help_text="Accepted formats: PDF, DOC, DOCX, TXT"
     )
+
     class Meta:
         model = UserProfile
         fields = ['location', 'bio']
@@ -33,7 +34,6 @@ class EditProfileForm(forms.ModelForm):
         if resume and not resume.name.endswith(('.pdf', '.docx', '.doc', '.txt')):
             raise forms.ValidationError("Invalid file type. Accepted formats: PDF, DOC, DOCX, TXT.")
         return resume
-
 
 
 class ResumeForm(forms.Form):

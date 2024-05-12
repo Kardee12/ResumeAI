@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+
 from .forms import SetupForm
+
 
 @login_required
 def setup_view(request):

@@ -1,126 +1,139 @@
-{% extends "Authorized/Core/JobSearcher/EmptyBase.html" %}
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
 {% load static %}
 {% load socialaccount %}
 
 {% block title %}
-Next Steps - ResumeAI
+    Next Steps - ResumeAI
 {% endblock %}
 
 {% block extra_head %}
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
-<style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #ffffff;
-        margin: 0;
-        padding: 0;
-        color: #525f7f;
-    }
-    .navbar {
-        background-color: #fff;
-    }
-    .next-steps-form {
-        background: #ffffff;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-    .form-control {
-        border-radius: 15px;
-    }
-    .btn-custom {
-        background-color: #007bff;
-        border: none;
-        color: #fff;
-        border-radius: 12px;
-        padding: 10px 20px;
-        font-size: 16px;
-        font-weight: 500;
-    }
-    .btn-back {
-        margin-bottom: 20px;
-    }
-    .skill-input-container {
-        display: flex;
-        align-items: center;
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 5px;
-        margin-bottom: 10px;
-    }
-    .skill-input-container input {
-        flex-grow: 1;
-        border: none;
-        background-color: transparent;
-        outline: none;
-    }
-    .skill-input-container button {
-        margin-left: 10px;
-    }
-</style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            color: #525f7f;
+        }
+
+        .navbar {
+            background-color: #fff;
+        }
+
+        .next-steps-form {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-control {
+            border-radius: 15px;
+        }
+
+        .btn-custom {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .btn-back {
+            margin-bottom: 20px;
+        }
+
+        .skill-input-container {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .skill-input-container input {
+            flex-grow: 1;
+            border: none;
+            background-color: transparent;
+            outline: none;
+        }
+
+        .skill-input-container button {
+            margin-left: 10px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<main class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <a href="{% url 'js_setup_profile1' %}" class="btn btn-back btn-light">
-                <i class="fas fa-arrow-left"></i> Back to Previous Page
-            </a>
-            <div class="next-steps-form">
-                <h2 class="text-center mb-4">Plan Your Next Steps</h2>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="goalInput" class="form-label">Career Goal</label>
-                        <input type="text" class="form-control" id="goalInput" name="goal" placeholder="What is your career goal?" value="{{ profile.goal }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Skills</label>
-                        <div id="skillsContainer">
-                            {% for skill in initial_skills %}
-                                <div class="skill-input-container">
-                                    <input type="text" class="form-control" name="skills" value="{{ skill.name }}">
-                                    <button type="button" class="btn btn-outline-danger btn-remove rounded-pill">X</button>
-                                </div>
-                            {% endfor %}
-                            <button type="button" class="btn btn-outline-primary rounded-pill btn-add">Add Skill</button>
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <a href="{% url 'js_setup_profile1' %}" class="btn btn-back btn-light">
+                    <i class="fas fa-arrow-left"></i> Back to Previous Page
+                </a>
+                <div class="next-steps-form">
+                    <h2 class="text-center mb-4">Plan Your Next Steps</h2>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="goalInput" class="form-label">Career Goal</label>
+                            <input type="text" class="form-control" id="goalInput" name="goal"
+                                   placeholder="What is your career goal?" value="{{ profile.goal }}">
                         </div>
-                    </div>
-                    <div class="text-center">
-                        <button href="{% url 'jobsearcher_profile' %}" type="submit" class="btn btn-custom">Submit</button>
-                    </div>
-                </form>
+                        <div class="mb-3">
+                            <label class="form-label">Skills</label>
+                            <div id="skillsContainer">
+                                {% for skill in initial_skills %}
+                                    <div class="skill-input-container">
+                                        <input type="text" class="form-control" name="skills" value="{{ skill.name }}">
+                                        <button type="button" class="btn btn-outline-danger btn-remove rounded-pill">X
+                                        </button>
+                                    </div>
+                                {% endfor %}
+                                <button type="button" class="btn btn-outline-primary rounded-pill btn-add">Add Skill
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button href="{% url 'jobsearcher_profile' %}" type="submit" class="btn btn-custom">Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const skillsContainer = document.getElementById('skillsContainer');
-        const addSkillButton = document.querySelector('.btn-add');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const skillsContainer = document.getElementById('skillsContainer');
+            const addSkillButton = document.querySelector('.btn-add');
 
-        addSkillButton.addEventListener('click', function () {
-            const inputContainer = document.createElement('div');
-            inputContainer.classList.add('skill-input-container');
-            inputContainer.innerHTML = '<input type="text" class="form-control" name="skills" placeholder="Enter a skill"><button type="button" class="btn btn-outline-danger btn-remove rounded-pill">X</button>';
+            addSkillButton.addEventListener('click', function () {
+                const inputContainer = document.createElement('div');
+                inputContainer.classList.add('skill-input-container');
+                inputContainer.innerHTML = '<input type="text" class="form-control" name="skills" placeholder="Enter a skill"><button type="button" class="btn btn-outline-danger btn-remove rounded-pill">X</button>';
 
-            inputContainer.querySelector('.btn-remove').addEventListener('click', function () {
-                this.parentNode.remove();
+                inputContainer.querySelector('.btn-remove').addEventListener('click', function () {
+                    this.parentNode.remove();
+                });
+
+                skillsContainer.appendChild(inputContainer);
             });
 
-            skillsContainer.appendChild(inputContainer);
-        });
-
-        skillsContainer.querySelectorAll('.btn-remove').forEach(button => {
-            button.addEventListener('click', function () {
-                this.parentNode.remove();
+            skillsContainer.querySelectorAll('.btn-remove').forEach(button => {
+                button.addEventListener('click', function () {
+                    this.parentNode.remove();
+                });
             });
         });
-    });
-</script>
+    </script>
 {% endblock %}

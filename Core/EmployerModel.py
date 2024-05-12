@@ -1,7 +1,7 @@
-from django.db import models
-from django.conf import settings
-from allauth.socialaccount.models import SocialAccount
 import uuid
+
+from django.conf import settings
+from django.db import models
 
 
 class EmployerProfile(models.Model):
@@ -11,6 +11,7 @@ class EmployerProfile(models.Model):
     company_role_description = models.TextField(blank=True, null=True)
     company_website = models.URLField(max_length=200, blank=True, null=True)
     employer_completed = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.company_name} Profile"
 
@@ -21,11 +22,13 @@ class JobSkills(models.Model):
     def __str__(self):
         return self.name
 
+
 class JobType(models.TextChoices):
     CONTRACTOR = 'Contractor', 'Contractor'
     INTERNSHIP = 'Internship', 'Internship'
     FULL_TIME = 'Full-time', 'Full-time'
     PART_TIME = 'Part-time', 'Part-time'
+
 
 class Job(models.Model):
     job_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)

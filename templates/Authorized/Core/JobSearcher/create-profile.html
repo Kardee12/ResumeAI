@@ -1,119 +1,131 @@
-{% extends "Authorized/Core/JobSearcher/EmptyBase.html" %}
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
 {% load static %}
 {% load socialaccount %}
 
 {% block title %}
-Create Profile - ResumeAI
+    Create Profile - ResumeAI
 {% endblock %}
 
 {% block extra_head %}
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete" async defer></script>
-<style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #ffffff;
-        margin: 0;
-        padding: 0;
-        color: #525f7f;
-    }
-    .navbar {
-        background-color: #fff;
-    }
-    .create-profile-form {
-        background: #ffffff;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-    .form-control {
-        border-radius: 15px;
-    }
-    .btn-custom {
-        background-color: #007bff;
-        border: none;
-        color: #fff;
-        border-radius: 12px;
-        padding: 10px 20px;
-        font-size: 16px;
-        font-weight: 500;
-    }
-    textarea.form-control {
-        border-radius: 12px;
-    }
-    #resumeUpload:invalid {
-        border-color: red;
-    }
-    #resumeUpload:valid {
-        border-color: green;
-    }
-</style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete"
+            async defer></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            color: #525f7f;
+        }
+
+        .navbar {
+            background-color: #fff;
+        }
+
+        .create-profile-form {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-control {
+            border-radius: 15px;
+        }
+
+        .btn-custom {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        textarea.form-control {
+            border-radius: 12px;
+        }
+
+        #resumeUpload:invalid {
+            border-color: red;
+        }
+
+        #resumeUpload:valid {
+            border-color: green;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<main class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="create-profile-form">
-                <h2 class="text-center mb-4">Create Your Profile</h2>
-                {% if resume_error %}
-                <div class="alert alert-danger" role="alert">
-                    {{ resume_error }}
+    <main class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="create-profile-form">
+                    <h2 class="text-center mb-4">Create Your Profile</h2>
+                    {% if resume_error %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ resume_error }}
+                        </div>
+                    {% endif %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="locationInput" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="locationInput" name="location"
+                                   placeholder="Enter your location">
+                        </div>
+                        <div class="mb-3">
+                            <label for="bioInput" class="form-label">Professional Bio</label>
+                            <textarea class="form-control" id="bioInput" name="bio" rows="4"
+                                      placeholder="Write a brief professional bio"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resumeUpload" class="form-label">Upload Resume</label>
+                            <input type="file" class="form-control" id="resumeUpload" name="resume"
+                                   accept=".pdf,.doc,.docx, .txt">
+                            <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, TXT</small>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-custom">Create Profile</button>
+                        </div>
+                    </form>
                 </div>
-                {% endif %}
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="locationInput" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="locationInput" name="location" placeholder="Enter your location">
-                    </div>
-                    <div class="mb-3">
-                        <label for="bioInput" class="form-label">Professional Bio</label>
-                        <textarea class="form-control" id="bioInput" name="bio" rows="4" placeholder="Write a brief professional bio"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="resumeUpload" class="form-label">Upload Resume</label>
-                        <input type="file" class="form-control" id="resumeUpload" name="resume" accept=".pdf,.doc,.docx, .txt">
-                        <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, TXT</small>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-custom">Create Profile</button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 {% endblock %}
 {% block extra_scripts %}
-<script>
-function initAutocomplete() {
-    var locationInput = document.getElementById('locationInput');
-    var options = {
-        types: ['(cities)'],
-        componentRestrictions: {country: 'us'}
-    };
-    var autocomplete = new google.maps.places.Autocomplete(locationInput, options);
+    <script>
+        function initAutocomplete() {
+            var locationInput = document.getElementById('locationInput');
+            var options = {
+                types: ['(cities)'],
+                componentRestrictions: {country: 'us'}
+            };
+            var autocomplete = new google.maps.places.Autocomplete(locationInput, options);
 
-    autocomplete.addListener('place_changed', function() {
-        var place = autocomplete.getPlace();
-        console.log(place);
-    });
-}
+            autocomplete.addListener('place_changed', function () {
+                var place = autocomplete.getPlace();
+                console.log(place);
+            });
+        }
 
-const fileInput = document.getElementById('resumeUpload');
-fileInput.addEventListener('change', validateFile);
+        const fileInput = document.getElementById('resumeUpload');
+        fileInput.addEventListener('change', validateFile);
 
-function validateFile() {
-    const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
-    const selectedFile = this.files[0];
-    if (!allowedExtensions.exec(selectedFile.name)) {
-        alert('Please select a PDF, DOC, or DOCX file.');
-        fileInput.value = ''; // Clear the selected file
-        return false;
-    }
-    return true;
-}
-</script>
+        function validateFile() {
+            const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
+            const selectedFile = this.files[0];
+            if (!allowedExtensions.exec(selectedFile.name)) {
+                alert('Please select a PDF, DOC, or DOCX file.');
+                fileInput.value = ''; // Clear the selected file
+                return false;
+            }
+            return true;
+        }
+    </script>
 {% endblock %}

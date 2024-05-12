@@ -4,6 +4,7 @@ class ParsingFunctions:
         self.API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
         self.headers = {"Authorization": f"Bearer {self.HF_TOKEN}"}
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
+
     def query(self, payload):
         try:
             response = requests.post(self.API_URL, headers=self.headers, json=payload)

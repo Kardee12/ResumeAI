@@ -2,92 +2,100 @@
 {% load static %}
 {% load form_filters %}
 {% block extra_head %}
-<style>
-  .setup-form-container {
-    background-color: #f8f9fa;
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    margin-top: -5rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  /* Custom styles for larger radio buttons */
-  .form-check-input {
-    position: relative;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    border: 2px solid #adb5bd;
-    appearance: none;
-    cursor: pointer;
-    margin-right: 0.5rem;
-  }
-  .form-check-input:checked {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-  }
-  .form-check-input:checked::after {
-    content: "";
-    position: absolute;
-    top: 25%;
-    left: 25%;
-    width: 0.75rem;
-    height: 0.75rem;
-    border-radius: 50%;
-    background-color: white;
-  }
-  .form-check-label {
-    font-size: 1.2em;
-    margin-bottom: 0.5rem;
-  }
-  .illustration-img {
-    width: 50%;
-    margin-bottom: 1rem;
-  }
-  .btn-complete-registration {
-    font-size: 1.1em;
-    padding: 0.75rem 1.25rem;
-    border-radius: 2rem;
-    width: 100%;
-  }
-  .radio-group {
-    display: flex;
-    justify-content: center;
-  }
-</style>
+    <style>
+        .setup-form-container {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: -5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Custom styles for larger radio buttons */
+        .form-check-input {
+            position: relative;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            border: 2px solid #adb5bd;
+            appearance: none;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .form-check-input:checked::after {
+            content: "";
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            background-color: white;
+        }
+
+        .form-check-label {
+            font-size: 1.2em;
+            margin-bottom: 0.5rem;
+        }
+
+        .illustration-img {
+            width: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .btn-complete-registration {
+            font-size: 1.1em;
+            padding: 0.75rem 1.25rem;
+            border-radius: 2rem;
+            width: 100%;
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="text-center mt-5">
-    <img src="{% static 'assets/img/illustrations/desk.svg' %}" class="illustration-img img-fluid" style="max-width: 70%;">
-</div>
-<section class="setup-form-container">
-    <h2 class="text-center">Welcome to ResumeAI</h2>
-    <p class="text-muted text-center">Let's get started by setting up your account.</p>
-    <form method="post" class="pt-3">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="radio-group mb-4">
-            {% for radio in form.role %}
-                <div class="form-check form-check-inline">
-                    {{ radio }}
-                    {{ radio.errors }}
-                    <label class="form-check-label" for="{{ radio.id_for_label }}"></label>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="mb-4">
-            {{ form.linkedin_url.errors }}
-            <label for="{{ form.linkedin_url.id_for_label }}" class="form-label">
-                LinkedIn URL:
-            </label>
-            {{ form.linkedin_url|add_class:"form-control" }}
-        </div>
-        <div class="d-grid">
-            <button type="submit" class="btn btn-primary btn-complete-registration">Complete Registration</button>
-        </div>
-    </form>
-</section>
+    <div class="text-center mt-5">
+        <img src="{% static 'assets/img/illustrations/desk.svg' %}" class="illustration-img img-fluid"
+             style="max-width: 70%;">
+    </div>
+    <section class="setup-form-container">
+        <h2 class="text-center">Welcome to ResumeAI</h2>
+        <p class="text-muted text-center">Let's get started by setting up your account.</p>
+        <form method="post" class="pt-3">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="radio-group mb-4">
+                {% for radio in form.role %}
+                    <div class="form-check form-check-inline">
+                        {{ radio }}
+                        {{ radio.errors }}
+                        <label class="form-check-label" for="{{ radio.id_for_label }}"></label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="mb-4">
+                {{ form.linkedin_url.errors }}
+                <label for="{{ form.linkedin_url.id_for_label }}" class="form-label">
+                    LinkedIn URL:
+                </label>
+                {{ form.linkedin_url|add_class:"form-control" }}
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-complete-registration">Complete Registration</button>
+            </div>
+        </form>
+    </section>
 {% endblock %}

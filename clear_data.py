@@ -1,10 +1,12 @@
 import os
+
 import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ResumeAI.settings')
 django.setup()
 from django.apps import apps
 from django.db import transaction, IntegrityError
+
 
 def clear_data():
     with transaction.atomic():
@@ -14,6 +16,7 @@ def clear_data():
                 print(f"Cleared data from {model._meta.db_table}")
         except IntegrityError as e:
             print(f"Error occurred: {e}")
+
 
 if __name__ == "__main__":
     confirm = input("Are you sure you want to delete all data from the database? (yes/no): ")

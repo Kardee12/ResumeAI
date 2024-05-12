@@ -1,7 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include
-from Core import views, EmployerViews, JobSearcher
+from django.urls import path
+
 from Core import gen_views
+from Core import views, EmployerViews, JobSearcher
 
 urlpatterns = [
     path("", views.index, name='index'),
@@ -23,16 +23,15 @@ urlpatterns = [
     path('jobsearcher/chat/clearchat/', JobSearcher.clearChat, name='clearChat'),
     path('jobsearcher/search', JobSearcher.search, name='search'),
     path('jobsearcher/apply-for-job/', JobSearcher.apply_for_job, name='apply_for_job'),
-    path('jobsearcher/all-job-applications/',JobSearcher.all_job_apps, name='all_job_apps'),
+    path('jobsearcher/all-job-applications/', JobSearcher.all_job_apps, name='all_job_apps'),
 
     path('emp-setup/', EmployerViews.emp_setupProfile, name='emp_setupProfile'),
-    path("employer/job_posting/",EmployerViews.job_posting_page, name="job_posting_page"),
-    path("employer/<uuid:job_id>/candidate_list", EmployerViews.candidatePage ,name="candidate_list"),
+    path("employer/job_posting/", EmployerViews.job_posting_page, name="job_posting_page"),
+    path("employer/<uuid:job_id>/candidate_list", EmployerViews.candidatePage, name="candidate_list"),
     path("employer/profile/", EmployerViews.profile, name="employer_profile"),
     path('employer/settings/', views.empsettings, name='empsettings'),
     path('employer/profile/edit', EmployerViews.edit_employer_profile, name='edit_employer_profile'),
-    path('employer/job-posting-page', EmployerViews.job_posting_page, name = 'job_posting_page'),
-    path('employer/<uuid:job_id>/edit_job', EmployerViews.edit_job_posting, name='edit_job_posting'),
+    path('employer/job-posting-page', EmployerViews.job_posting_page, name='job_posting_page'),
     path('employer/create-job-posting', EmployerViews.create_job_posting, name='create_job_posting'),
     path('employer/dashboard/', EmployerViews.employer_dashboard, name='employer_dashboard'),
     path('employer/company/page', EmployerViews.company_profile_page, name='company_profile_page'),
