@@ -131,18 +131,18 @@ function getJobTypeColor(jobType) {
     }
 }
 
-function showDetails(jobId) {
-    const job = globalJobs.find(job => job.job_uuid === jobId);
+function showDetails(job_uuid) {
+    const job = globalJobs.find(job => job.job_uuid === job_uuid);
     if (!job) {
-        console.error('Job not found:', jobId);
+        console.error('Job not found:', job_uuid);
         return;
     }
 
     const jobDetailsDiv = document.querySelector('.job-details');
     const jobTypeColor = getJobTypeColor(job.fields.job_type);
-    const editJobUrl = "{% url 'edit_job_posting' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
+    const editJobUrl = "{% url 'edit_job_posting' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", job_uuid);
     const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';
-    const candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
+    const candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", job_uuid);
     jobDetailsDiv.innerHTML = `
 <div class="card card-custom rounded-lg">
     <div class="row no-gutters">

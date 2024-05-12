@@ -1,0 +1,83 @@
+{% extends "Authorized/Core/JobSearcher/Base.html" %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}Edit Job Posting{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Job Posting</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.company.label_tag }}
+            {{ form.company }}
+            {% if form.company.errors %}
+                <div class="alert alert-danger">{{ form.company.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.position.label_tag }}
+            {{ form.position }}
+            {% if form.position.errors %}
+                <div class="alert alert-danger">{{ form.position.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="alert alert-danger">{{ form.description.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.pay.label_tag }}
+            {{ form.pay }}
+            {% if form.pay.errors %}
+                <div class="alert alert-danger">{{ form.pay.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.location.label_tag }}
+            {{ form.location }}
+            {% if form.location.errors %}
+                <div class="alert alert-danger">{{ form.location.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.link_to_apply.label_tag }}
+            {{ form.link_to_apply }}
+            {% if form.link_to_apply.errors %}
+                <div class="alert alert-danger">{{ form.link_to_apply.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.link_to_company.label_tag }}
+            {{ form.link_to_company }}
+            {% if form.link_to_company.errors %}
+                <div class="alert alert-danger">{{ form.link_to_company.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.job_type.label_tag }}
+            {{ form.job_type }}
+            {% if form.job_type.errors %}
+                <div class="alert alert-danger">{{ form.job_type.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {% for field in form.fields %}
+                {% if "skill_" in field %}
+                    {{ form[field].label_tag }}
+                    {{ form[field] }}
+                    {% if form[field].errors %}
+                        <div class="alert alert-danger">{{ form[field].errors.as_text }}</div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Job</button>
+        <a href="{% url 'job_posting_page' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

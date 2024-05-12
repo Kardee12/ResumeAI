@@ -32,12 +32,13 @@ urlpatterns = [
     path('employer/settings/', views.empsettings, name='empsettings'),
     path('employer/profile/edit', EmployerViews.edit_employer_profile, name='edit_employer_profile'),
     path('employer/job-posting-page', EmployerViews.job_posting_page, name = 'job_posting_page'),
+    path('employer/<uuid:job_id>/edit_job', EmployerViews.edit_job_posting, name='edit_job_posting'),
     path('employer/create-job-posting', EmployerViews.create_job_posting, name='create_job_posting'),
     path('employer/dashboard/', EmployerViews.employer_dashboard, name='employer_dashboard'),
     path('employer/company/page', EmployerViews.company_profile_page, name='company_profile_page'),
     path('employer/company/edit/page', EmployerViews.edit_company_page, name='edit_company_page'),
     path('update-status/<int:application_id>/', EmployerViews.update_candidate_status, name='update_candidate_status'),
-    path('employer/edit-job/<uuid:job_id>/', EmployerViews.edit_job_posting, name='edit_job_posting'),
-    path('employer/delete-job/<uuid:job_id>/', EmployerViews.delete_job, name='delete_job'),
+    path('employer/edit-job/<uuid:job_uuid>/', EmployerViews.edit_job_posting, name='edit_job_posting'),
+    path('employer/delete-job/<uuid:job_uuid>/', EmployerViews.delete_job, name='delete_job'),
 
 ]
