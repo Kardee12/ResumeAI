@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "crispy_forms"
 ]
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
@@ -112,7 +113,7 @@ DATABASES = {
         'USER': 'core',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': 5433
+        'PORT': 5432
     }
 }
 
@@ -187,4 +188,3 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'

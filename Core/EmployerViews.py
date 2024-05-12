@@ -86,14 +86,15 @@ def create_job_posting(request):
 
 @login_required
 @employer_required
-def edit_job_posting(request, job_id):
-    job = get_object_or_404(Job, job_uuid=job_id)
+def edit_job_posting(request, job_uuid):
+    job = get_object_or_404(Job, job_uuid=job_uuid)
     if request.method == 'POST':
         form = EditJobForm(request.POST, instance=job)
         if form.is_valid():
             form.save()
             messages.success(request, "Job posting updated successfully.")
             return redirect('job_posting_page')
+
         else:
             messages.error(request, "Please correct the errors below.")
     else:
@@ -291,9 +292,9 @@ def setup_employer_profile(request):
 
 @login_required
 @employer_required
-def delete_job(request, job_id):
+def delete_job(request, job_uuid):
     if request.method == 'POST':
-        job = get_object_or_404(Job, job_uuid = job_id, employer_profile__user = request.user)
+        job = get_object_or_404(Job, job_uuid = job_uuid, employer_profile__user = request.user)
         job.delete()
         messages.success(request, 'Job successfully deleted')
         return redirect('job_posting_page')
