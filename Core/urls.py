@@ -10,7 +10,7 @@ urlpatterns = [
     path('logout/', views.logoutView, name='logout'),
     path("login/", views.logView.as_view(), name='login'),
 
-    path('jobsearcher/dashboard', JobSearcher.jobsearcher_dashboard, name='jobsearcher_dashboard'),
+    path('jobsearcher/dashboard/', JobSearcher.jobsearcher_dashboard, name='jobsearcher_dashboard'),
     path('jobsearcher/chat/', JobSearcher.jobsearcher_chat, name='jobsearcher_chat'),
     path('jobsearcher/settings/', views.settings, name='settings'),
     path('jobsearcher/profile/', JobSearcher.jobsearcher_profile, name='jobsearcher_profile'),
@@ -34,10 +34,7 @@ urlpatterns = [
     path('employer/job-posting-page', EmployerViews.job_posting_page, name='job_posting_page'),
     path('employer/create-job-posting', EmployerViews.create_job_posting, name='create_job_posting'),
     path('employer/dashboard/', EmployerViews.employer_dashboard, name='employer_dashboard'),
-    path('employer/company/page', EmployerViews.company_profile_page, name='company_profile_page'),
-    path('employer/company/edit/page', EmployerViews.edit_company_page, name='edit_company_page'),
     path('update-status/<int:application_id>/', EmployerViews.update_candidate_status, name='update_candidate_status'),
     path('employer/edit-job/<uuid:job_uuid>/', EmployerViews.edit_job_posting, name='edit_job_posting'),
     path('employer/delete-job/<uuid:job_uuid>/', EmployerViews.delete_job, name='delete_job'),
-
 ]
