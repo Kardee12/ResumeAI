@@ -191,7 +191,6 @@
             <div class="job-listing" onclick="showDetails(${job.pk})">
                 <div class="icon-container">
                     <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'assets/img/default-logo.jpeg' %}'">
-                    <img src="${companyWebsite}" onError="this.onerror=null;this.src='{% static 'assets/img/default-logo.jpeg' %}';">
                 </div>
                 <div>
                     <h5>${job.fields.position}</h5>
