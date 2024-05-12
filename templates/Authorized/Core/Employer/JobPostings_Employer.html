@@ -95,6 +95,7 @@
                         <form action="{% url 'delete_job' job.job_uuid %}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this job?');">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btn-custom">Delete</button>
+                        </form>    
                     </li>
                     {% empty %}
                     <li class="list-group-item rounded-lg">There are no jobs posted.</li>

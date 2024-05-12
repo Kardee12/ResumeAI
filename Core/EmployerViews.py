@@ -10,7 +10,7 @@ from Core.functions.ParsingUtility import ParsingFunctions
 from Core.models import JobApplication
 from ResumeAI import settings
 from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
-from Core.EmployerForms import EditEmployerProfileForm, EmployerProfileForm, JobForm
+from Core.EmployerForms import EditEmployerProfileForm, EmployerProfileForm, JobForm, EditJobForm
 from Core.EmployerModel import EmployerProfile, Job, JobSkills
 from django.db import transaction, models
 from django.db.models import Count, Q
@@ -84,47 +84,62 @@ def create_job_posting(request):
         'profile': employer_profile  # Pass profile to handle it in the template
     })
 
-#USE FORM
 @login_required
 @employer_required
 def edit_job_posting(request, job_id):
     job = get_object_or_404(Job, job_uuid=job_id)
     if request.method == 'POST':
-        position = request.POST.get('position')
-        description = request.POST.get('description')
-        job_type = request.POST.get('job_type')
-        pay = request.POST.get('pay')
-        location = request.POST.get('location')
-        link_to_apply = request.POST.get('link_to_apply')
-        if position and position != job.position:
-            job.position = position
-        if description and description != job.description:
-            job.description = description
-        if job_type and job_type != job.job_type:
-            job.job_type = job_type
-        if pay and pay != job.pay:
-            job.pay = pay
-        if location and location != job.location:
-            job.location = location
-        if link_to_apply and link_to_apply != job.link_to_apply:
-            job.link_to_apply = link_to_apply
-        current_skills = {skill.name for skill in job.skills.all()}
-        new_skills = set(request.POST.get(f'skill_{i}') for i in range(1, 6) if request.POST.get(f'skill_{i}'))
-        if new_skills != current_skills:
-            job.skills.clear()
-            for skill_name in new_skills:
-                if skill_name:
-                    skill, created = JobSkills.objects.get_or_create(name=skill_name)
-                    job.skills.add(skill)
-
-        job.save()
-        return redirect('job_posting_page')
+        form = EditJobForm(request.POST, instance=job)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Job posting updated successfully.")
+            return redirect('job_posting_page')
+        else:
+            messages.error(request, "Please correct the errors below.")
     else:
-        context = {
-            'job': job,
-            'skills': job.skills.all()
-        }
-        return render(request, 'Authorized/Core/Employer/edit-job-posting.html', context)
+        form = EditJobForm(instance=job)
+
+    return render(request, 'Authorized/Core/Employer/edit-job-posting.html', {'form': form, 'job': job})
+
+
+# def edit_job_posting(request, job_id):
+#     job = get_object_or_404(Job, job_uuid=job_id)
+#     if request.method == 'POST':
+#         position = request.POST.get('position')
+#         description = request.POST.get('description')
+#         job_type = request.POST.get('job_type')
+#         pay = request.POST.get('pay')
+#         location = request.POST.get('location')
+#         link_to_apply = request.POST.get('link_to_apply')
+#         if position and position != job.position:
+#             job.position = position
+#         if description and description != job.description:
+#             job.description = description
+#         if job_type and job_type != job.job_type:
+#             job.job_type = job_type
+#         if pay and pay != job.pay:
+#             job.pay = pay
+#         if location and location != job.location:
+#             job.location = location
+#         if link_to_apply and link_to_apply != job.link_to_apply:
+#             job.link_to_apply = link_to_apply
+#         current_skills = {skill.name for skill in job.skills.all()}
+#         new_skills = set(request.POST.get(f'skill_{i}') for i in range(1, 6) if request.POST.get(f'skill_{i}'))
+#         if new_skills != current_skills:
+#             job.skills.clear()
+#             for skill_name in new_skills:
+#                 if skill_name:
+#                     skill, created = JobSkills.objects.get_or_create(name=skill_name)
+#                     job.skills.add(skill)
+#
+#         job.save()
+#         return redirect('job_posting_page')
+#     else:
+#         context = {
+#             'job': job,
+#             'skills': job.skills.all()
+#         }
+#         return render(request, 'Authorized/Core/Employer/edit-job-posting.html', context)
 
 @login_required
 @employer_required
@@ -150,7 +165,6 @@ def employer_dashboard(request):
     }
     return render(request, 'Authorized/Core/Employer/employer_dashboard.html', context)
 
-#USE FORM
 @login_required
 @employer_required
 def edit_employer_profile(request):
@@ -158,27 +172,19 @@ def edit_employer_profile(request):
     profile, created = EmployerProfile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
-        position = request.POST.get('position')
-        company_role_description = request.POST.get('company_role_description')
-        company_website = request.POST.get('company_website')
-
-        with transaction.atomic():
-            if position and position != profile.position:
-                profile.position = position
-            if company_role_description and company_role_description != profile.company_role_description:
-                profile.company_role_description = company_role_description
-            if company_website and company_website != profile.company_website:
-                profile.company_website = company_website
-
-            profile.save()
+        form = EditEmployerProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
             messages.success(request, "Your profile has been updated successfully.")
             return redirect('employer_dashboard')
+    else:
+        form = EditEmployerProfileForm(instance=profile)
 
     context = {
+        'form': form,
         'profile': profile
     }
     return render(request, 'Authorized/Core/Employer/edit_employer_profile.html', context)
-
 
 @login_required
 @employer_required

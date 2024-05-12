@@ -1,7 +1,7 @@
 {% extends "Authorized/Core/JobSearcher/Base.html" %}
 {% load static %}
 
-{% block title %}Create Job Posting - ResumeAI{% endblock %}
+{% block title %}Search - ResumeAI{% endblock %}
 
 {% block extra_head %}
 <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700|Roboto:300,400,500,700&display=swap" rel="stylesheet">
@@ -200,6 +200,11 @@ function showDetails(jobId) {
             <span class="job-type-badge" style="background-color: ${jobTypeColor}; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; display: inline-block;">${jobType}</span>
             <p><strong>Company:</strong> ${job.fields.company}</p>
             <p><strong>Location:</strong> ${job.fields.location}</p>
+            <p><strong>Applicant Count:</strong> ${job.fields.applicant_count}</p>
+            <p>
+                <strong>Recruiter:</strong>
+                <a href="${job.fields.linkedin}" target="_blank"  class="linkedin-link" title="View Recruiter on LinkedIn"><i class="fab fa-linkedin"></i></a>
+            </p>
             <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
             <p style="white-space: pre-wrap; word-wrap: break-word;">${job.fields.description}</p>
             <p><strong>Skills:</strong> ${skillsDisplay}</p>

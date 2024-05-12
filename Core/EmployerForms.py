@@ -36,19 +36,20 @@ class EmployerProfileForm(forms.Form):
 class EditEmployerProfileForm(forms.ModelForm):
     class Meta:
         model = EmployerProfile
-        fields = ['position', 'company_name', 'company_role_description', 'company_website']
+        fields = ['position', 'company_role_description']
         widgets = {
             'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your position at the company'}),
-            'company_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your company name'}),
             'company_role_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Describe your role at the company'}),
-            'company_website': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://yourcompany.com'}),
         }
 
-    def clean_company_website(self):
-        website = self.cleaned_data.get('company_website')
-        validator = URLValidator()
-        try:
-            validator(website)
-        except forms.ValidationError:
-            raise forms.ValidationError("Enter a valid URL.")
-        return website
+class EditJobForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        fields = ['position', 'description', 'pay', 'location', 'link_to_apply']
+        widgets = {
+            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Job Position'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Enter Job Description'}),
+            'pay': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Payment Details'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Location'}),
+            'link_to_apply': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Enter Link to Apply'}),
+        }

@@ -60,15 +60,17 @@ Edit Employer Profile - ResumeAI
                     <h2 class="text-center mb-4">Edit Employer Profile</h2>
                     <div class="mb-3">
                         <label for="position" class="form-label">Position</label>
-                        <input type="text" id="position" name="position" class="form-control" value="{{ profile.position }}" placeholder="Position">
+                        <input type="text" id="position" name="position" class="form-control {% if form.position.errors %}is-invalid{% endif %}" value="{{ form.position.value|default_if_none:profile.position }}" placeholder="Enter your position at the company">
+                        {% for error in form.position.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <div class="mb-3">
                         <label for="company_role_description" class="form-label">Company Role Description</label>
-                        <textarea id="company_role_description" name="company_role_description" class="form-control" placeholder="Describe your company">{{ profile.company_role_description }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="company_website" class="form-label">Company Website</label>
-                        <input type="url" id="company_website" name="company_website" class="form-control" value="{{ profile.company_website }}" placeholder="http://">
+                        <textarea id="company_role_description" name="company_role_description" class="form-control {% if form.company_role_description.errors %}is-invalid{% endif %}" placeholder="Describe your role at the company">{{ form.company_role_description.value|default_if_none:profile.company_role_description }}</textarea>
+                        {% for error in form.company_role_description.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-custom">Save Changes</button>
