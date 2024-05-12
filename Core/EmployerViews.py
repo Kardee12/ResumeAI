@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from Core.EmployerForms import EditEmployerProfileForm, EmployerProfileForm, JobForm, EditJobForm
 from Core.EmployerModel import EmployerProfile, Job, JobSkills
 from Core.models import JobApplication
-from ResumeAI.Generic.generic_decoraters import employer_required
+from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_completed, emp_profile_not_completed
 
 
 @login_required
@@ -35,6 +35,7 @@ def emp_setupProfile(request):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def create_job_posting(request):
     employer_profile = EmployerProfile.objects.filter(user=request.user).first()
     if not employer_profile:
@@ -81,6 +82,7 @@ def create_job_posting(request):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def edit_job_posting(request, job_uuid):
     job = get_object_or_404(Job, job_uuid=job_uuid)
     if request.method == 'POST':
@@ -100,6 +102,7 @@ def edit_job_posting(request, job_uuid):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def employer_dashboard(request):
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
@@ -125,6 +128,7 @@ def employer_dashboard(request):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def edit_employer_profile(request):
     user = request.user
     profile, created = EmployerProfile.objects.get_or_create(user=user)
@@ -149,18 +153,21 @@ def edit_employer_profile(request):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def company_profile_page(request):
     return render(request, "Authorized/Core/Employer/company_profile_page.html")
 
 
 @login_required
 @employer_required
+@emp_profile_completed
 def edit_company_page(request):
     return render(request, 'Authorized/Core/Employer/edit_company_profile.html')
 
 
 @login_required
 @employer_required
+@emp_profile_completed
 def candidatePage(request, job_id):
     job = get_object_or_404(Job, job_uuid=job_id)
     job_applications = JobApplication.objects.filter(job=job)
@@ -175,7 +182,9 @@ def candidatePage(request, job_id):
 
     return render(request, 'Authorized/Core/Employer/CandidateList.html', context=context)
 
-
+@login_required
+@employer_required
+@emp_profile_completed
 def update_candidate_status(request, application_id):
     job_application = get_object_or_404(JobApplication, id=application_id)
 
@@ -217,9 +226,15 @@ def custom_job_serializer(jobs):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def job_posting_page(request):
-    jobs = Job.objects.all()
-    jobs_json = custom_job_serializer(jobs)  # Use your custom serializer here
+    employer_profile = EmployerProfile.objects.filter(user=request.user).first()
+    if not employer_profile:
+        messages.error(request, "You must complete your employer profile.")
+        return redirect('create_employer_profile')
+
+    jobs = Job.objects.filter(employer_profile=employer_profile)
+    jobs_json = custom_job_serializer(jobs)
     context = {
         'jobs': jobs,
         'jobs_json': json.dumps(jobs_json)
@@ -229,39 +244,16 @@ def job_posting_page(request):
 
 @login_required
 @employer_required
+@emp_profile_completed
 def profile(request):
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
     jobs = Job.objects.filter(employer_profile=profile)
     return render(request, "Authorized/Core/Employer/Profile_Employer.html", context={'profile': profile, 'jobs': jobs})
 
-
 @login_required
 @employer_required
-def setup_employer_profile(request):
-    try:
-        profile = EmployerProfile.objects.get(user=request.user)
-    except EmployerProfile.DoesNotExist:
-        profile = None
-
-    if request.method == 'POST':
-        form = EmployerProfileForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            with transaction.atomic():
-                profile = form.save(commit=False)
-                profile.user = request.user
-                profile.save()
-                return redirect('employer_dashboard')
-        else:
-            messages.error(request, "Please correct the errors below.")
-    else:
-        form = EmployerProfileForm(instance=profile)
-
-    return render(request, 'Authorized/Core/Employer/create-employer-profile.html', context={'form': form})
-
-
-@login_required
-@employer_required
+@emp_profile_completed
 def delete_job(request, job_uuid):
     if request.method == 'POST':
         job = get_object_or_404(Job, job_uuid=job_uuid, employer_profile__user=request.user)

@@ -256,10 +256,10 @@ def processMessages(request):
     message = request.POST.get('message', '')
     if not message:
         return JsonResponse({'error': 'No message provided'}, status=400)
-    user_profile = UserProfile.objects.filter(user=request.user).first()
-    if not user_profile or not user_profile.resume:
+    user_profile = UserProfile.objects.filter(user=request.user)
+    if not user_profile or not request.user.resumes:
         return JsonResponse({'error': 'No resume available'}, status=404)
-    resume = user_profile.resume
+    resume = request.user.resumes.order_by('-uploaded_at').first()
     extracted_text = ""
     rparser = ResumeParsing(request)
     if resume.resume.name.endswith('.pdf'):
@@ -320,7 +320,7 @@ def search(request):
         jobs = Job.objects.filter(
             Q(position__icontains=query) | Q(description__icontains=query) |
             Q(employer_profile__company_name__icontains=query) | Q(location__icontains=query) |
-            Q(pay__icontains=query) | Q(job_type__icontains=query)
+            Q(pay__icontains=query) | Q(job_type__icontains=query) | Q(skills__name__icontains=query)
         ).distinct()
     else:
         jobs = Job.objects.all()
@@ -344,7 +344,7 @@ def apply_for_job(request):
         with transaction.atomic():
             application, created = JobApplication.objects.get_or_create(user=user, job=job)
             if created:
-                application.status = 'applied'
+                application.status = 'Applied'
                 application.save()
                 job.applicant_count += 1
                 job.list_of_applicants.add(user)

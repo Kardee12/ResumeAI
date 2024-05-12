@@ -85,7 +85,7 @@ class ResumeParsing:
 
     def extract_text_from_pdf(self):
         try:
-            resume = UserResume.objects.get(user=self.request.user)
+            resume = self.request.user.resumes.order_by('-uploaded_at').first()
             if not resume.resume:
                 return None
             text = ""
@@ -102,7 +102,7 @@ class ResumeParsing:
 
     def extract_text_from_docx(self):
         try:
-            resume = UserResume.objects.get(user=self.request.user)
+            resume = self.request.user.resumes.order_by('-uploaded_at').first()
             if not resume.resume:
                 return None
             if resume.resume.path.endswith('.docx'):
@@ -119,7 +119,7 @@ class ResumeParsing:
 
     def extract_text_from_doc(self):
         try:
-            resume = UserResume.objects.get(user=self.request.user)
+            resume = self.request.user.resumes.order_by('-uploaded_at').first()
             if not resume.resume:
                 return None
             if resume.resume.path.endswith('.doc'):
@@ -135,7 +135,7 @@ class ResumeParsing:
 
     def extract_text_from_txt(self):
         try:
-            resume = UserResume.objects.get(user=self.request.user)
+            resume = self.request.user.resumes.order_by('-uploaded_at').first()
             if not resume.resume:
                 return None
 
