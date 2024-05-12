@@ -1,14 +1,17 @@
-import requests
-from decouple import config
+import os
 import re
 
-from django.core.exceptions import ObjectDoesNotExist
-from sentence_transformers import SentenceTransformer, util
-import numpy as np
-from Core.models import UserResume
 import fitz
-from docx import Document
+import numpy as np
+import requests
 import textract
+from decouple import config
+from django.core.exceptions import ObjectDoesNotExist
+from docx import Document
+from sentence_transformers import SentenceTransformer, util
+
+from Core.models import UserResume
+
 
 class ParsingFunctions:
     def __init__(self):
@@ -16,6 +19,7 @@ class ParsingFunctions:
         self.API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
         self.headers = {"Authorization": f"Bearer {self.HF_TOKEN}"}
         self.model = SentenceTransformer('all-MiniLM-L6-v2')
+
     def query(self, payload):
         try:
             response = requests.post(self.API_URL, headers=self.headers, json=payload)
@@ -40,6 +44,7 @@ class ParsingFunctions:
             "parameters": {"return_full_text": False, "num_results": 10},
         }
         return self.query(payload)
+
     def post_processing(self, output):
         text = output[0]['generated_text'] if output else ''
         skills_list = [re.sub(r'^\s*\d+\.\s*', '', line).strip() for line in text.split('\n') if line.strip()]
@@ -73,13 +78,14 @@ class ParsingFunctions:
                 high_similarity_skills.append(skill)  # Append original skill if no match found
         return high_similarity_skills
 
+
 class ResumeParsing:
     def __init__(self, request):
         self.request = request
 
     def extract_text_from_pdf(self):
         try:
-            resume = UserResume.objects.get(user=self.request.user)
+            resume = self.request.user.resumes.order_by('-uploaded_at').first()
             if not resume.resume:
                 return None
             text = ""
@@ -96,7 +102,7 @@ class ResumeParsing:
 
     def extract_text_from_docx(self):
         try:
-            resume = UserResume.objects.get(user=self.request.user)
+            resume = self.request.user.resumes.order_by('-uploaded_at').first()
             if not resume.resume:
                 return None
             if resume.resume.path.endswith('.docx'):
@@ -113,7 +119,7 @@ class ResumeParsing:
 
     def extract_text_from_doc(self):
         try:
-            resume = UserResume.objects.get(user=self.request.user)
+            resume = self.request.user.resumes.order_by('-uploaded_at').first()
             if not resume.resume:
                 return None
             if resume.resume.path.endswith('.doc'):
@@ -126,9 +132,10 @@ class ResumeParsing:
         except Exception as e:
             print(f"An error occurred while extracting text from DOC: {e}")
             return None
+
     def extract_text_from_txt(self):
         try:
-            resume = UserResume.objects.get(user=self.request.user)
+            resume = self.request.user.resumes.order_by('-uploaded_at').first()
             if not resume.resume:
                 return None
 
@@ -144,3 +151,44 @@ class ResumeParsing:
         except Exception as e:
             print(f"An error occurred while extracting text from TXT: {e}")
             return None
+
+
+class NewResumeParsing:
+    def __init__(self, resume_file):
+        self.resume_file = resume_file
+
+    def extract_text(self):
+        if not os.path.exists(self.resume_file.path):
+            print("Resume file does not exist.")
+            return None
+
+        try:
+            if self.resume_file.name.endswith('.pdf'):
+                return self.extract_text_from_pdf()
+            elif self.resume_file.name.endswith('.docx'):
+                return self.extract_text_from_docx()
+            elif self.resume_file.name.endswith('.doc'):
+                return self.extract_text_from_doc()
+            elif self.resume_file.name.endswith('.txt'):
+                return self.extract_text_from_txt()
+        except Exception as e:
+            print(f"An error occurred while extracting text: {e}")
+        return None
+
+    def extract_text_from_pdf(self):
+        text = ""
+        with fitz.open(self.resume_file.path) as doc:
+            for page in doc:
+                text += page.get_text()
+        return text
+
+    def extract_text_from_docx(self):
+        doc = Document(self.resume_file.path)
+        return '\n'.join([paragraph.text for paragraph in doc.paragraphs])
+
+    def extract_text_from_doc(self):
+        return textract.process(self.resume_file.path).decode('utf-8')
+
+    def extract_text_from_txt(self):
+        with open(self.resume_file.path, 'r') as f:
+            return f.read().strip()

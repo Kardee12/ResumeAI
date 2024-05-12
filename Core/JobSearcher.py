@@ -1,12 +1,12 @@
 import io
 import json
-import os
 from datetime import timedelta, datetime
 
 from django.contrib import messages
-from django.core import serializers
+from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
-from django.core.serializers import serialize
+from django.db import transaction
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
@@ -14,19 +14,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
 
 from Core.models import UserProfile, UserResume, UserSkill, JobApplication
-from ResumeAI.Generic.generic_decoraters import job_searcher_required, js_profile_completed, js_profile_not_completed
-from django.contrib.auth.decorators import login_required
 from ResumeAI import settings
-from . import models
+from ResumeAI.Generic.generic_decoraters import job_searcher_required, js_profile_completed
 from .EmployerModel import Job
-from .forms import UserProfileForm, ResumeForm
+from .forms import UserProfileForm, ResumeForm, EditProfileForm
 from .functions.ChatUtility import query_model
 from .functions.GenerationUtility import generate_resume_text
 from .functions.JobSearcherDBUtility import create_user_skills, update_user_skills
-from .functions.ParsingUtility import ResumeParsing, ParsingFunctions
-
-from django.db import transaction
-from django.db.models import Q, Count
+from .functions.ParsingUtility import ResumeParsing, ParsingFunctions, NewResumeParsing
 
 
 @login_required
@@ -38,21 +33,26 @@ def jobsearcher_dashboard(request):
     last_month = today - timedelta(days=30)
 
     total_applications = JobApplication.objects.filter(user=user).count()
-    total_open_applications = JobApplication.objects.filter(user=user, status='applied').count()
-    total_interviews = JobApplication.objects.filter(user=user, status='interview').count()
-    total_offers = JobApplication.objects.filter(user=user, status='offer').count()
-    total_rejections = JobApplication.objects.filter(user=user, status='rejected').count()
+    total_open_applications = JobApplication.objects.filter(user=user, status='Applied').count()
+    total_interviews = JobApplication.objects.filter(user=user, status='Interview').count()
+    total_offers = JobApplication.objects.filter(user=user, status='Offer').count()
+    total_rejections = JobApplication.objects.filter(user=user, status='Rejected').count()
     last_month_applications = JobApplication.objects.filter(user=user, application_date__lt=last_month).count()
-    last_month_open_applications = JobApplication.objects.filter(user=user, status='applied', application_date__lt=last_month).count()
-    last_month_interviews = JobApplication.objects.filter(user=user, status='interview', application_date__lt=last_month).count()
-    last_month_offers = JobApplication.objects.filter(user=user, status='offer', application_date__lt=last_month).count()
-    last_month_rejections = JobApplication.objects.filter(user=user, status='rejected', application_date__lt=last_month).count()
+    last_month_open_applications = JobApplication.objects.filter(user=user, status='Applied',
+                                                                 application_date__lt=last_month).count()
+    last_month_interviews = JobApplication.objects.filter(user=user, status='Interview',
+                                                          application_date__lt=last_month).count()
+    last_month_offers = JobApplication.objects.filter(user=user, status='Offer',
+                                                      application_date__lt=last_month).count()
+    last_month_rejections = JobApplication.objects.filter(user=user, status='Rejected',
+                                                          application_date__lt=last_month).count()
     change_applications = total_applications - last_month_applications
     change_open_applications = total_open_applications - last_month_open_applications
     change_interviews = total_interviews - last_month_interviews
     change_offers = total_offers - last_month_offers
     change_rejections = total_rejections - last_month_rejections
-    success_rate = float (float(total_offers) / float(total_applications)) if (total_applications and total_offers) > 0 else 0
+    success_rate = 10 * float(float(total_offers) / float(total_applications)) if (
+                                                                                          total_applications and total_offers) > 0 else 0
     context = {
         'job_applications': JobApplication.objects.filter(user=user).order_by('-application_date')[:3],
         'total_applications': total_applications,
@@ -84,6 +84,7 @@ def jobsearcher_profile(request):
         'skills': skills
     })
 
+
 @login_required
 @job_searcher_required
 @js_profile_completed
@@ -104,7 +105,6 @@ def update_skills(request):
 
 @login_required
 @job_searcher_required
-@js_profile_not_completed
 def js_setup_profile(request):
     rparser = ResumeParsing(request)
     aiParser = ParsingFunctions()
@@ -156,86 +156,68 @@ def js_setup_profile(request):
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
     })
 
+
+def process_resume(resume_file, profile, request):
+    rparser = NewResumeParsing(resume_file)
+    aiParser = ParsingFunctions()
+    try:
+        if profile.resume:
+            profile.resume.delete()
+        new_resume = UserResume(user=request.user)
+        new_resume.resume.save(resume_file.name, resume_file, save=True)
+        new_resume.save()
+        profile.resume = new_resume
+        extracted_text = rparser.extract_text()
+        if extracted_text:
+            output = aiParser.gen_query(extracted_text)
+            skills = aiParser.post_processing(output)
+            if skills and len(skills) >= 1:
+                update_user_skills(request.user, skills)
+                profile.save()
+                return True
+            else:
+                messages.error(request, "Insufficient skills extracted from resume.")
+                return False
+        else:
+            messages.error(request, "Unable to parse the resume.")
+            return False
+    except Exception as e:
+        messages.error(request, f"Error processing resume: {str(e)}")
+        return False
+
+
 @login_required
 @job_searcher_required
 @js_profile_completed
 def edit_profile(request):
-    rparser = ResumeParsing(request)
-    aiParser = ParsingFunctions()
-    resume_error = None
-    try:
-        profile = UserProfile.objects.get(user=request.user)
-    except UserProfile.DoesNotExist:
-        profile = None
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        location = request.POST.get('location')
-        bio = request.POST.get('summary')
-        resume_file = request.FILES.get('resume')
-        with transaction.atomic():
-            if profile is None:
-                profile = UserProfile.objects.create(user=request.user)
-            if location and location != profile.location:
-                profile.location = location
-            if bio and bio != profile.bio:
-                profile.bio = bio
-            skills_extracted = False
+        form = EditProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save(commit=False)
+            resume_file = request.FILES.get('resume')
             if resume_file:
-                new_resume = UserResume(
-                    user=request.user,
-                    resume=resume_file
-                )
-                new_resume.save()
-                extracted_text = None
-                if new_resume.resume.name.endswith('.pdf'):
-                    extracted_text = rparser.extract_text_from_pdf()
-                elif new_resume.resume.name.endswith('.docx'):
-                    extracted_text = rparser.extract_text_from_docx()
-                elif new_resume.resume.name.endswith('.doc'):
-                    extracted_text = rparser.extract_text_from_doc()
-                elif new_resume.resume.name.endswith('.txt'):
-                    extracted_text = rparser.extract_text_from_txt()
-                if extracted_text:
-                    output = aiParser.gen_query(extracted_text)
-                    skills = aiParser.post_processing(output)
-                    if len(skills) >= 4:
-                        skills_extracted = True
-                        if profile.resume:
-                            old_resume = profile.resume
-                            if old_resume.resume and os.path.isfile(old_resume.resume.path):
-                                os.remove(old_resume.resume.path)
-                            old_resume.delete()
-                        profile.resume = new_resume
-                        update_user_skills(request.user, skills)
-                    else:
-                        new_resume.delete()
-                        resume_error = "Insufficient number of skills extracted from resume."
-                else:
-                    new_resume.delete()
-                    resume_error = "Unable to parse the resume."
-
-            if not resume_file or (resume_file and skills_extracted):
-                profile.save()
-        if resume_error:
-            messages.error(request, resume_error)
+                if not process_resume(resume_file, profile, request):
+                    return redirect('jobsearcher_profile')
+            form.save(commit=True)
+            messages.success(request, 'Profile updated successfully.')
             return redirect('jobsearcher_profile')
+        else:
+            messages.error(request, "Please correct the errors below.")
+            return redirect('jobsearcher_profile')
+    else:
+        form = EditProfileForm(instance=profile)
 
-        return redirect('jobsearcher_profile')
-
-    context = {
-        'profile': profile,
-        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY
-    }
-    return render(request, 'Authorized/Core/JobSearcher/edit-profile.html', context)
+    return render(request, 'Authorized/Core/JobSearcher/edit-profile.html', {'form': form, 'profile': profile})
 
 
 @login_required
 @job_searcher_required
-@js_profile_not_completed
 def create_resume(request):
     form = ResumeForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         with transaction.atomic():
-            profile, created = UserProfile.objects.get(user=request.user)
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
             resume_text = generate_resume_text(request.user, form.cleaned_data)
             resume_file = io.BytesIO(resume_text.encode())
             file_name = f"{request.user.username}_resume.txt"
@@ -265,19 +247,19 @@ def create_resume(request):
 def jobsearcher_chat(request):
     return render(request, "Authorized/Core/JobSearcher/chat.html")
 
+
 @never_cache
 @csrf_exempt
 @login_required
-@js_profile_completed
 @require_http_methods(["POST"])
 def processMessages(request):
     message = request.POST.get('message', '')
     if not message:
         return JsonResponse({'error': 'No message provided'}, status=400)
-    user_profile = UserProfile.objects.filter(user=request.user).first()
-    if not user_profile or not user_profile.resume:
+    user_profile = UserProfile.objects.filter(user=request.user)
+    if not user_profile or not request.user.resumes:
         return JsonResponse({'error': 'No resume available'}, status=404)
-    resume = user_profile.resume
+    resume = request.user.resumes.order_by('-uploaded_at').first()
     extracted_text = ""
     rparser = ResumeParsing(request)
     if resume.resume.name.endswith('.pdf'):
@@ -291,6 +273,7 @@ def processMessages(request):
     response = query_model(message, extracted_text)
     print(response)
     return JsonResponse({'api_response': response['answer']})
+
 
 @never_cache
 @csrf_exempt
@@ -312,16 +295,19 @@ def custom_job_serializer(jobs):
                 'company': job.employer_profile.company_name,
                 'position': job.position,
                 'description': job.description,
+                'company_role_description': job.employer_profile.company_role_description,
+                'linkedin': job.employer_profile.user.linkedin_url,
                 'location': job.location,
                 'pay': job.pay,
                 'link_to_apply': job.link_to_apply,
                 'link_to_company': job.employer_profile.company_website,
                 'job_type': job.job_type,
-                'skills': [skill.name for skill in job.skills.all()]  # Include skill names
+                'skills': [skill.name for skill in job.skills.all()]
             }
         }
         job_list.append(job_info)
     return job_list
+
 
 @csrf_exempt
 @js_profile_completed
@@ -333,8 +319,8 @@ def search(request):
     if query:
         jobs = Job.objects.filter(
             Q(position__icontains=query) | Q(description__icontains=query) |
-            Q(company__icontains=query) | Q(location__icontains=query) |
-            Q(pay__icontains=query) | Q(job_type__icontains=query)
+            Q(employer_profile__company_name__icontains=query) | Q(location__icontains=query) |
+            Q(pay__icontains=query) | Q(job_type__icontains=query) | Q(skills__name__icontains=query)
         ).distinct()
     else:
         jobs = Job.objects.all()
@@ -343,7 +329,8 @@ def search(request):
     print(jobs)
     jobs_data = custom_job_serializer(jobs)
     jobs_json = json.dumps(jobs_data)
-    return render(request, 'Authorized/Core/JobSearcher/searcher.html', {'jobs_json': jobs_json, 'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY})
+    return render(request, 'Authorized/Core/JobSearcher/searcher.html',
+                  {'jobs_json': jobs_json, 'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY})
 
 
 @require_POST
@@ -357,7 +344,7 @@ def apply_for_job(request):
         with transaction.atomic():
             application, created = JobApplication.objects.get_or_create(user=user, job=job)
             if created:
-                application.status = 'applied'
+                application.status = 'Applied'
                 application.save()
                 job.applicant_count += 1
                 job.list_of_applicants.add(user)

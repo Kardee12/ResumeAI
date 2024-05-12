@@ -1,66 +1,142 @@
 {% extends "Authorized/Core/Employer/base.html" %}
 {% load static %}
-{% load socialaccount %}
-{% block title %}Candidate List {% endblock %}
+
+{% block title %}Candidate List - ResumeAI{% endblock %}
+
+{% block extra_head %}
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,700|Roboto:300,400,500,700&display=swap"
+          rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            color: #343a40;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        .card-header {
+            background-color: #0056b3;
+            color: #ffffff;
+            border-bottom: 2px solid #004494;
+            padding: 16px 20px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.2rem;
+        }
+
+        .list-group-item {
+            background-color: #ffffff;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control, .btn-custom {
+            border-radius: 15px;
+        }
+
+        .btn-custom {
+            background-color: #004494;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            margin-left: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #003366;
+        }
+
+        .btn-back {
+            display: inline-block;
+            background-color: #f8f9fa;
+            color: #007bff;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            border: 1px solid #007bff;
+            margin-bottom: 20px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #e7e9eb;
+            text-decoration: none;
+            color: #0056b3;
+        }
+
+        .form-group {
+            margin-bottom: 10px; /* Increased spacing between form elements */
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container my-5">
+        <a href="{% url 'job_posting_page' %}" class="btn btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
         <div class="row">
-            <div class="col-md-12" style="margin-top: 20px;width: 663px;">
+            <div class="col-md-12">
                 <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Candidate List</h4>
-                        <h6 class="text-muted card-subtitle mb-2">{{ job.title }} @ {{ job.company }}</h6>
-                        <h6 class="text-muted card-subtitle mb-2">Job ID: {{ job.id }}</h6>
+                    <div class="card-header">
+                        <h4>Candidate List for {{ job.position }}</h4>
+                        <h6>{{ job.position }} @ {{ job.employer_profile.company_name }}</h6>
+                        <h6>Job ID: {{ job.job_uuid }}</h6>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" style="height: 655px;margin-left: -12px;">
-            <div class="col-md-6" style="height: inherit;">
-                <div style="height: inherit;overflow: hidden;width: 641px;margin: auto;border-width: 1px;border-radius: 6px;margin-top: 5px;">
-                    <div class="card shadow-sm" style="height: 655px;margin: auto;overflow: scroll;width: 645px;">
-                        <div class="card-group justify-content-center align-items-center m-auto" style="overflow: scroll;display: block;width: 628px;height: inherit;">
-                            {% for candidate in candidates %}
-                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
-                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
-                                    <div style="margin-top: 5px;">
-                                        <h4 style="margin-top: 5px;">{{ candidate.user.username }}</h4>
-                                        <hr style="width: inherit;margin-top: 5px;">
-                                        <p style="width: 250px;margin-bottom: 19px;margin-top: 5px;">{{ candidate.user.email }}</p>
+                    <ul class="list-group list-group-flush">
+                        {% for application in job.applications.all %}
+                            <li class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5>{{ application.user.username }}</h5>
+                                        <p>{{ application.user.email }}</p>
+                                        <a href="{{ application.user.linkedin_url }}" target="_blank"
+                                           class="linkedin-link"><i class="fab fa-linkedin"></i></a>
                                     </div>
-                                    <button class="btn btn-primary" type="button" onclick="location.href='{% url download_resume candidate.id %}'">Resume</button>
-                                    <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#contactModal{{ candidate.id }}">Contact Info</button>
+                                    <form action="{% url 'update_candidate_status' application.id %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <select name="status" class="form-control form-control-sm">
+                                                {% for status, status_display in application.STATUS_CHOICES %}
+                                                    <option value="{{ status }}"
+                                                            {% if application.status == status %}selected{% endif %}>
+                                                        {{ status_display }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-custom">Update Status</button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </div>
-                            <div class="modal fade" id="contactModal{{ candidate.id }}" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <h5 class="modal-title" id="contactModalLabel">Contact Info</h5>
-                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                      </button>
-                                    </div>
-                                    <div class="modal-body">
-                                      Email: {{ candidate.user.email }}
-                                      
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            {% empty %}
-                            <div class="card" style="margin: auto;width: 613px;margin-top: 5px;margin-bottom: 5px;border-radius: 10px;">
-                                <div class="card-body align-self-center" style="margin-top: 0px;width: 600px;">
-                                    <h4>No candidates available.</h4>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No candidates available.</li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>

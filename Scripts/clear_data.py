@@ -1,6 +1,10 @@
 import os
+
 import django
-import ResumeAI
+from django.db import transaction
+from psycopg2 import IntegrityError
+
+from Core import apps
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ResumeAI.settings')
 django.setup()
@@ -14,6 +18,7 @@ def clear_data():
                 print(f"Cleared data from {model._meta.db_table}")
         except IntegrityError as e:
             print(f"Error occurred: {e}")
+
 
 if __name__ == "__main__":
     confirm = input("Are you sure you want to delete all data from the database? (yes/no): ")

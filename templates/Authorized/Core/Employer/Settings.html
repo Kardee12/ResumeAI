@@ -1,9 +1,10 @@
-{% extends 'Authorized/Core/JobSearcher/Base.html' %}
+{% extends "Authorized/Core/Employer/Base.html" %}
 {% load static %}
 {% load socialaccount %}
 
 {% block extra_head %}
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap"
+          rel="stylesheet">
 {% endblock %}
 
 {% block title %}Settings - ResumeAI{% endblock %}
@@ -14,25 +15,27 @@
             color: #525f7f;
 
         }
-        .main-card{
+
+        .main-card {
             border-radius: 15px;
         }
+
         .module-card {
             background-color: #ffffff;
             border: none;
             transition: transform .2s;
         }
-    
+
         .module-card:hover {
             transform: scale(1.05);
         }
-    
+
         .no-border-card {
             border: none !important;
         }
     </style>
     <div class="container">
-        <div class="row"> <h3 class="float-left"><strong>Settings</strong> </h3></div>
+        <div class="row"><h3 class="float-left"><strong>Settings</strong></h3></div>
         <div class="row mb-3">
             <div class="col-lg-4">
                 <div class="card border-primary shadow mb-3 no-border-card main-card">
@@ -42,7 +45,7 @@
                                  height="160">
                         {% endif %}
                         <div class="mb-3">
-                            <strong>Hello {{ user.first_name }} {{user.last_name}}!</strong>
+                            <strong>Hello {{ user.first_name }} {{ user.last_name }}!</strong>
                         </div>
                     </div>
                 </div>

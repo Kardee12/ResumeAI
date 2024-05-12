@@ -1,0 +1,121 @@
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ResumeAI{% endblock %}</title>
+    <link rel="stylesheet" href="{% static "assets/bootstrap/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css">
+    <link rel="stylesheet" href="{% static "assets/css/styles.min.css" %}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            color: #525f7f;
+        }
+
+        .content-container {
+            font-family: 'Roboto', BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .hover-highlight:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 0.25rem;
+        }
+
+        .dropdown-menu {
+            border-radius: 0.5rem;
+        }
+
+    </style>
+    {% block extra_head %}
+    {% endblock %}
+</head>
+
+<body>
+<nav class="navbar navbar-expand-md fixed-top navbar-shrink py-3 navbar-light" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+                <span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"
+                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round" class="icon icon-tabler icon-tabler-cloud-search">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M11 18.004h-4.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.393 -1.762 1.794 -3.2 3.675 -3.773c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99"></path>
+                        <path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+                        <path d="M20.2 20.2l1.8 1.8"></path>
+                    </svg>
+                </span>
+            <span class="text-dark fw-bold">ResumeAI</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            {% with user.socialaccount_set.all.0 as socialaccount %}
+                                {% if socialaccount %}
+                                    <img src="{{ socialaccount.get_avatar_url }}" alt="{{ user.username }}"
+                                         class="rounded-circle" style="width: 32px; height: 32px;">
+                                {% else %}
+                                    <i class="fas fa-user-circle fa-lg"></i>
+                                {% endif %}
+                            {% endwith %}
+                            {{ user.first_name|title }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'employer_profile' %}"> Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
+                            <li><a class="dropdown-item" href="{% url 'custom_logout' %}">Log Out</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}">Sign In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_signup' %}">Sign Up</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="py-sm-5 my-sm-5">
+    <div class="content-container">
+        {% block content %}
+        {% endblock content %}
+    </div>
+</section>
+
+<footer>
+    <div class="container py-4 py-lg-5">
+        <div class="text-muted d-flex justify-content-between align-items-center pt-3">
+            <p class="mb-0">Copyright © 2024 ResumeAI</p>
+            <ul class="list-inline mb-0">
+                <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+                <li class="list-inline-item"><a href="#">Terms of Use</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static "assets/js/script.min.js" %}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

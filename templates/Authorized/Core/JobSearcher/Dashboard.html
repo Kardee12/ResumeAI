@@ -2,13 +2,14 @@
 {% load static %}
 {% load socialaccount %}
 {% block title %}
-Dashboard - ResumeAI
+    Dashboard - ResumeAI
 {% endblock %}
 
 {% block extra_head %}
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
-        <style>
+    <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #ffffff;
@@ -16,17 +17,20 @@ Dashboard - ResumeAI
             padding: 0;
             color: #525f7f;
         }
+
         .navbar {
             background-color: #fff;
         }
+
         .card, .chart-container {
             background-color: #fff;
             border: none;
             border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             padding: 15px;
             margin-bottom: 20px; /* Space between cards */
         }
+
         .small-card {
             width: 100%;
             padding: 10px;
@@ -34,9 +38,10 @@ Dashboard - ResumeAI
             background-color: #e7f1ff; /* Light blue background for small cards */
             border: none;
             border-radius: 10px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 10px;
         }
+
         .btn-custom, .btn-update {
             background-color: #007bff;
             border: none;
@@ -48,14 +53,17 @@ Dashboard - ResumeAI
         .btn-update:hover {
             background-color: #0056b3;
         }
-        .badge-custom { 
+
+        .badge-custom {
             border: none;
             border-radius: 20px;
         }
+
         .badge-positive {
             background-color: #007bff; /* Blue for positive changes */
             color: white;
         }
+
         .badge-negative {
             background-color: #ffc107; /* Gold for negative changes */
             color: black;
@@ -64,9 +72,11 @@ Dashboard - ResumeAI
         .company-link {
             color: #007bff;
         }
+
         .company-link:hover {
             color: #0056b3;
         }
+
         .greeting {
             font-family: 'Poppins', sans-serif;
             font-size: 28px;
@@ -74,6 +84,7 @@ Dashboard - ResumeAI
             color: #333;
             margin-bottom: 30px;
         }
+
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -82,54 +93,62 @@ Dashboard - ResumeAI
     </style>
 {% endblock %}
 {% block content %}
-<main class="container">
-    <h3 class="greeting">Hello <strong>{{ user.first_name |title }}</strong></h3>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="grid-container">
-                <div class="small-card">
-                    <h5 class="card-title fw-bold">Open Applications</h5>
-                    <p class="h3 fw-bold">{{ total_open_applications }}</p>
-                    <span class="badge badge-custom {% if change_open_applications >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
-                        {% if change_open_applications >= 0 %}+{{ change_open_applications }}{% else %}{{ change_open_applications }}{% endif %} Since Last Month
+    <main class="container">
+        <h3 class="greeting">Hello <strong>{{ user.first_name |title }}</strong></h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="grid-container">
+                    <div class="small-card">
+                        <h5 class="card-title fw-bold">Open Applications</h5>
+                        <p class="h3 fw-bold">{{ total_open_applications }}</p>
+                        <span class="badge badge-custom {% if change_open_applications >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if change_open_applications >= 0 %}+{{ change_open_applications }}{% else %}
+                            {{ change_open_applications }}{% endif %} Since Last Month
                     </span>
-                </div>
-                <div class="small-card">
-                    <h5 class="card-title fw-bold">Current Interviews</h5>
-                    <p class="h3 fw-bold">{{ total_interviews }}</p>
-                    <span class="badge badge-custom {% if change_interviews >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
-                        {% if change_interviews >= 0 %}+{{ change_interviews }}{% else %}{{ change_interviews }}{% endif %} Since Last Month
+                    </div>
+                    <div class="small-card">
+                        <h5 class="card-title fw-bold">Current Interviews</h5>
+                        <p class="h3 fw-bold">{{ total_interviews }}</p>
+                        <span class="badge badge-custom {% if change_interviews >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if change_interviews >= 0 %}+{{ change_interviews }}{% else %}
+                            {{ change_interviews }}{% endif %} Since Last Month
                     </span>
+                    </div>
+                </div>
+                <div class="card">
+                    <h5 class="card-title fw-bold">Applications</h5>
+                    <p class="h3 fw-bold">{{ total_applications }}</p>
+                    <span class="badge badge-custom {% if change_applications >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if change_applications >= 0 %}+{{ change_applications }}{% else %}
+                            {{ change_applications }}{% endif %} Since Last Month
+                </span>
+                </div>
+                <div class="card">
+                    <h5 class="card-title fw-bold">Job Offers</h5>
+                    <p class="h3 fw-bold">{{ total_offers }}</p>
+                    <span class="badge badge-custom {% if success_rate >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                    {% if success_rate >= 0 %}
+                        +{{ success_rate|floatformat:2 }}%
+                    {% else %}
+                        {{ success_rate|floatformat:2 }}%
+                    {% endif %} Since Last Month
+                </span>
+                </div>
+                <div class="card">
+                    <h5 class="card-title fw-bold">Rejections</h5>
+                    <p class="h3 fw-bold">{{ total_rejections }}</p>
+                    <span class="badge badge-custom {% if change_rejections >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
+                        {% if change_rejections >= 0 %}+{{ change_rejections }}{% else %}
+                            {{ change_rejections }}{% endif %} Since Last Month
+                </span>
                 </div>
             </div>
-            <div class="card">
-                <h5 class="card-title fw-bold">Applications</h5>
-                <p class="h3 fw-bold">{{ total_applications }}</p>
-                <span class="badge badge-custom {% if change_applications >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
-                        {% if change_applications >= 0 %}+{{ change_applications }}{% else %}{{ change_applications }}{% endif %} Since Last Month
-                </span>
-            </div>
-            <div class="card">
-                <h5 class="card-title fw-bold">Job Offers</h5>
-                <p class="h3 fw-bold">{{ total_offers }}</p>
-                <span class="badge badge-custom {% if success_rate >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
-                        {% if success_rate >= 0 %}+{{ success_rate }}{% else %}{{ success_rate }}{% endif %} Since Last Month
-                </span>
-            </div>
-            <div class="card">
-                <h5 class="card-title fw-bold">Rejections</h5>
-                <p class="h3 fw-bold">{{ total_rejections }}</p>
-                <span class="badge badge-custom {% if change_rejections >= 0 %}badge-positive{% else %}badge-negative{% endif %}">
-                        {% if change_rejections >= 0 %}+{{ change_rejections }}{% else %}{{ change_rejections }}{% endif %} Since Last Month
-                </span>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <h3 class="fs-4 fw-light my-4">Your Job Applications</h3>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
+            <div class="col-md-6">
+                <div class="card">
+                    <h3 class="fs-4 fw-light my-4">Your Job Applications</h3>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
                             <tr>
                                 <th scope="col">Company</th>
                                 <th scope="col">Position</th>
@@ -137,48 +156,48 @@ Dashboard - ResumeAI
                                 <th scope="col">Status</th>
                                 <th scope="col">Date Applied</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                            </thead>
+                            <tbody>
                             {% for application in job_applications %}
-                            <tr>
-                                <td>{{ application.job.employer_profile.company_name }}</td>
-                                <td>{{ application.job.position }}</td>
-                                <td>{{ application.job.job_type }}</td>
-                                <td class="application-detail">
-                                    <span class="badge">{{ application.status }}</span>
-                                </td>
-                                <td>{{ application.application_date|date:"M d, Y" }}</td>
-                            </tr>
+                                <tr>
+                                    <td>{{ application.job.employer_profile.company_name }}</td>
+                                    <td>{{ application.job.position }}</td>
+                                    <td>{{ application.job.job_type }}</td>
+                                    <td class="application-detail">
+                                        <span class="badge">{{ application.status }}</span>
+                                    </td>
+                                    <td>{{ application.application_date|date:"M d, Y" }}</td>
+                                </tr>
                             {% empty %}
-                            <tr>
-                                <td colspan="5">No applications found.</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="5">No applications found.</td>
+                                </tr>
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="d-flex align-items-center justify-content-center">
-                    <a href="{% url 'all_job_apps' %}" class="btn btn-custom">View More</a>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <a href="{% url 'all_job_apps' %}" class="btn btn-custom">View More</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 {% endblock %}
 
 {% block extra_scripts %}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        // This function changes the color of the status badges based on their content
-        const statusBadges = document.querySelectorAll('.application-detail .badge');
+        document.addEventListener('DOMContentLoaded', function () {
+            // This function changes the color of the status badges based on their content
+            const statusBadges = document.querySelectorAll('.application-detail .badge');
 
-        statusBadges.forEach(function(badge) {
-            const statusText = badge.textContent.trim();
-            badge.style.backgroundColor = getStatusColor(statusText);
-            badge.style.color = 'white'; // Ensure text is white for better readability
-            badge.style.borderRadius = '15px';
+            statusBadges.forEach(function (badge) {
+                const statusText = badge.textContent.trim();
+                badge.style.backgroundColor = getStatusColor(statusText);
+                badge.style.color = 'white'; // Ensure text is white for better readability
+                badge.style.borderRadius = '15px';
+            });
         });
-    });
 
         function getStatusColor(status) {
             switch (status) {

@@ -2,11 +2,12 @@
 {% load static %}
 {% load socialaccount %}
 {% block title %}
-Chat - ResumeAI
+    Chat - ResumeAI
 {% endblock %}
 
 {% block extra_head %}
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap"
+          rel="stylesheet">
 {% endblock extra_head %}
 {% block content %}
     <style>
@@ -227,20 +228,23 @@ Chat - ResumeAI
             }
             return cookieValue;
         }
-        $(document).ajaxSend(function(event, xhr, settings) {
+
+        $(document).ajaxSend(function (event, xhr, settings) {
             function csrfSafeMethod(method) {
                 return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
             }
+
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 var csrftoken = getCookie('csrftoken');
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         });
-        
+
         const userAvatarUrl = "{{ user.get_avatar_url}}";
         const avatarImageUrl = "{% static 'assets/img/apple-touch-icon.png' %}";
         document.addEventListener('DOMContentLoaded', function () {
-            const input = document.getElementById("chat-input");;
+            const input = document.getElementById("chat-input");
+            ;
             input.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();

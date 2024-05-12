@@ -6,106 +6,137 @@
 {% endblock %}
 
 {% block extra_head %}
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
-<style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #ffffff;
-        margin: 0;
-        padding: 0;
-        color: #525f7f;
-    }
-    .navbar {
-        background-color: #fff;
-    }
-    .edit-profile-form {
-        background: #ffffff;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-    .form-control {
-        border-radius: 15px;
-    }
-    .btn-custom {
-        background-color: #007bff;
-        border: none;
-        color: #fff;
-        border-radius: 12px;
-        padding: 10px 20px;
-        font-size: 16px;
-        font-weight: 500;
-    }
-    .btn-back {
-        margin-bottom: 20px; /* Additional margin to separate from the form */
-    }
-    textarea.form-control {
-        border-radius: 12px;
-    }
-</style>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&family=Roboto:wght@300;400;500;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            color: #525f7f;
+        }
+
+        .navbar {
+            background-color: #fff;
+        }
+
+        .edit-profile-form {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-control {
+            border-radius: 15px;
+        }
+
+        .btn-custom {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .btn-back {
+            margin-bottom: 20px; /* Additional margin to separate from the form */
+        }
+
+        textarea.form-control {
+            border-radius: 12px;
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAutocomplete"
+            async defer></script>
 {% endblock %}
 
 {% block content %}
-<main class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <a href="{% url 'jobsearcher_profile' %}" class="btn btn-back btn-light">
-                <i class="fas fa-arrow-left"></i> Back to Profile
-            </a>
-            <div class="edit-profile-form">
-                <h2 class="text-center mb-4">Edit Your Profile</h2>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="locationInput" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="locationInput" name="location" placeholder="Enter your location">
-                    </div>
-                    <div class="mb-3">
-                        <label for="summaryInput" class="form-label">Professional Bio</label>
-                        <textarea class="form-control" id="summaryInput" name="summary" rows="3" placeholder="Detail your professional background and expertise.">{{ profile.bio }}</textarea>
-                    </div>
-                   <div class="mb-3">
-                        <label for="resumeUpload" class="form-label">Upload Resume</label>
-                        <input type="file" class="form-control" id="resumeUpload" name="resume" accept=".pdf,.doc,.docx, .txt">
-                        <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, TXT</small>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-custom">Save Changes</button>
-                    </div>
-                </form>
+    <main class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <a href="{% url 'jobsearcher_profile' %}" class="btn btn-back btn-light">
+                    <i class="fas fa-arrow-left"></i> Back to Profile
+                </a>
+                <div class="edit-profile-form">
+                    <h2 class="text-center mb-4">Edit Your Profile</h2>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="locationInput" class="form-label">Location</label>
+                            <input type="text" class="form-control {% if form.location.errors %}is-invalid{% endif %}"
+                                   id="locationInput" name="location" placeholder="Enter your location">
+                            {% for error in form.location.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="bioInput" class="form-label">Professional Bio</label>
+                            <textarea class="form-control {% if form.bio.errors %}is-invalid{% endif %}" id="bioInput"
+                                      name="bio" rows="3"
+                                      placeholder="Detail your professional background and expertise.">{{ form.bio.value|default_if_none:profile.bio }}</textarea>
+                            {% if form.bio.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.bio.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="resumeUpload" class="form-label">Upload Resume</label>
+                            <input type="file" class="form-control {% if form.resume.errors %}is-invalid{% endif %}"
+                                   id="resumeUpload" name="resume" accept=".pdf,.doc,.docx, .txt">
+                            {% if form.resume.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.resume.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, TXT</small>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-custom">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-function initAutocomplete() {
-    var locationInput = document.getElementById('locationInput');
-    var autocomplete = new google.maps.places.Autocomplete(locationInput, {
-        types: ['geocode']
-    });
+    <script>
+        function initAutocomplete() {
+            var locationInput = document.getElementById('locationInput');
+            var autocomplete = new google.maps.places.Autocomplete(locationInput, {
+                types: ['geocode']
+            });
 
-    autocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
-    autocomplete.addListener('place_changed', function() {
-        var place = autocomplete.getPlace();
-        if (!place.geometry) {
-            window.alert("No details available for input: '" + place.name + "'");
-            return;
+            autocomplete.setFields(['address_components', 'geometry', 'icon', 'name']);
+            autocomplete.addListener('place_changed', function () {
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    window.alert("No details available for input: '" + place.name + "'");
+                    return;
+                }
+            });
         }
-    });
-}
 
-    window.addEventListener('DOMContentLoaded', function() {
-        var locationInput = document.getElementById('locationInput');
-        var locationValue = "{{ profile.location}}";
-        var formattedLocation = locationValue.replace(/\w\S*/g, function(txt){
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        window.addEventListener('DOMContentLoaded', function () {
+            var locationInput = document.getElementById('locationInput');
+            var locationValue = "{{ profile.location}}";
+            var formattedLocation = locationValue.replace(/\w\S*/g, function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+            locationInput.placeholder = formattedLocation;
         });
-        locationInput.placeholder = formattedLocation;
-    });
-</script>
+    </script>
 {% endblock %}
