@@ -47,7 +47,7 @@ To set up ResumeAI in a production environment, follow these steps:
    - Create a PostgreSQL database named `resumeAI` with a user `core`:
      ```sql
      CREATE DATABASE resumeAI;
-     CREATE USER core WITH ENCRYPTED PASSWORD 'password';
+     CREATE USER core WITH PASSWORD 'password';
      GRANT ALL PRIVILEGES ON DATABASE resumeAI TO core;
      ```
    - Initialize and migrate the database schema:
