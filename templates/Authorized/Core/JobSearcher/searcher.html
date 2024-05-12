@@ -186,12 +186,12 @@
 
         function updateJobListings(jobs) {
             let listingsHTML = jobs.map(job => {
-                const companyWebsite = job.fields.company_website ? `https://logo.clearbit.com/${encodeURIComponent(job.fields.company_website)}` : '{% static "img/default-logo.png" %}';
+                const companyWebsite = job.fields.company_website ? `https://logo.clearbit.com/${encodeURIComponent(job.fields.company_website)}` : '{% static "assets/img/default-logo.jpeg" %}';
                 return `
             <div class="job-listing" onclick="showDetails(${job.pk})">
                 <div class="icon-container">
-                    <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}'">
-                    <img src="${companyWebsite}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';">
+                    <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'assets/img/default-logo.jpeg' %}'">
+                    <img src="${companyWebsite}" onError="this.onerror=null;this.src='{% static 'assets/img/default-logo.jpeg' %}';">
                 </div>
                 <div>
                     <h5>${job.fields.position}</h5>
@@ -212,10 +212,10 @@
             const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';  // Join skills array into a string
 
             if (job) {
-                const companyWebsite = job.fields.company_website ? `https://logo.clearbit.com/${encodeURIComponent(job.fields.company_website)}` : '{% static "img/default-logo.png" %}';
+                const companyWebsite = job.fields.company_website ? `https://logo.clearbit.com/${encodeURIComponent(job.fields.company_website)}` : '{% static "assets/img/default-logo.jpeg" %}';
                 console.log({{ job.pk }})
                 document.getElementById('jobDetails').innerHTML = `
-            <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'img/default-logo.png' %}';" alt="${job.fields.company} Logo" style="width: 80px; height: auto; border-radius: 8px; margin-bottom: 20px;">
+            <img src="https://logo.clearbit.com/${job.fields.link_to_company}" onError="this.onerror=null;this.src='{% static 'assets/img/default-logo.jpeg' %}';" alt="${job.fields.company} Logo" style="width: 80px; height: auto; border-radius: 8px; margin-bottom: 20px;">
             <h4>${job.fields.position}</h4>
             <span class="job-type-badge" style="background-color: ${jobTypeColor}; color: white; padding: 5px 10px; border-radius: 5px; font-size: 12px; display: inline-block;">${jobType}</span>
             <p><strong>Company:</strong> ${job.fields.company}</p>
