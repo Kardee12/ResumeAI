@@ -82,3 +82,7 @@ python manage.py runserver
   - https://www.youtube.com/watch?v=B7x744DQD6A
 - JobSearcher Perspective
   - https://www.youtube.com/watch?v=quuw8BRcraQ
+
+## LINKS TO TEST RESUMES:
+https://drive.google.com/drive/folders/1bwZn02UFOwsGK_km0bRaL-vbKAzZF6kW?usp=sharing
+- blank.pdf only for create-resume test!
