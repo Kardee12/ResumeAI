@@ -9,6 +9,17 @@ from django.db import transaction, IntegrityError
 
 
 def clear_data():
+    """
+    Clear all data from the database tables.
+
+    This function iterates over all models registered in the Django app and deletes all records from their
+    corresponding database tables. It uses a transaction to ensure atomicity, and it prints a message for each
+    model table cleared. If any integrity error occurs during the deletion process, it catches the exception
+    and prints an error message.
+
+    Note: This function should be used with caution as it will permanently delete all data from the database.
+
+    """
     with transaction.atomic():
         try:
             for model in apps.get_models():

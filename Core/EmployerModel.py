@@ -5,6 +5,21 @@ from django.db import models
 
 
 class EmployerProfile(models.Model):
+    """
+    Model representing an employer's profile.
+
+    Attributes:
+        user (OneToOneField): user reference to the employer profile.
+        position (CharField): position at the company
+        company_name (CharField): name of the company
+        company_description (TextField): description of the company
+        company_website (URLField): website of the company
+        employer_completed (BooleanField):  if the employer profile is completed
+
+    Methods:
+        __str__: return a string representation of the employer's profile
+
+    """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employer_profile')
     position = models.CharField(max_length=120, blank=False, null=False, default='Unknown')
     company_name = models.CharField(max_length=255)
@@ -17,6 +32,16 @@ class EmployerProfile(models.Model):
 
 
 class JobSkills(models.Model):
+    """
+    Model representing job skills.
+
+    Attributes:
+        name (CharField): name of the job skill
+
+    Methods:
+        __str__: return a string representation of the job skill
+
+    """
     name = models.CharField(max_length=120, unique=True)
 
     def __str__(self):
@@ -24,6 +49,26 @@ class JobSkills(models.Model):
 
 
 class JobType(models.TextChoices):
+    """
+    Model representing a job posting.
+
+    Attributes:
+        job_uuid (UUIDField): unique ID for the job.
+        employer_profile (ForeignKey): reference to the employer's profile associated with job
+        applicant_count (IntegerField): count of applicants for the job
+        position (CharField): position of the job
+        description (TextField): description of the job
+        location (CharField): location of the job
+        pay (CharField): pay for the job
+        skills (ManyToManyField): required skills for the job
+        list_of_applicants (ManyToManyField): users who have applied for the job
+        link_to_apply (URLField): ink to apply for the job
+        job_type (CharField): type of the job
+
+    Methods:
+        __str__: return a string representation of the job
+
+    """
     CONTRACTOR = 'Contractor', 'Contractor'
     INTERNSHIP = 'Internship', 'Internship'
     FULL_TIME = 'Full-time', 'Full-time'
@@ -31,6 +76,25 @@ class JobType(models.TextChoices):
 
 
 class Job(models.Model):
+    """
+    Choices for the type of job.
+    Attributes:
+        job_uuid (UUIDField):unique ID for the job
+        employer_profile (ForeignKey): reference to the employer's profile associated with the job
+        applicant_count (IntegerField): count of applicants for the job
+        position (CharField): position of the job
+        description (TextField): description of the job
+        location (CharField): location of the job
+        pay (CharField): pay for the job
+        skills (ManyToManyField): required skills for the job
+        list_of_applicants (ManyToManyField): users who have applied for the job
+        link_to_apply (URLField): link to apply for the job
+        job_type (CharField): type of the job
+
+    Methods:
+        __str__: string representation of the job
+
+    """
     job_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     employer_profile = models.ForeignKey('EmployerProfile', on_delete=models.CASCADE, related_name='jobs', null=True)
     applicant_count = models.IntegerField(default=0, editable=False)

@@ -6,6 +6,15 @@ from Core.models import UserProfile
 
 
 class UserProfileForm(forms.Form):
+    """
+    Form for user profile creation/update.
+
+    Fields:
+        location (CharField): entering the user's location
+        bio (CharField): entering the user's professional bio
+        resume (FileField): uploading the user's resume
+
+    """
     location = forms.CharField(label='Location', max_length=255, required=False)
     bio = forms.CharField(label='Professional Bio', widget=forms.Textarea, required=False)
     resume = forms.FileField(
@@ -17,6 +26,15 @@ class UserProfileForm(forms.Form):
 
 
 class EditProfileForm(forms.ModelForm):
+    """
+    Form for editing user profile
+
+    Fields:
+        location (CharField): entering the user's location
+        bio (CharField): entering the user's professional bio
+        resume (FileField): uploading the user's resume
+
+    """
     # location = forms.CharField(max_length=100, required=False)
     # summary = forms.CharField(widget=forms.Textarea, required=False)
     resume = forms.FileField(
@@ -37,6 +55,25 @@ class EditProfileForm(forms.ModelForm):
 
 
 class ResumeForm(forms.Form):
+    """
+    Form for resume creation/update
+
+    Fields:
+        job_title_X (CharField): entering job titles in the user's job history
+        company_name_X (CharField): entering company names in the user's job history
+        start_date_X (DateField): entering start dates in the user's job history
+        end_date_X (DateField): entering end dates in the user's job history
+        job_description_X (CharField): entering job descriptions in the user's job history
+        degree (CharField): entering the user's degree
+        institution_name (CharField): entering the name of the institution
+        education_start_date (DateField): entering the start date of education
+        education_end_date (DateField): entering the end date of education
+        skill_X (CharField): entering skills
+
+    Methods:
+        clean: clean the form data and ensure that at least one skill is inputted
+
+    """
     job_title_1 = forms.CharField(max_length=100, required=False)
     company_name_1 = forms.CharField(max_length=100, required=False)
     start_date_1 = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)

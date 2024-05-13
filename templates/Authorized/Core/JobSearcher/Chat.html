@@ -26,104 +26,104 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            background-color: #fff; /* Background color for the message */
+            background-color: #fff; 
             border-bottom: 1px solid #fff;
         }
 
         .input-bar-container {
             display: flex;
             align-items: center;
-            background-color: #fff; /* White background to match the chat-card */
+            background-color: #fff; 
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             padding: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow to match chat-card */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
             margin-bottom: 1rem;
         }
 
         .input-bar-container label,
         .input-bar-container button {
-            background-color: #fff; /* White background */
+            background-color: #fff; 
             border: none;
-            margin: 0 5px; /* Slight space between elements */
+            margin: 0 5px; 
             padding: 8px;
-            border-radius: 50%; /* Circular for the icons */
+            border-radius: 50%; 
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
-        /* Adjust padding and borders to ensure the elements appear connected */
+        
         .input-bar-container input[type="text"] {
             flex-grow: 1;
             border: none;
             padding: 8px 15px;
             margin: 0;
-            border-radius: 20px; /* Rounded borders for the text input */
-            box-shadow: none; /* No shadow to make it blend with the container */
+            border-radius: 20px; 
+            box-shadow: none; 
         }
 
-        /* Hover styles for the icons */
+       
         .input-bar-container label:hover,
         .input-bar-container button:hover {
-            background-color: #f8f8f8; /* Light grey for hover effect */
+            background-color: #f8f8f8; 
         }
 
         .input-bar-container input[type="file"] {
-            display: none; /* Keep the file input hidden */
+            display: none;
         }
 
         .reset-label {
-            /* Inherit styles from the file upload label for consistency */
+            
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background-color: #fff; /* White background */
+            background-color: #fff; 
             border-radius: 50%;
             padding: 8px;
-            margin-right: 0.5rem; /* Space between the reset and text input */
+            margin-right: 0.5rem; 
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
         .reset-label:hover {
-            background-color: #f8f8f8; /* Light grey for hover effect */
+            background-color: #f8f8f8; 
         }
 
         .message-bubble {
             display: flex;
             align-items: center;
-            width: 100%; /* Full width */
+            width: 100%; 
             margin-bottom: 5px;
         }
 
         .message-avatar {
-            width: 40px; /* Adjust this value to change the avatar size */
-            height: 40px; /* Adjust this value to change the avatar size */
+            width: 40px; 
+            height: 40px; 
             border-radius: 50%;
-            background-color: #ccc; /* Placeholder for avatar color */
-            background-size: cover; /* Ensure the image covers the div without distortion */
-            background-position: center; /* Center the background image */
+            background-color: #ccc; 
+            background-size: cover; 
+            background-position: center; 
         }
 
 
-        /* Style for the message content */
+        
         .message-content {
             display: flex;
             flex-direction: column;
-            flex-grow: 1; /* Allow the content to fill the available space */
+            flex-grow: 1; 
             padding: 8px;
             border-radius: 18px;
-            background-color: #fff; /* Background color for the message */
-            margin-left: 10px; /* Space between avatar and message */
+            background-color: #fff; 
+            margin-left: 10px; 
         }
 
         .message-text {
-            flex-grow: 1; /* Allows text to fill the bubble */
-            padding: 10px 14px; /* Padding inside the text area */
-            border-radius: 18px; /* Rounded corners for the text area */
-            background-color: #fff; /* White background for the text area */
-            color: #000; /* Text color for readability */
-            margin: 0; /* Remove any margin if present */
+            flex-grow: 1; 
+            padding: 10px 14px; 
+            border-radius: 18px; 
+            background-color: #fff; 
+            color: #000; 
+            margin: 0; 
         }
 
 
@@ -148,7 +148,7 @@
             display: flex;
             align-items: center;
             padding: 8px;
-            background-color: #f1f3f4; /* Light grey background for each file */
+            background-color: #f1f3f4; 
             border-radius: 16px;
         }
 
@@ -161,24 +161,24 @@
         }
 
         .file-icon {
-            font-size: 24px; /* Larger icon size */
-            color: #5f6368; /* Icon color */
+            font-size: 24px; 
+            color: #5f6368; 
             margin-right: 10px;
         }
 
         .file-name {
             font-size: 14px;
-            color: #202124; /* Text color */
+            color: #202124; 
         }
 
         .remove-file-button {
-            margin-left: auto; /* Push the button to the right */
-            color: #5f6368; /* Button color */
+            margin-left: auto; 
+            color: #5f6368; 
             cursor: pointer;
         }
 
         .remove-file-button:hover {
-            color: #202124; /* Darker color on hover */
+            color: #202124; 
         }
 
     </style>

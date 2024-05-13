@@ -6,6 +6,15 @@ from .forms import SetupForm
 
 @login_required
 def setup_view(request):
+    """
+    View function for user setup.
+
+    This view handles both GET and POST requests. In a GET request, it renders the setup form. In a POST request,
+    it processes the form data and updates the user's role, LinkedIn URL, and setup completion status accordingly.
+
+    Args:
+        request: The HTTP request object.
+    """
     if request.method == 'POST':
         form = SetupForm(request.POST)
         print(form.is_valid())

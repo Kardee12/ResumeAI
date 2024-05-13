@@ -28,6 +28,17 @@ from .functions.ParsingUtility import ResumeParsing, ParsingFunctions, NewResume
 @job_searcher_required
 @js_profile_completed
 def jobsearcher_dashboard(request):
+    """
+    View function for rendering the job searcher dashboard
+
+    Args:
+        request (HttpRequest): HTTP request object
+
+    Returns:
+        HttpResponse: renders the job searcher dashboard template
+            with the user's job applications and the calculated statistics.
+
+    """
     user = request.user
     today = datetime.today()
     last_month = today - timedelta(days=30)
@@ -74,6 +85,17 @@ def jobsearcher_dashboard(request):
 @job_searcher_required
 @js_profile_completed
 def jobsearcher_profile(request):
+    """
+    View function for rendering the job searcher profile.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: renders the job searcher profile template
+            with the profile information and a subset of skills.
+
+    """
     user = request.user
     profile = UserProfile.objects.get(user=user)
     skills = profile.skills.all()[:6]
@@ -89,6 +111,16 @@ def jobsearcher_profile(request):
 @job_searcher_required
 @js_profile_completed
 def update_skills(request):
+    """
+    View function for updating job searcher skills.
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: redirects the user to the job searcher
+            profile page or the job searcher dashboard.
+
+    """
     if request.method == 'POST':
         user = request.user
         profile = UserProfile.objects.get(user=user)
@@ -106,6 +138,17 @@ def update_skills(request):
 @login_required
 @job_searcher_required
 def js_setup_profile(request):
+    """
+    View function for setting up the job searcher profile.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: renders the profile setup form or redirects
+            the user to the home page upon successful setup
+
+    """
     rparser = ResumeParsing(request)
     aiParser = ParsingFunctions()
     resume_error = None
@@ -158,6 +201,22 @@ def js_setup_profile(request):
 
 
 def process_resume(resume_file, profile, request):
+    """
+    Process the uploaded resume file and update the user's profile with the extracted information.
+
+    This function takes the uploaded resume file, parses it to extract text content, analyzes the extracted text
+    to identify relevant skills, and updates the user's profile with the extracted skills. If successful, it saves
+    the updated profile and returns True. If there are any errors during the processing, it displays an appropriate
+    error message and returns False.
+
+    Args:
+        resume_file (UploadedFile): The uploaded resume file to be processed.
+        profile (UserProfile): The user's profile to be updated with the extracted skills.
+        request (HttpRequest): The HTTP request object for displaying error messages.
+
+    Returns:
+        bool: True if the resume processing and profile update are successful, False otherwise.
+    """
     rparser = NewResumeParsing(resume_file)
     aiParser = ParsingFunctions()
     try:
@@ -190,6 +249,17 @@ def process_resume(resume_file, profile, request):
 @job_searcher_required
 @js_profile_completed
 def edit_profile(request):
+    """
+    View function for editing the job searcher profile.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: renders the profile edit form or redirects
+            the user to the job searcher profile page upon successful update
+
+    """
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         form = EditProfileForm(request.POST, request.FILES, instance=profile)
@@ -214,6 +284,16 @@ def edit_profile(request):
 @login_required
 @job_searcher_required
 def create_resume(request):
+    """
+    View function for creating a resume for the job searcher profile.
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: renders the resume creation form or redirects
+            the user to the home page upon successful resume creation and profile completion
+
+    """
     form = ResumeForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         with transaction.atomic():
@@ -245,6 +325,16 @@ def create_resume(request):
 @job_searcher_required
 @js_profile_completed
 def jobsearcher_chat(request):
+    """
+    View function for the job searcher chat page.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: renders the chat page template
+
+    """
     return render(request, "Authorized/Core/JobSearcher/chat.html")
 
 
@@ -253,6 +343,16 @@ def jobsearcher_chat(request):
 @login_required
 @require_http_methods(["POST"])
 def processMessages(request):
+    """
+    View function for processing messages in the chatbot.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing the message data.
+
+    Returns:
+        JsonResponse: A JSON response containing the processed response from the chatbot
+            model. 
+    """
     message = request.POST.get('message', '')
     if not message:
         return JsonResponse({'error': 'No message provided'}, status=400)
@@ -280,12 +380,31 @@ def processMessages(request):
 @js_profile_completed
 @login_required
 def clearChat(request):
+    """
+    View function for clearing chat conversation memory.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: A JSON response indicating the success of the operation
+        
+    """
     if 'conversation_memory' in request.session:
         del request.session['conversation_memory']
     return JsonResponse({'success': True}, status=200)
 
 
 def custom_job_serializer(jobs):
+    """
+    Custom serializer function for serializing job objects into a custom format.
+    Args:
+        jobs (QuerySet): A queryset containing job objects to be serialized.
+
+    Returns:
+        list: A list of dictionaries representing serialized job data. Each dictionary
+            contains the following keys
+    """
     job_list = []
     for job in jobs:
         job_info = {
@@ -313,6 +432,16 @@ def custom_job_serializer(jobs):
 @js_profile_completed
 @login_required
 def search(request):
+    """
+    View function for handling job search functionality.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing user data and query parameters.
+
+    Returns:
+        HttpResponse: A rendered HTML response containing job search results in JSON format
+        along with the Google Maps API key for rendering maps in the frontend.
+    """
     user_profile = UserProfile.objects.get(user=request.user)
     user_skill_names = user_profile.skills.values_list('name', flat=True)
     query = request.GET.get('q', '')
@@ -336,6 +465,16 @@ def search(request):
 @require_POST
 @login_required
 def apply_for_job(request):
+    """
+    View function for handling job applications.
+
+    Args:
+        request (HttpRequest): The HTTP request object containing the user's application data.
+
+    Returns:
+        JsonResponse: A JSON response indicating the success or failure of the application process.
+
+    """
     job_id = request.GET.get('job_id')
     user = request.user
 
@@ -367,6 +506,17 @@ def apply_for_job(request):
 @js_profile_completed
 @login_required
 def all_job_apps(request):
+    """
+    View function for displaying all job applications submitted by a user.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: A response containing the rendered template displaying all
+        job applications submitted by the user.
+
+    """
     user = request.user
     job_applications = JobApplication.objects.filter(user=user).order_by('-application_date')
     context = {

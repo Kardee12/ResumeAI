@@ -14,6 +14,15 @@ from ResumeAI.Generic.generic_decoraters import employer_required, emp_profile_c
 @login_required
 @employer_required
 def emp_setupProfile(request):
+    """
+    View function for setting up an employer profile.
+
+    Args:
+        request (HttpRequest): HTTP request object.
+
+    Returns:
+        HttpResponse: redirects the user to the home page or renders the employer profile setup form
+    """
     if request.method == 'POST':
         form = EmployerProfileForm(request.POST)
         if form.is_valid():
@@ -37,6 +46,16 @@ def emp_setupProfile(request):
 @employer_required
 @emp_profile_completed
 def create_job_posting(request):
+    """
+    View function for creating a new job posting
+
+    Args:
+        request (HttpRequest): HTTP request object.
+
+    Returns:
+        HttpResponse: renders the job posting creation form or redirects the user to the employer dashboard
+
+    """
     employer_profile = EmployerProfile.objects.filter(user=request.user).first()
     if not employer_profile:
         messages.error(request, "Please complete your employer profile first.")
@@ -84,6 +103,22 @@ def create_job_posting(request):
 @employer_required
 @emp_profile_completed
 def edit_job_posting(request, job_uuid):
+    """
+    View function for editing a job posting.
+
+    This view allows employers to edit the details of a job posting. It retrieves the job object based on the job_uuid
+    provided in the URL. If the request method is POST, it validates the form data submitted for editing the job.
+    If the form is valid, it saves the changes and redirects to the job posting page. If the form is not valid, it
+    displays error messages. If the request method is GET, it renders the edit job posting form with pre-filled data.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        job_uuid (str): The UUID of the job to be edited.
+
+    Returns:
+        HttpResponse: The HTTP response containing the edit job posting form.
+
+    """
     job = get_object_or_404(Job, job_uuid=job_uuid)
     if request.method == 'POST':
         form = EditJobForm(request.POST, instance=job)
@@ -104,6 +139,17 @@ def edit_job_posting(request, job_uuid):
 @employer_required
 @emp_profile_completed
 def employer_dashboard(request):
+    """
+    View function for rendering the employer dashboard.
+
+    Args:
+        request (HttpRequest): HTTP request object.
+
+    Returns:
+        HttpResponse: renders the employer dashboard template w/ employer's profile info and the latest job postings w/ the last
+            three applicants for each job.
+
+    """
     employer_profile = EmployerProfile.objects.get(user=request.user)
     jobs = Job.objects.filter(employer_profile=employer_profile).order_by('-id')[:3]
 
@@ -130,6 +176,21 @@ def employer_dashboard(request):
 @employer_required
 @emp_profile_completed
 def edit_employer_profile(request):
+    """
+    View function for editing an employer profile.
+
+    This view allows employers to edit their profile information. It retrieves the employer profile object associated
+    with the current user. If the request method is POST, it validates the form data submitted for editing the profile.
+    If the form is valid, it saves the changes and redirects to the employer dashboard. If the form is not valid, it
+    displays error messages. If the request method is GET, it renders the edit employer profile form with pre-filled data.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The HTTP response containing the edit employer profile form.
+
+    """
     user = request.user
     profile, created = EmployerProfile.objects.get_or_create(user=user)
 
@@ -169,6 +230,16 @@ def edit_company_page(request):
 @employer_required
 @emp_profile_completed
 def candidatePage(request, job_id):
+    """
+    View function for displaying candidates for a job posting.
+    Args:
+        request (HttpRequest): HTTP request object.
+        job_id (int): The ID of the job posting.
+
+    Returns:
+        HttpResponse: renders the candidate list template with the candidates for the specified job posting
+
+    """
     job = get_object_or_404(Job, job_uuid=job_id)
     job_applications = JobApplication.objects.filter(job=job)
     employer_profile = EmployerProfile.objects.get(user=request.user)
@@ -186,6 +257,24 @@ def candidatePage(request, job_id):
 @employer_required
 @emp_profile_completed
 def update_candidate_status(request, application_id):
+    """
+    View function to update the status of a candidate application for a job posting.
+
+    This function allows an employer user to update the status of a candidate application for a specific job posting.
+    It retrieves the job application object based on the provided application ID, validates the new status provided
+    via a POST request, and updates the status accordingly. If the provided status is valid, it saves the changes and
+    redirects to the candidate list page for the corresponding job posting. If the status is invalid or if the request
+    method is not POST, it redirects to an appropriate error page.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        application_id (int): The ID of the job application to be updated.
+
+    Returns:
+        HttpResponseRedirect: Redirects to the candidate list page for the corresponding job posting if successful.
+        HttpResponseRedirect: Redirects to an appropriate error page if the request method is not POST or if the
+        provided status is invalid.
+    """
     job_application = get_object_or_404(JobApplication, id=application_id)
 
     if request.method == 'POST':
@@ -201,6 +290,21 @@ def update_candidate_status(request, application_id):
 
 
 def custom_job_serializer(jobs):
+    """
+    Custom serializer function for serializing job objects into a JSON-compatible format.
+
+    This function takes a queryset or list of job objects as input and serializes each job object into a dictionary
+    format suitable for JSON serialization. It includes relevant fields and related data such as applicant count, company
+    name, job position, job description, company role description, LinkedIn URL, job location, payment details, links to
+    apply and company website, job type, and skills required.
+    Used in job posting
+
+    Args:
+        jobs (QuerySet or list): Queryset or list of job objects to be serialized.
+
+    Returns:
+        list: A list of dictionaries, each representing a serialized job object.
+    """
     job_list = []
     for job in jobs:
         job_info = {
@@ -228,6 +332,16 @@ def custom_job_serializer(jobs):
 @employer_required
 @emp_profile_completed
 def job_posting_page(request):
+    """
+    View function for displaying all job postings.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: renders the job postings template with the list of all job postings
+
+    """
     employer_profile = EmployerProfile.objects.filter(user=request.user).first()
     if not employer_profile:
         messages.error(request, "You must complete your employer profile.")
@@ -246,6 +360,16 @@ def job_posting_page(request):
 @employer_required
 @emp_profile_completed
 def profile(request):
+    """
+    View function for displaying the employer profile.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: renders the employer profile template with the profile information.
+
+    """
     user = request.user
     profile = EmployerProfile.objects.get(user=user)
     jobs = Job.objects.filter(employer_profile=profile)
@@ -255,6 +379,21 @@ def profile(request):
 @employer_required
 @emp_profile_completed
 def delete_job(request, job_uuid):
+    """
+    View function for deleting a job posting.
+
+    This view allows employers to delete a job posting. It verifies that the request method is POST. If so, it retrieves
+    the job object with the given UUID and associated with the current user as the employer. It then deletes the job
+    object and redirects to the job posting page with a success message. If the request method is not POST, it displays
+    an error message and redirects to the job posting page.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        job_uuid (str): The UUID of the job to be deleted.
+
+    Returns:
+        HttpResponse: The HTTP response redirecting to the job posting page with a success message or an error message.
+    """
     if request.method == 'POST':
         job = get_object_or_404(Job, job_uuid=job_uuid, employer_profile__user=request.user)
         job.delete()

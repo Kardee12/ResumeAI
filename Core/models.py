@@ -9,6 +9,16 @@ from Core.EmployerModel import Job
 
 
 class UserSkill(models.Model):
+    """
+    Model representing a user's skill.
+
+    Attributes:
+        name (str): name of the skill
+        
+    Methods:
+        __str__: Returns the string representation of the skill (its name).
+
+    """
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
@@ -16,6 +26,21 @@ class UserSkill(models.Model):
 
 
 class UserProfile(models.Model):
+    """
+    Model representing a user's profile.
+
+    Attributes:
+        user (ForeignKey): user associated with the profil
+        profile_completed (bool): Indicates whether the user's profile is completed
+        location (str): location of the user
+        bio (str): professional bio of the user
+        resume (ForeignKey): user's resume (linked to the UserResume model)
+        skills (ManyToManyField): skills associated with the user
+
+    Methods:
+        __str__: Returns string representation of the UserProfile 
+
+    """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     profile_completed = models.BooleanField(default=False)
     location = models.CharField(max_length=255, blank=True, null=True)
@@ -28,6 +53,18 @@ class UserProfile(models.Model):
 
 
 class UserResume(models.Model):
+    """
+    Model representing a user's resume.
+
+    Attributes:
+        user (ForeignKey): The user associated with the resume.
+        resume (FileField): The file field for uploading the resume.
+        uploaded_at (DateTimeField): The date and time when the resume was uploaded.
+
+    Methods:
+        __str__: Returns the string representation of the UserResume object.
+
+    """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='resumes')
     resume = models.FileField(
         upload_to='user_resumes/',
@@ -48,6 +85,19 @@ class UserResume(models.Model):
 
 
 class JobApplication(models.Model):
+    """
+    Model representing a job application.
+
+    Attributes:
+        job (ForeignKey): The job to which the application is submitted.
+        user (ForeignKey): The user who submitted the application.
+        status (CharField): The status of the application, chosen from predefined choices.
+        application_date (DateTimeField): The date and time when the application was submitted.
+
+    Methods:
+        __str__: Returns the string representation of the JobApplication object.
+
+    """
     STATUS_CHOICES = (
         ('Applied', 'Applied'),
         ('Interview', 'Interview'),

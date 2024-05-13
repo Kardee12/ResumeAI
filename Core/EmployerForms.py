@@ -5,6 +5,24 @@ from .EmployerModel import Job, EmployerProfile
 
 
 class JobForm(forms.Form):
+    """
+    Form for creating a new job posting.
+
+    company (CharField): field for entering the name of the company
+    position (CharField): field for entering the job position
+    description (CharField): field for entering the job description
+    pay (IntegerField): field for entering the job pay
+    location (CharField): field for entering the job location
+    link_to_apply (URLField): field for entering the link to apply for the job
+    link_to_company (URLField): field for entering the link to the company's website
+    job_type (ChoiceField): A dropdown field for selecting the job type.
+    skill_1, skill_2, skill_3, skill_4, skill_5 (ModelChoiceField): Fields for choosing
+        up to five skills required for the job.
+
+    Methods:
+        clean_skills_used: clean and validate the selected skills by checking their IDs against
+            the existing skills in the database.
+    """
     position = forms.CharField(label='Job Position', max_length=200, widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Enter Job Position'}))
     description = forms.CharField(label='Job Description',
@@ -45,6 +63,15 @@ class EmployerProfileForm(forms.Form):
 
 
 class EditEmployerProfileForm(forms.ModelForm):
+    """
+    Form for creating or updating an employer profile.
+
+    Attributes:
+        company_name (CharField): field for entering the name of the company
+        position (CharField): A field for entering the position at the company
+        company_description (CharField): field for entering the company description
+        company_website (URLField): field for entering the company website
+    """
     class Meta:
         model = EmployerProfile
         fields = ['position', 'company_role_description']
@@ -57,6 +84,20 @@ class EditEmployerProfileForm(forms.ModelForm):
 
 
 class EditJobForm(forms.ModelForm):
+    """
+    Form for editing job details.
+
+    This form is used to edit various details of a job posting, including position, description, pay, location, and
+    link to apply.
+
+    Attributes:
+        position (CharField): Field for the job position.
+        description (Textarea): Field for the job description.
+        pay (NumberInput): Field for payment details.
+        location (CharField): Field for the job location.
+        link_to_apply (URLInput): Field for the link to apply.
+
+    """
     class Meta:
         model = Job
         fields = ['position', 'description', 'pay', 'location', 'link_to_apply']
