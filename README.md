@@ -38,6 +38,8 @@ To set up ResumeAI in a production environment, follow these steps:
 
 2. **Configuration:**
    - Create your own API credentials for Google and Hugging Face. Store these securely.
+   - To get the Google_maps_api_key, use the google places api.
+   - To get the huggingface token, go to the huggingface website, sign up for a token and allow for read/write. 
    - Create a `.env` file in the project root directory and add the following environment variables with your credentials:
      ```plaintext
      SOCIAL_AUTH_GOOGLE_CLIENT_ID = "your_google_client_id"
