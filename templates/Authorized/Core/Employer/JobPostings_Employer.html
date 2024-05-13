@@ -77,6 +77,10 @@
         .text-muted {
             color: #6c757d;
         }
+        .text-description{
+            max-height: 100px;
+            overflow-y: scroll;
+        }
     </style>
 {% endblock %}
 
@@ -171,7 +175,7 @@
                 <p><strong>Company:</strong> ${job.fields.company}</p>
                 <p><strong>Location:</strong> ${job.fields.location}</p>
                 <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
-                <p>${job.fields.description}</p>
+                <p class="text-description">${job.fields.description}</p>
                 <p><strong>Skills:</strong> ${skillsDisplay}</p>
                 <div class="d-flex justify-content-around mt-4">
                     <a href="${editJobUrl}" class="btn btn-primary btn-custom">Edit Now</a>
