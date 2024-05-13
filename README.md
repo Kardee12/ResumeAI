@@ -47,9 +47,9 @@ To set up ResumeAI in a production environment, follow these steps:
      ```
    - Create a PostgreSQL database named `resumeAI` with a user `core`:
      ```sql
-     CREATE DATABASE resumeAI;
+     CREATE DATABASE resumeai;
      CREATE USER core WITH PASSWORD 'password';
-     GRANT ALL PRIVILEGES ON DATABASE resumeAI TO core;
+     GRANT ALL PRIVILEGES ON DATABASE resumeai TO core;
      ```
    - Initialize and migrate the database schema. If there is anything in the migrations folders, remove everything but the _init_.py:
      ```bash
@@ -82,3 +82,7 @@ python manage.py runserver
   - https://www.youtube.com/watch?v=B7x744DQD6A
 - JobSearcher Perspective
   - https://www.youtube.com/watch?v=quuw8BRcraQ
+
+## LINKS TO TEST RESUMES:
+https://drive.google.com/drive/folders/1bwZn02UFOwsGK_km0bRaL-vbKAzZF6kW?usp=sharing
+- blank.pdf only for create-resume test!
