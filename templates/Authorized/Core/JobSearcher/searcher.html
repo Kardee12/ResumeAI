@@ -131,6 +131,10 @@
             border-radius: 0.75rem;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
         }
+        .text-description{
+            max-height: 100px;
+            overflow-y: scroll;
+        }
     </style>
 
 {% endblock %}
@@ -225,7 +229,7 @@
                 <a href="${job.fields.linkedin}" target="_blank"  class="linkedin-link" title="View Recruiter on LinkedIn"><i class="fab fa-linkedin"></i></a>
             </p>
             <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
-            <p style="white-space: pre-wrap; word-wrap: break-word;">${job.fields.description}</p>
+            <p class="text-description" style="white-space: pre-wrap; word-wrap: break-word;">${job.fields.description}</p>
             <p><strong>Skills:</strong> ${skillsDisplay}</p>
             <button class="btn btn-primary" id="apply-btn-${jobId}" onclick="applyJob(${jobId})">Apply Now</button>
         `;
