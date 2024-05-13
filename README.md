@@ -49,7 +49,7 @@ To set up ResumeAI in a production environment, follow these steps:
      ```sql
      CREATE DATABASE resumeai;
      CREATE USER core WITH PASSWORD 'password';
-     GRANT ALL PRIVILEGES ON DATABASE resumeAI TO core;
+     GRANT ALL PRIVILEGES ON DATABASE resumeai TO core;
      ```
    - Initialize and migrate the database schema. If there is anything in the migrations folders, remove everything but the _init_.py:
      ```bash
