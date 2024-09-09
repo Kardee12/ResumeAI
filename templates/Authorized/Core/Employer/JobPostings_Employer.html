@@ -91,7 +91,10 @@
                     <li class="list-group-item rounded-lg">
                         <h5>{{ job.position }}</h5>
                         <p class="text-muted">{{ job.description|truncatewords:20 }}</p>
-                        <button class="btn btn-primary btn-custom" onclick="showDetails('{{ job.job_uuid }}')">View Posting</button>
+                        <button class="btn btn-primary btn-custom" onclick="showDetails('{{ job.job_uuid|escapejs}}')">View Posting</button>
+                        <form action="{% url 'delete_job' job.job_uuid %}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this job?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-custom">Delete</button>
                     </li>
                     {% empty %}
                     <li class="list-group-item rounded-lg">There are no jobs posted.</li>
@@ -110,7 +113,7 @@
 
 {% block extra_scripts %}
 <script>
-var globalJobs = JSON.parse('{{ jobs_json|safe }}');  // Ensure this is parsing correctly and contains all job information
+var globalJobs = JSON.parse('{{ jobs_json|escapejs }}');  // Ensure this is parsing correctly and contains all job information
 
 function getJobTypeColor(jobType) {
     switch (jobType) {
@@ -127,18 +130,18 @@ function getJobTypeColor(jobType) {
     }
 }
 
-function showDetails(jobId) {
-    const job = globalJobs.find(job => job.job_uuid === jobId);
+function showDetails(job_uuid) {
+    const job = globalJobs.find(job => job.job_uuid === job_uuid);
     if (!job) {
-        console.error('Job not found:', jobId);
+        console.error('Job not found:', job_uuid);
         return;
     }
 
     const jobDetailsDiv = document.querySelector('.job-details');
     const jobTypeColor = getJobTypeColor(job.fields.job_type);
-    const editJobUrl = "{% url 'edit_job_posting' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
+    const editJobUrl = "{% url 'edit_job_posting' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", job_uuid);
     const skillsDisplay = job.fields.skills && job.fields.skills.length > 0 ? job.fields.skills.join(', ') : 'No skills listed';
-    const candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", jobId);
+    const candidateListUrl = "{% url 'candidate_list' '00000000-0000-0000-0000-000000000000' %}".replace("00000000-0000-0000-0000-000000000000", job_uuid);
     jobDetailsDiv.innerHTML = `
 <div class="card card-custom rounded-lg">
     <div class="row no-gutters">
@@ -153,7 +156,6 @@ function showDetails(jobId) {
                 <p><strong>Location:</strong> ${job.fields.location}</p>
                 <p><strong>Salary:</strong> $${parseFloat(job.fields.pay).toLocaleString()}</p>
                 <p>${job.fields.description}</p>
-                <p><strong>Meet the recruiter:</strong> ${job.fields.company_role_description}</p>
                 <p><strong>Skills:</strong> ${skillsDisplay}</p>
                 <div class="d-flex justify-content-around mt-4">
                     <a href="${editJobUrl}" class="btn btn-primary btn-custom">Edit Now</a>

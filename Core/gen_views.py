@@ -11,7 +11,7 @@ from ResumeAI.Generic.generic_decoraters import emp_profile_completed, employer_
 def download_resume(request):
     try:
         user = request.user
-        user_resume = UserResume.objects.get(user=user)
+        user_resume = user.resumes.order_by('-uploaded_at').first()
         filename = user_resume.resume.path
         response = FileResponse(open(filename, 'rb'))
         return response

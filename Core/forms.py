@@ -1,5 +1,8 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
+
+from Core.models import UserProfile
 
 
 class UserProfileForm(forms.Form):
@@ -13,19 +16,24 @@ class UserProfileForm(forms.Form):
     )
 
 
-class EditProfileForm(forms.Form):
-    location = forms.CharField(label='Location', max_length=255, required=False, widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Enter your location', 'id': 'locationInput'}))
-    bio = forms.CharField(label='Professional Bio', widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-                          required=False)
+class EditProfileForm(forms.ModelForm):
+    # location = forms.CharField(max_length=100, required=False)
+    # summary = forms.CharField(widget=forms.Textarea, required=False)
     resume = forms.FileField(
-        label='Upload Resume',
         required=False,
-        validators=[FileExtensionValidator(['pdf', 'doc', 'docx', 'txt'])],
-        help_text='Accepted formats: PDF, DOC, DOCX, TXT',
-        widget=forms.FileInput(attrs={'class': 'form-control'}
-                               )
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx', 'txt'])],
+        help_text="Accepted formats: PDF, DOC, DOCX, TXT"
     )
+    class Meta:
+        model = UserProfile
+        fields = ['location', 'bio']
+
+    def clean_resume(self):
+        resume = self.cleaned_data.get('resume')
+        if resume and not resume.name.endswith(('.pdf', '.docx', '.doc', '.txt')):
+            raise forms.ValidationError("Invalid file type. Accepted formats: PDF, DOC, DOCX, TXT.")
+        return resume
+
 
 
 class ResumeForm(forms.Form):
@@ -62,4 +70,15 @@ class ResumeForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         skills = [cleaned_data.get(f"skill_{i + 1}") for i in range(10) if cleaned_data.get(f"skill_{i + 1}")]
+        if len(skills) != 10:
+            raise ValidationError("All 10 skills are required.")
+        jobs_required_fields = ['job_title_1', 'company_name_1', 'start_date_1', 'end_date_1', 'job_description_1']
+        if not all(cleaned_data.get(field) for field in jobs_required_fields):
+            raise ValidationError("At least one complete work experience is required.")
+        if cleaned_data['start_date_1'] and cleaned_data['end_date_1']:
+            if cleaned_data['start_date_1'] > cleaned_data['end_date_1']:
+                raise ValidationError("Start date must be before end date for the job.")
+        if cleaned_data['education_start_date'] > cleaned_data['education_end_date']:
+            raise ValidationError("Educational start date must be before the end date.")
+
         return cleaned_data

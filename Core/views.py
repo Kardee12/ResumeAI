@@ -40,6 +40,11 @@ def settings(request):
         social_account = SocialAccount.objects.get(user=request.user)
     except SocialAccount.DoesNotExist:
         social_account = None
+        
+    if request.user.role == 'jobsearcher':
+        base_template = 'Authorized/Core/JobSearcher/Base.html'
+    else:
+        base_template = 'Authorized/Core/Employer/base.html'
 
     if request.method == 'POST':
         if 'sign_out' in request.POST:
@@ -50,7 +55,8 @@ def settings(request):
             return redirect('/')
 
     return render(request, 'Authorized/Core/Settings.html', {
-        'social_account': social_account
+        'social_account': social_account,
+        'base_template':base_template,
     })
 
 

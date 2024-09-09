@@ -1,6 +1,10 @@
 import os
 import django
+from django.db import transaction
+from psycopg2 import IntegrityError
+
 import ResumeAI
+from Core import apps
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ResumeAI.settings')
 django.setup()

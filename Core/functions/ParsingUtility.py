@@ -1,3 +1,5 @@
+import os
+
 import requests
 from decouple import config
 import re
@@ -144,3 +146,43 @@ class ResumeParsing:
         except Exception as e:
             print(f"An error occurred while extracting text from TXT: {e}")
             return None
+
+class NewResumeParsing:
+    def __init__(self, resume_file):
+        self.resume_file = resume_file
+
+    def extract_text(self):
+        if not os.path.exists(self.resume_file.path):
+            print("Resume file does not exist.")
+            return None
+
+        try:
+            if self.resume_file.name.endswith('.pdf'):
+                return self.extract_text_from_pdf()
+            elif self.resume_file.name.endswith('.docx'):
+                return self.extract_text_from_docx()
+            elif self.resume_file.name.endswith('.doc'):
+                return self.extract_text_from_doc()
+            elif self.resume_file.name.endswith('.txt'):
+                return self.extract_text_from_txt()
+        except Exception as e:
+            print(f"An error occurred while extracting text: {e}")
+        return None
+
+    def extract_text_from_pdf(self):
+        text = ""
+        with fitz.open(self.resume_file.path) as doc:
+            for page in doc:
+                text += page.get_text()
+        return text
+
+    def extract_text_from_docx(self):
+        doc = Document(self.resume_file.path)
+        return '\n'.join([paragraph.text for paragraph in doc.paragraphs])
+
+    def extract_text_from_doc(self):
+        return textract.process(self.resume_file.path).decode('utf-8')
+
+    def extract_text_from_txt(self):
+        with open(self.resume_file.path, 'r') as f:
+            return f.read().strip()

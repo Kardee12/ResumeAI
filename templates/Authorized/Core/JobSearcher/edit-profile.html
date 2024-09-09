@@ -60,15 +60,34 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="locationInput" class="form-label">Location</label>
-                        <input type="text" class="form-control" id="locationInput" name="location" placeholder="Enter your location">
+                        <input type="text" class="form-control {% if form.location.errors %}is-invalid{% endif %}" id="locationInput" name="location" placeholder="Enter your location">
+                        {% for error in form.location.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
                     </div>
                     <div class="mb-3">
-                        <label for="summaryInput" class="form-label">Professional Bio</label>
-                        <textarea class="form-control" id="summaryInput" name="summary" rows="3" placeholder="Detail your professional background and expertise.">{{ profile.bio }}</textarea>
+                        <label for="bioInput" class="form-label">Professional Bio</label>
+                        <textarea class="form-control {% if form.bio.errors %}is-invalid{% endif %}" id="bioInput" name="bio" rows="3" placeholder="Detail your professional background and expertise.">{{ form.bio.value|default_if_none:profile.bio }}</textarea>
+                        {% if form.bio.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.bio.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
-                   <div class="mb-3">
+                    <div class="mb-3">
                         <label for="resumeUpload" class="form-label">Upload Resume</label>
-                        <input type="file" class="form-control" id="resumeUpload" name="resume" accept=".pdf,.doc,.docx, .txt">
+                        <input type="file" class="form-control {% if form.resume.errors %}is-invalid{% endif %}" id="resumeUpload" name="resume" accept=".pdf,.doc,.docx, .txt">
+                        {% if form.resume.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.resume.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, TXT</small>
                     </div>
                     <div class="text-center">
