@@ -36,7 +36,7 @@ STATICFILES_FINDERS = (
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-)%*1#lrapu2w+be$tdg4=he765x1#2a9)2%#)*cnsr9#2#ig&*"
+SECRET_KEY = ""
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
